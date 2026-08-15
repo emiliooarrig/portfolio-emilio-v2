@@ -1,0 +1,211 @@
+// ============================================================
+//  _glass-panel.scss — SIGNATURE ELEMENT
+//  Único componente con tratamiento Liquid Glass del sitio.
+//  No replicar en tarjetas, nav ni botones.
+// ============================================================
+
+@use '../tokens' as *;
+
+.glass-panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+// Resplandor ámbar: el "dato refinado" emergiendo en la esquina.
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  inset: -20% -20% auto auto;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, var(--glass-highlight), transparent 70%);
+  pointer-events: none;
+}
+
+// Fallback para equipos sin backdrop-filter.
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel {
+    background: var(--color-surface-alt);
+  }
+}
+
+// ------------------------------------------------------------
+//  Pipeline
+// ------------------------------------------------------------
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  height: 100%;
+  padding: var(--space-5);
+}
+
+.pipeline__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.pipeline__title {
+  font-size: var(--text-md);
+  font-weight: 500;
+}
+
+.pipeline__caption {
+  flex-shrink: 0;
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
+// --- Riel animado -------------------------------------------
+.pipeline__flow {
+  position: relative;
+  height: 1.5rem;
+}
+
+.pipeline__rail {
+  position: absolute;
+  inset: 50% 0 auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--color-structural) 0%,
+    rgba(91, 141, 239, 0.35) 45%,
+    rgba(232, 163, 61, 0.45) 75%,
+    var(--color-accent) 100%
+  );
+  opacity: 0.5;
+}
+
+.pipeline__packet {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: 2px;
+  background: var(--color-structural);
+  animation: packet-flow 5.2s linear infinite;
+  animation-delay: calc(var(--packet-index) * -0.86s);
+  will-change: transform, opacity;
+}
+
+// El color no se funde a medio camino: cambia en el punto de transformación.
+// Ese salto es la narrativa — el dato deja de ser crudo y pasa a valer algo.
+@keyframes packet-flow {
+  0% {
+    transform: translateX(0) scale(0.85);
+    background-color: var(--color-structural);
+    opacity: 0;
+  }
+  8%  { opacity: 1; }
+  48% { background-color: var(--color-structural); }
+  62% { background-color: var(--color-accent); }
+  92% { opacity: 1; }
+  100% {
+    transform: translateX(calc(100cqw - 10px)) scale(1);
+    background-color: var(--color-accent);
+    opacity: 0;
+  }
+}
+
+// El riel define el contenedor de consulta para el recorrido.
+.pipeline__flow {
+  container-type: inline-size;
+}
+
+.pipeline.is-paused .pipeline__packet {
+  animation-play-state: paused;
+}
+
+// --- Etapas -------------------------------------------------
+.pipeline__steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: auto;
+}
+
+.pipeline__step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-subtle);
+}
+
+.pipeline__node {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--color-structural);
+  box-shadow: 0 0 0 3px var(--color-structural-dim);
+}
+
+.pipeline__step--transform .pipeline__node {
+  background: var(--color-text-muted);
+  box-shadow: 0 0 0 3px rgba(147, 162, 180, 0.16);
+}
+
+.pipeline__step--refined .pipeline__node {
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-dim);
+}
+
+.pipeline__label {
+  color: var(--color-text);
+  font-size: var(--text-2xs);
+}
+
+.pipeline__desc {
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-snug);
+}
+
+@include below($bp-tablet) {
+  .pipeline__head {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .pipeline__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@include below($bp-mobile) {
+  // En móvil el gesto de vidrio se conserva; la animación se simplifica.
+  .pipeline__steps {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .pipeline__desc {
+    display: none;
+  }
+
+  .pipeline__packet:nth-child(n + 4) {
+    display: none;
+  }
+}
+
+@include reduced-motion {
+  .pipeline__packet {
+    animation: none;
+    opacity: 0.9;
+  }
+
+  // Sin movimiento: los paquetes quedan distribuidos a lo largo del riel.
+  .pipeline__packet { transform: translateX(calc(var(--packet-index) * 18cqw)); }
+}

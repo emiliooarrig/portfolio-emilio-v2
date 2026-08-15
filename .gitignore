@@ -1,0 +1,15 @@
+CLAUDE.md
+
+# Dependencias
+/node_modules/
+
+# Configuración local (credenciales de BD)
+/config/config.local.php
+
+# Artefactos de compilación de SCSS
+*.css.map
+.sass-cache/
+
+# Sistema
+Thumbs.db
+.DS_Store

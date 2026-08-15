@@ -1,0 +1,144 @@
+// ============================================================
+//  _cta.scss — botones y bloque de llamada a la acción
+//  Ámbar = acción principal (dato con valor)
+//  Azul  = acción secundaria (estructura)
+// ============================================================
+
+@use '../tokens' as *;
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;            // 44px — área táctil mínima
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-align: center;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &--sm {
+    min-height: 2.25rem;
+    padding: var(--space-2) var(--space-4);
+  }
+
+  // Primario: alto contraste, uno por vista.
+  &--primary {
+    background: var(--color-accent);
+    color: #14202B;
+
+    &:hover {
+      background: var(--color-accent-hover);
+      color: #14202B;
+    }
+  }
+
+  // Secundario: contorno estructural.
+  &--secondary {
+    border-color: var(--border-structural);
+    color: var(--color-structural);
+
+    &:hover {
+      background: var(--color-structural-dim);
+      border-color: var(--color-structural);
+      color: var(--color-structural);
+    }
+  }
+
+  // Ghost: acciones terciarias.
+  &--ghost {
+    border-color: var(--border-subtle);
+    color: var(--color-text-muted);
+
+    &:hover {
+      background: var(--color-surface-alt);
+      border-color: var(--border-strong);
+      color: var(--color-text);
+    }
+  }
+}
+
+@include reduced-motion {
+  .cta:active {
+    transform: none;
+  }
+}
+
+// ------------------------------------------------------------
+//  Bloque CTA
+// ------------------------------------------------------------
+.cta-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+
+  &__title {
+    font-size: var(--text-md);
+    font-weight: 500;
+  }
+
+  &__text {
+    max-width: 42rem;
+    margin-top: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-2xs);
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    flex-shrink: 0;
+  }
+
+  // Variante dentro del flujo de una sección.
+  &--inline {
+    padding: var(--space-6);
+    border: 1px solid var(--border-subtle);
+    border-left: 2px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+
+  // Variante panel suelto.
+  &--panel {
+    padding: var(--space-6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+  }
+
+  // Variante de cierre en el footer: sin caja, más aire.
+  &--footer {
+    padding-block: var(--space-7);
+
+    .cta-block__title {
+      font-size: var(--text-lg);
+    }
+  }
+
+  @include below($bp-tablet) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+
+    &--inline,
+    &--panel {
+      padding: var(--space-5);
+    }
+  }
+}

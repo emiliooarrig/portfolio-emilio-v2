@@ -1,0 +1,78 @@
+// ============================================================
+//  _cert-card.scss — certificaciones
+//  Sin numeración: no son una secuencia, son un conjunto.
+// ============================================================
+
+@use '../tokens' as *;
+
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  gap: var(--bento-gap);
+}
+
+.cert-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+
+  &:hover {
+    background: var(--color-surface-alt);
+    border-color: var(--border-strong);
+  }
+}
+
+.cert-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.cert-card__issuer {
+  color: var(--color-structural);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.03em;
+}
+
+.cert-card__title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+}
+
+.cert-card__desc {
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-snug);
+}
+
+.cert-card__meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+
+  dt {
+    color: var(--color-text-faint);
+    font-size: 0.6875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin-top: var(--space-1);
+    color: var(--color-text-muted);
+    font-size: var(--text-2xs);
+    overflow-wrap: anywhere;
+  }
+}

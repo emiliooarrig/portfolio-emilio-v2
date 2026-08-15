@@ -1,0 +1,18 @@
+// ============================================================
+//  main.scss — punto de entrada. Compila a main.css
+//  Compilar:  sass public/assets/css/main.scss public/assets/css/main.css
+//  Watch:     npm run css:watch
+// ============================================================
+
+@use 'tokens';
+@use 'base';
+@use 'layout';
+
+@use 'components/nav';
+@use 'components/cta';
+@use 'components/bento';
+@use 'components/glass-panel';
+@use 'components/timeline';
+@use 'components/cert-card';
+@use 'components/project-detail';
+@use 'components/form';

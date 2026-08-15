@@ -1,0 +1,182 @@
+// ============================================================
+//  _timeline.scss — experiencia laboral
+//  Única sección con marcadores numerados: es una secuencia real.
+// ============================================================
+
+@use '../tokens' as *;
+
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.timeline__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: var(--space-5);
+
+  // Línea vertical que conecta la secuencia.
+  &::before {
+    content: '';
+    position: absolute;
+    top: 3rem;
+    bottom: calc(var(--space-5) * -1);
+    left: 1.75rem;
+    width: 1px;
+    background: var(--border-subtle);
+  }
+
+  &:last-child::before {
+    display: none;
+  }
+}
+
+.timeline__marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.timeline__index {
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
+.timeline__item--current {
+  .timeline__marker {
+    border-color: var(--border-accent);
+    background: var(--color-accent-dim);
+  }
+
+  .timeline__index {
+    color: var(--color-accent);
+  }
+}
+
+.timeline__content {
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  transition: background-color var(--duration-base) var(--ease-out);
+
+  &:hover {
+    background: var(--color-surface-alt);
+  }
+}
+
+.timeline__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.timeline__role {
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.timeline__company {
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.timeline__location {
+  color: var(--color-text-dim);
+}
+
+.timeline__dates {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.timeline__duration {
+  color: var(--color-text-faint);
+}
+
+.timeline__type {
+  margin-top: var(--space-3);
+  color: var(--color-structural);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.timeline__summary {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.timeline__highlights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+
+  li {
+    position: relative;
+    padding-left: var(--space-5);
+    color: var(--color-text-muted);
+    font-size: var(--text-2xs);
+    line-height: var(--leading-snug);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0.5rem;
+      left: 0;
+      width: 10px;
+      height: 1px;
+      background: var(--color-accent);
+      opacity: 0.7;
+    }
+  }
+}
+
+@include below($bp-mobile) {
+  .timeline__item {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: var(--space-3);
+
+    &::before {
+      top: 2.25rem;
+      left: 1.25rem;
+    }
+  }
+
+  .timeline__marker {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .timeline__head {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .timeline__dates {
+    align-items: flex-start;
+  }
+
+  .timeline__content {
+    padding: var(--space-4);
+  }
+}

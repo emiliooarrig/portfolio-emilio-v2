@@ -1,0 +1,218 @@
+// ============================================================
+//  layout.scss — contenedor, secciones y retícula de 12 columnas
+// ============================================================
+
+@use 'tokens' as *;
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page__main {
+  flex: 1 0 auto;
+  padding-top: var(--nav-height);
+
+  // Transición de página: entrada corta, sin desplazamiento pesado.
+  animation: page-enter var(--duration-slow) var(--ease-out) both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@include reduced-motion {
+  .page__main {
+    animation: none;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+
+  @include below($bp-mobile) {
+    padding-inline: var(--space-4);
+  }
+}
+
+// ------------------------------------------------------------
+//  Secciones — ritmo espacial desigual, a propósito
+// ------------------------------------------------------------
+.section {
+  padding-block: var(--space-8);
+
+  &--hero {
+    padding-top: var(--space-7);
+  }
+
+  &--tight {
+    padding-top: var(--space-6);
+  }
+
+  &--projects {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  &--error {
+    padding-block: var(--space-9);
+    text-align: center;
+  }
+
+  @include below($bp-mobile) {
+    padding-block: var(--space-7);
+  }
+}
+
+.section__foot {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+}
+
+// ------------------------------------------------------------
+//  Encabezado de sección
+// ------------------------------------------------------------
+.section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.section-header__main {
+  max-width: 46rem;
+}
+
+.section-header__title {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-3);
+}
+
+.section-header__lead {
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.section-header__meta {
+  flex-shrink: 0;
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
+@include below($bp-tablet) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-header__title {
+    font-size: var(--text-lg);
+  }
+}
+
+// ------------------------------------------------------------
+//  Retícula base de 12 columnas
+// ------------------------------------------------------------
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--bento-gap);
+
+  @include below($bp-tablet) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @include below($bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Split de contenido + panel lateral, alineado a la misma retícula
+.grid-split {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: var(--space-6);
+  align-items: start;
+
+  &--form {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  }
+
+  @include below($bp-tablet) {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+}
+
+// ------------------------------------------------------------
+//  Panel: superficie neutra fuera del bento
+// ------------------------------------------------------------
+.panel {
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+
+  &--sticky {
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-4));
+
+    @include below($bp-tablet) {
+      position: static;
+    }
+  }
+
+  &--form {
+    padding: var(--space-6);
+
+    @include below($bp-mobile) {
+      padding: var(--space-5);
+    }
+  }
+}
+
+.panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.panel__note {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
+// ------------------------------------------------------------
+//  Página de error
+// ------------------------------------------------------------
+.error-code {
+  color: var(--color-structural);
+  font-size: var(--text-lg);
+  letter-spacing: var(--tracking-wide);
+}
+
+.error-title {
+  margin: var(--space-3) 0;
+  font-size: var(--text-xl);
+}
+
+.error-text {
+  margin-bottom: var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.section--error .hero__actions {
+  justify-content: center;
+}

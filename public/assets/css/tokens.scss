@@ -1,0 +1,118 @@
+// ============================================================
+//  tokens.scss — fuente de verdad del sistema visual
+//  Narrativa: azul estructural = dato crudo · ámbar = dato refinado
+// ============================================================
+
+// ------------------------------------------------------------
+//  Breakpoints (SCSS: sólo existen en tiempo de compilación)
+// ------------------------------------------------------------
+$bp-mobile:  40rem;   // 640px — bento a 1 columna
+$bp-tablet:  60rem;   // 960px — bento a 4 columnas
+$bp-desktop: 75rem;   // 1200px
+
+@mixin below($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// ------------------------------------------------------------
+//  Custom properties
+// ------------------------------------------------------------
+:root {
+  // --- Base -------------------------------------------------
+  --color-bg:          #0F1620; // azul-grafito, no negro puro
+  --color-surface:     #16202C; // celdas bento
+  --color-surface-alt: #1C2836; // celdas elevadas / hover
+  --color-surface-sunk: #121B25; // inputs: inset, más oscuro que su entorno
+
+  // --- Estructura ("dato crudo") ----------------------------
+  --color-grid-line:   #2A3B4D;
+  --color-structural:  #5B8DEF;
+  --color-structural-dim: rgba(91, 141, 239, 0.16);
+
+  // --- Refinado ("dato con valor") --------------------------
+  --color-accent:       #E8A33D;
+  --color-accent-hover: #F2B759;
+  --color-accent-dim:   rgba(232, 163, 61, 0.14);
+
+  // --- Texto: cuatro niveles --------------------------------
+  --color-text:       #E7ECF2; // primario
+  --color-text-muted: #93A2B4; // secundario
+  --color-text-dim:   #6E8095; // metadatos
+  --color-text-faint: #4E5F73; // deshabilitado
+
+  // --- Bordes: se ven cuando los buscas, no antes -----------
+  --border-subtle:     rgba(231, 236, 242, 0.07);
+  --border-strong:     rgba(231, 236, 242, 0.13);
+  --border-structural: rgba(91, 141, 239, 0.28);
+  --border-accent:     rgba(232, 163, 61, 0.35);
+
+  // --- Glass panel (sólo signature element) -----------------
+  --glass-bg:        rgba(22, 32, 44, 0.55);
+  --glass-border:    rgba(91, 141, 239, 0.25);
+  --glass-highlight: rgba(232, 163, 61, 0.15);
+
+  // --- Semánticos -------------------------------------------
+  --color-success: #4FB286;
+  --color-danger:  #E0685F;
+
+  // --- Tipografía -------------------------------------------
+  --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-body:    'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', 'Cascadia Mono', ui-monospace, monospace;
+
+  // Escala (rem, base 16px)
+  --text-2xs: 0.8125rem;
+  --text-xs:  0.9375rem;
+  --text-sm:  1rem;
+  --text-md:  1.25rem;
+  --text-lg:  1.75rem;
+  --text-xl:  2.5rem;
+  --text-2xl: 3.5rem;
+
+  --leading-tight: 1.15;
+  --leading-snug:  1.35;
+  --leading-body:  1.6;
+
+  --tracking-tight: -0.02em;
+  --tracking-wide:  0.08em;
+
+  // --- Espaciado: base 4px ----------------------------------
+  --space-1: 0.25rem;  //  4
+  --space-2: 0.5rem;   //  8
+  --space-3: 0.75rem;  // 12
+  --space-4: 1rem;     // 16
+  --space-5: 1.5rem;   // 24
+  --space-6: 2rem;     // 32
+  --space-7: 3rem;     // 48
+  --space-8: 4rem;     // 64
+  --space-9: 6rem;     // 96
+
+  // Densidad de celda bento (decisión: workbench, no folleto)
+  --cell-padding: var(--space-5);
+  --bento-gap:    var(--space-3);
+
+  // --- Radios (concéntricos: exterior = interior + padding) --
+  --radius-sm: 6px;   // chips, inputs
+  --radius-md: 10px;  // botones
+  --radius-lg: 16px;  // celdas bento, glass panel
+  --radius-xl: 22px;  // contenedores mayores
+
+  // --- Layout -----------------------------------------------
+  --container-max: 76rem;
+  --nav-height:    4.5rem;
+
+  // --- Movimiento -------------------------------------------
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+  --duration-slow: 320ms;
+}
