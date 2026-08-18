@@ -10,6 +10,7 @@ TRUNCATE TABLE `contact_messages`;
 TRUNCATE TABLE `experience_highlights`;
 TRUNCATE TABLE `experiences`;
 TRUNCATE TABLE `certifications`;
+TRUNCATE TABLE `services`;
 TRUNCATE TABLE `project_pipeline_steps`;
 TRUNCATE TABLE `project_metrics`;
 TRUNCATE TABLE `project_technologies`;
@@ -37,9 +38,9 @@ VALUES
 (1,
  'Emilio Guzmán',
  'Ingeniero de TI · Ingeniería de Datos',
- 'Diseño y opero pipelines de datos que convierten información cruda en decisiones medibles.',
- 'Ingeniero de TI enfocado en ingeniería de datos: modelado, orquestación de pipelines y capas analíticas listas para negocio.',
- 'Trabajo en la parte del sistema que casi nadie ve: el camino que recorre un dato desde que se genera hasta que alguien toma una decisión con él. Diseño modelos dimensionales, orquesto pipelines idempotentes y construyo capas semánticas para que los equipos dejen de discutir de dónde salió un número y empiecen a discutir qué hacer con él.\n\nVengo del lado de infraestructura y sistemas, así que me importa tanto el SLA del pipeline como el gráfico final: monitoreo, costos, reprocesos y calidad del dato son parte del entregable, no un extra.',
+ 'Construyo software y pongo orden en la información para que tu negocio deje de perder tiempo.',
+ 'Ingeniero de TI. Hago dos cosas: construyo el software que un negocio necesita para trabajar mejor, y pongo en orden la información que ya tiene para que sirva de algo.',
+ 'Trabajo en la parte que casi nadie ve: el camino que recorre un dato desde que se genera hasta que alguien toma una decisión con él. En la práctica eso significa sistemas que funcionan sin que nadie los esté empujando, y números en los que todos confían porque salen del mismo lugar.\n\nVengo del lado de la infraestructura, así que me importa tanto que el sistema no se caiga como que el reporte final se entienda. Si algo se rompe un domingo, lo levanto; si un número no cuadra, sé dónde buscarlo. Prefiero explicarte en tus palabras qué voy a hacer antes de escribir una sola línea de código.',
  'emilioag2703@gmail.com',
  '+52 000 000 0000',
  'Guadalajara, México',
@@ -91,50 +92,50 @@ INSERT INTO `projects`
  `cover_image`, `repo_url`, `demo_url`, `bento_size`, `is_featured`, `is_published`, `has_pipeline`,
  `started_on`, `ended_on`, `sort_order`)
 VALUES
-(1, 'plataforma-datos-retail', 'Plataforma de datos para retail',
- 'Del punto de venta al tablero directivo en 15 minutos',
- 'Data warehouse en BigQuery con ingesta incremental desde 120 tiendas y capa semántica en dbt para reportes de venta casi en tiempo real.',
- 'La operación consolidaba ventas en hojas de cálculo enviadas por correo cada noche. El cierre diario llegaba a media mañana y cada área tenía su propia versión del mismo número.',
+(1, 'plataforma-datos-retail', 'La venta de 120 tiendas en un solo lugar',
+ 'De la caja registradora al reporte de dirección, en 15 minutos',
+ 'Junté lo que vendían 120 tiendas en un solo lugar, para que dirección viera el día anterior sin esperar a que alguien lo armara a mano.',
+ 'Cada tienda mandaba su venta por correo en una hoja de cálculo. El reporte del día anterior llegaba a media mañana y cada área tenía su propia versión del mismo número.',
  'Construí ingesta incremental desde los POS hacia BigQuery con Airflow, modelado dimensional en dbt (ventas, inventario, mermas) y pruebas de calidad automáticas en cada corrida. La capa semántica quedó como fuente única para Power BI.',
- 'El cierre diario pasó de 10 h a 15 min, y las tres áreas que discutían cifras distintas hoy leen el mismo modelo.',
+ 'El reporte diario pasó de tardar 10 horas a estar listo en 15 minutos, y las tres áreas que discutían cifras distintas hoy leen la misma.',
  'Data Engineer (líder técnico)', 'Cadena retail nacional',
  NULL, 'https://github.com/emilioguzman/retail-data-platform', NULL,
  'xl', 1, 1, 1, '2024-02-01', '2024-11-30', 10),
 
-(2, 'pipeline-streaming-iot', 'Pipeline de telemetría IoT',
- 'Ingesta continua de 4,500 sensores industriales',
- 'Streaming con Kafka y Spark Structured Streaming para detectar anomalías de temperatura en planta antes de que se conviertan en paro de línea.',
- 'Los sensores de planta escribían a un histórico que sólo se revisaba después de una falla. El diagnóstico era siempre forense, nunca preventivo.',
+(2, 'pipeline-streaming-iot', 'Avisar antes de que se pare la máquina',
+ '4,500 sensores de planta vigilados al mismo tiempo',
+ 'Puse a la planta a avisar sola cuando una máquina empieza a calentarse, en vez de enterarse cuando ya se detuvo.',
+ 'Los sensores guardaban todo, pero nadie los miraba hasta que algo ya se había roto. El diagnóstico siempre llegaba tarde.',
  'Diseñé el flujo Kafka → Spark Structured Streaming → almacenamiento columnar, con ventanas móviles para detección de desviaciones y alertas al equipo de mantenimiento.',
  'Las alertas se adelantaron un promedio de 40 minutos a la falla; dos paros de línea evitados en el primer trimestre.',
  'Data Engineer', 'Manufactura industrial',
  NULL, NULL, NULL,
  'lg', 1, 1, 1, '2023-05-01', '2023-12-15', 20),
 
-(3, 'observabilidad-datos', 'Observabilidad de pipelines',
- 'Saber que un dato se rompió antes que el negocio',
- 'Sistema de monitoreo de frescura, volumen y esquema sobre 30+ tablas críticas, con alertas a Slack y bitácora histórica de incidentes.',
- 'Los errores de datos se descubrían cuando alguien notaba un tablero vacío. No había forma de saber cuándo se rompió ni por cuánto tiempo.',
+(3, 'observabilidad-datos', 'Detectar el error antes que el cliente',
+ 'Un vigilante que no se distrae',
+ 'Puse a vigilar solas las 30 tablas más importantes: si un número deja de llegar o llega raro, el equipo se entera en minutos y no en días.',
+ 'Los errores se descubrían cuando alguien notaba un reporte vacío. No había forma de saber cuándo se rompió ni cuánto tiempo llevaba así.',
  'Implementé chequeos de frescura, volumen esperado y deriva de esquema como DAGs de Airflow, con severidad por tabla y una bitácora consultable de cada incidente.',
- 'El tiempo medio de detección bajó de 2 días a 20 minutos.',
+ 'Enterarse de un problema pasó de tardar 2 días a tardar 20 minutos.',
  'Data Engineer', 'Proyecto interno',
  NULL, 'https://github.com/emilioguzman/data-observability', NULL,
  'md', 1, 1, 0, '2024-03-01', NULL, 30),
 
-(4, 'migracion-onprem-cloud', 'Migración on-premise a la nube',
- '11 años de histórico movidos sin parar la operación',
- 'Migración de un data warehouse SQL Server on-premise hacia PostgreSQL gestionado en la nube, con validación fila a fila y ventana de corte de 4 horas.',
- 'El servidor on-premise estaba sin soporte y cada mantenimiento requería detener la operación durante el fin de semana.',
+(4, 'migracion-onprem-cloud', 'Mudanza a la nube sin cerrar un solo día',
+ '11 años de información movidos sin parar la operación',
+ 'Cambié el servidor viejo de la empresa por uno en la nube, con toda la historia intacta y sin pedirle a nadie que dejara de trabajar.',
+ 'El servidor de la empresa ya no tenía soporte y cada mantenimiento obligaba a detener la operación un fin de semana completo.',
  'Planeé la migración por dominios, con carga histórica en paralelo, doble escritura durante la transición y scripts de reconciliación por conteo y checksum.',
- 'Corte final de 4 horas en domingo, cero pérdida de registros y 38% menos de costo de infraestructura.',
+ 'Cuatro horas de corte un domingo, ni un registro perdido y 38% menos de costo cada mes.',
  'Ingeniero de TI', 'Sector financiero',
  NULL, NULL, NULL,
  'lg', 0, 1, 0, '2022-08-01', '2023-03-31', 40),
 
-(5, 'capa-semantica-bi', 'Capa semántica de negocio',
+(5, 'capa-semantica-bi', 'Un solo significado para cada número',
  'Un solo lugar donde vive la definición de "cliente activo"',
- 'Diccionario de métricas y modelo semántico en dbt que estandariza 60 indicadores usados por finanzas, comercial y operaciones.',
- 'Cada área calculaba sus propios KPIs con reglas distintas. La misma junta terminaba con tres cifras de ingreso para el mismo mes.',
+ 'Puse por escrito qué significa cada uno de los 60 indicadores del negocio, para que finanzas, comercial y operaciones dejaran de calcularlos distinto.',
+ 'Cada área calculaba sus propios indicadores con reglas distintas. La misma junta terminaba con tres cifras de ingreso para el mismo mes.',
  'Documenté y modelé cada métrica en dbt con pruebas y linaje visible, más un diccionario navegable para usuarios de negocio.',
  'Las juntas de resultados dejaron de empezar con una discusión sobre de dónde salió el número.',
  'Analytics Engineer', 'Retail y servicios',
@@ -190,6 +191,56 @@ INSERT INTO `project_pipeline_steps` (`project_id`, `label`, `description`, `sta
 (2, 'Spark Streaming',    'Ventanas móviles de 5 minutos',           'transform', 30),
 (2, 'Detección',          'Umbrales dinámicos por sensor',           'transform', 40),
 (2, 'Alerta a planta',    'Notificación al equipo de mantenimiento', 'refined',   50);
+
+-- ------------------------------------------------------------
+--  services — carrusel de "Servicios"
+--  Regla de escritura: lo lee alguien que no sabe de sistemas. Cero jerga,
+--  cero nombres de herramientas; el resultado antes que el método.
+-- ------------------------------------------------------------
+INSERT INTO `services`
+(`slug`, `title`, `tagline`, `description`, `deliverables`, `outcome`, `timeframe`, `icon`, `is_featured`, `sort_order`)
+VALUES
+('paginas-web', 'Páginas web que sí traen clientes',
+ 'Tu negocio explicado en diez segundos',
+ 'Diseño y programo tu sitio desde cero: rápido, que se vea bien en el celular y que le diga a quien entra qué haces y por qué vale la pena buscarte. Nada de plantillas que se ven igual a las de todos.',
+ JSON_ARRAY('Diseño hecho a tu medida', 'Se ve bien en celular y computadora', 'Formulario de contacto que sí te llega'),
+ 'Que quien te busque en internet te encuentre y te escriba.',
+ '2 a 4 semanas', 'browser', 1, 10),
+
+('sistemas-a-medida', 'Sistemas para tu día a día',
+ 'Cuando la hoja de cálculo ya no da para más',
+ 'Programo el sistema que tu equipo usa todos los días: registrar clientes, controlar inventario, dar seguimiento a pedidos. Hecho a la medida de cómo trabajas tú, no al revés.',
+ JSON_ARRAY('Un usuario y permisos por persona', 'Pantallas simples, sin manual de 40 hojas', 'Acompañamiento a tu equipo las primeras semanas'),
+ 'Todos trabajan sobre la misma información, sin archivos sueltos.',
+ '1 a 3 meses', 'layers', 1, 20),
+
+('automatizacion', 'Automatizar lo repetitivo',
+ 'Lo que hoy toma horas, hecho solo',
+ 'El reporte que alguien arma a mano cada lunes, los correos que se mandan uno por uno, la información que se copia de un lado a otro: todo eso puede hacerse solo y sin errores de dedo.',
+ JSON_ARRAY('Reviso contigo cómo se hace hoy', 'Lo dejo corriendo solo y a tiempo', 'Te aviso si algún día falla'),
+ 'Tu equipo deja de copiar y pegar y vuelve a lo suyo.',
+ '1 a 3 semanas', 'bolt', 1, 30),
+
+('orden-en-tu-informacion', 'Orden en tu información',
+ 'Tus números en un solo lugar',
+ 'Junto lo que hoy vive disperso —el sistema de ventas, las hojas de cálculo, lo que sigue en papel— en un solo lugar confiable, para que todos lean la misma cifra.',
+ JSON_ARRAY('Reviso dónde está hoy cada dato', 'Un solo lugar donde consultarlo', 'Limpieza de duplicados y errores viejos'),
+ 'Se acaban las juntas que empiezan discutiendo de dónde salió el número.',
+ '3 a 6 semanas', 'boxes', 0, 40),
+
+('reportes-y-tableros', 'Reportes que se entienden solos',
+ 'Saber cómo va el negocio sin pedirle nada a nadie',
+ 'Armo la pantalla donde ves ventas, gastos o lo que necesites medir: se actualiza sola, se lee desde el celular y está escrita en palabras normales.',
+ JSON_ARRAY('Tú eliges qué se mide', 'Se actualiza sin que nadie lo toque', 'Se lee desde el celular'),
+ 'Decides con los números de hoy, no con el reporte del mes pasado.',
+ '2 a 4 semanas', 'chart', 0, 50),
+
+('soporte', 'Soporte y acompañamiento',
+ 'Alguien que conteste cuando algo se cae',
+ 'Me hago cargo de que lo que ya tienes siga funcionando: respaldos, actualizaciones, seguridad y una persona a quien llamarle cuando algo no prende.',
+ JSON_ARRAY('Respaldos automáticos de tu información', 'Revisiones periódicas antes de que falle', 'Atención directa cuando algo se rompe'),
+ 'Si algo falla, ya hay quien lo levante — y no eres tú.',
+ 'Mensual', 'shield', 0, 60);
 
 -- ------------------------------------------------------------
 --  certifications

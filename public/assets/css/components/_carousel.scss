@@ -1,0 +1,282 @@
+// ============================================================
+//  _carousel.scss — carrusel de Servicios
+//
+//  El riel es un contenedor con scroll y scroll-snap: funciona con
+//  trackpad, dedo o arrastre aunque el JS no cargue. Las flechas y los
+//  puntos son un extra que el JS revela.
+//
+//  Las tarjetas son celdas bento como cualquier otra: superficie y hover
+//  salen de los mixins compartidos, no se redefinen aquí.
+// ============================================================
+
+@use '../tokens' as *;
+
+.carousel {
+  position: relative;
+}
+
+// ------------------------------------------------------------
+//  Riel
+// ------------------------------------------------------------
+.carousel__track {
+  display: flex;
+  gap: var(--bento-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  // Aire para que la elevación del hover no se recorte contra el riel.
+  padding-block: var(--space-2);
+  // Sangría lateral: la tarjeta activa no queda pegada al borde al saltar.
+  scroll-padding-inline: 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: var(--radius-lg);
+  }
+}
+
+.carousel__slide {
+  flex: 0 0 auto;
+  // Tres a la vista en escritorio, contando la separación entre celdas.
+  width: calc((100% - var(--bento-gap) * 2) / 3);
+  min-width: 0;
+  scroll-snap-align: start;
+  display: flex;
+
+  @include below($bp-tablet) {
+    width: calc((100% - var(--bento-gap)) / 2);
+  }
+
+  @include below($bp-mobile) {
+    // En móvil se asoma la siguiente: se ve que hay más y se puede deslizar.
+    width: 86%;
+  }
+}
+
+// ------------------------------------------------------------
+//  Tarjeta de servicio
+// ------------------------------------------------------------
+.service-card {
+  @include bento-surface;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  min-height: 21rem;
+  padding: var(--cell-padding);
+
+  // Una de cada tres arranca en ámbar: marca las que más me piden.
+  &--featured {
+    border-color: var(--border-accent);
+  }
+}
+
+.service-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.service-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-structural);
+  transition:
+    color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring);
+}
+
+.service-card:hover .service-card__icon,
+.service-card:focus-within .service-card__icon {
+  border-color: var(--border-accent);
+  color: var(--color-accent);
+  transform: scale(1.06);
+}
+
+.service-card__timeframe {
+  flex-shrink: 0;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  letter-spacing: 0.04em;
+}
+
+.service-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.service-card__title {
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+}
+
+.service-card__tagline {
+  color: var(--color-accent);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-snug);
+}
+
+.service-card__text {
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
+}
+
+.service-card__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+
+  li {
+    position: relative;
+    padding-left: var(--space-5);
+    color: var(--color-text-muted);
+    font-size: var(--text-2xs);
+    line-height: var(--leading-snug);
+
+    // Palomita dibujada con dos bordes: sin fuentes de íconos.
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0.3rem;
+      left: 0;
+      width: 0.375rem;
+      height: 0.6rem;
+      border: solid var(--color-structural);
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.service-card__outcome {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--color-text);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-snug);
+}
+
+// ------------------------------------------------------------
+//  Controles
+// ------------------------------------------------------------
+.carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.carousel__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-accent);
+    background: var(--color-surface-alt);
+    color: var(--color-accent);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+.carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-right: auto;
+}
+
+.carousel__dot {
+  width: 1.5rem;
+  height: 3px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-grid-line);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    width var(--duration-base) var(--ease-out);
+
+  &[aria-selected='true'] {
+    width: 2.5rem;
+    background: var(--color-accent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+}
+
+@include reduced-motion {
+  .carousel__track {
+    scroll-behavior: auto;
+  }
+
+  .service-card:hover .service-card__icon,
+  .service-card:focus-within .service-card__icon {
+    transform: none;
+  }
+
+  .carousel__arrow:active:not(:disabled) {
+    transform: none;
+  }
+
+  .carousel__dot {
+    transition-property: background-color;
+  }
+}

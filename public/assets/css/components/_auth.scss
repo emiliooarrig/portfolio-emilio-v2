@@ -1,0 +1,107 @@
+// ============================================================
+//  _auth.scss — pantalla de acceso al panel
+//
+//  Sólo el login: una celda bento centrada sobre el fondo de blueprint. El
+//  panel ya con sesión vive en _admin.scss, que sí tiene barra lateral.
+//  El formulario reutiliza `.form*` de _form.scss: los campos del acceso y
+//  los del contacto son los mismos, y deben seguir siéndolo.
+// ============================================================
+
+@use '../tokens' as *;
+
+.auth {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: var(--space-7) var(--space-4);
+}
+
+.auth__card {
+  @include bento-surface;
+
+  width: min(26rem, 100%);
+  padding: var(--space-7) var(--space-6);
+}
+
+// ------------------------------------------------------------
+//  Identidad
+// ------------------------------------------------------------
+.auth__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.auth__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-structural);
+}
+
+.auth__brand-name {
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.04em;
+}
+
+// ------------------------------------------------------------
+//  Texto
+// ------------------------------------------------------------
+.auth__title {
+  font-size: var(--text-lg);
+}
+
+.auth__lead {
+  margin: var(--space-3) 0 var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
+
+  strong {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+}
+
+// ------------------------------------------------------------
+//  Formulario y acciones
+// ------------------------------------------------------------
+.auth__submit {
+  // A lo ancho: es la única acción de la pantalla.
+  align-self: stretch;
+  justify-content: center;
+}
+
+.auth__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.auth__note {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  line-height: var(--leading-snug);
+}
+
+.auth__back {
+  display: inline-block;
+  margin-top: var(--space-5);
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}

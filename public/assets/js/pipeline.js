@@ -1,8 +1,8 @@
 /**
- * pipeline.js — control del signature element (panel de vidrio).
+ * pipeline.js — control del riel de paquetes de datos.
  *
- * La animación de los paquetes de datos vive en CSS; aquí sólo se pausa
- * cuando el panel no está visible, para no gastar batería ni GPU.
+ * La animación vive en CSS; aquí sólo se pausa cuando el panel no está
+ * visible, para no gastar batería ni GPU.
  */
 
 export function initPipeline() {

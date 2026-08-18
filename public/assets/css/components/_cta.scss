@@ -7,6 +7,7 @@
 @use '../tokens' as *;
 
 .cta {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -15,6 +16,15 @@
   padding: var(--space-3) var(--space-5);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
+  // Sin fondo por defecto: las variantes deciden. Hace falta decirlo porque
+  // un <button> sin `background` se pinta con el gris del sistema, mientras
+  // que un <a> con las mismas clases sale transparente — y el CTA vive en
+  // los dos elementos.
+  background: none;
+  overflow: hidden;
+  // Stacking context propio: el relleno deslizante puede ir detrás del texto
+  // sin caer por debajo del fondo del botón.
+  isolation: isolate;
   font-family: var(--font-body);
   font-size: var(--text-2xs);
   font-weight: 600;
@@ -24,7 +34,23 @@
     background-color var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
     transform var(--duration-fast) var(--ease-out);
+
+  // Relleno que se desliza de izquierda a derecha al hover.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-out);
+    z-index: -1;
+  }
+
+  &:hover::before {
+    transform: scaleX(1);
+  }
 
   &:active {
     transform: scale(0.97);
@@ -35,14 +61,35 @@
     padding: var(--space-2) var(--space-4);
   }
 
-  // Primario: alto contraste, uno por vista.
+  // Escala del hero: los únicos CTA que compiten con un título gigante.
+  &--lg {
+    min-height: 3.25rem;
+    padding: var(--space-4) var(--space-7);
+    font-size: var(--text-xs);
+  }
+
+  // Icono que se desplaza junto al texto.
+  .cta__icon {
+    display: inline-flex;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  &:hover .cta__icon {
+    transform: translateX(3px);
+  }
+
+  // Primario: alto contraste, uno por sección.
   &--primary {
     background: var(--color-accent);
-    color: #14202B;
+    color: #0A0E15;
+
+    &::before {
+      background: var(--color-accent-hover);
+    }
 
     &:hover {
-      background: var(--color-accent-hover);
-      color: #14202B;
+      color: #0A0E15;
+      box-shadow: 0 8px 24px rgba(255, 177, 61, 0.22);
     }
   }
 
@@ -51,10 +98,31 @@
     border-color: var(--border-structural);
     color: var(--color-structural);
 
-    &:hover {
+    &::before {
       background: var(--color-structural-dim);
+    }
+
+    &:hover {
       border-color: var(--color-structural);
       color: var(--color-structural);
+    }
+  }
+
+  // Peligro: sólo el botón que confirma un borrado en el panel. Es el único
+  // sitio del proyecto donde el rojo de aviso se usa como acción, y por eso
+  // va en contorno hasta que el puntero está encima: se ve, pero no compite
+  // con el ámbar de la acción principal.
+  &--danger {
+    border-color: rgba(255, 107, 91, 0.45);
+    color: var(--color-alert);
+
+    &::before {
+      background: var(--color-alert);
+    }
+
+    &:hover {
+      border-color: var(--color-alert);
+      color: var(--color-bg);
     }
   }
 
@@ -63,8 +131,11 @@
     border-color: var(--border-subtle);
     color: var(--color-text-muted);
 
-    &:hover {
+    &::before {
       background: var(--color-surface-alt);
+    }
+
+    &:hover {
       border-color: var(--border-strong);
       color: var(--color-text);
     }
@@ -72,9 +143,15 @@
 }
 
 @include reduced-motion {
-  .cta:active {
-    transform: none;
+  .cta,
+  .cta::before,
+  .cta .cta__icon {
+    transition-property: background-color, border-color, color;
   }
+
+  .cta::before { display: none; }
+  .cta:active  { transform: none; }
+  .cta:hover .cta__icon { transform: none; }
 }
 
 // ------------------------------------------------------------
@@ -107,11 +184,27 @@
 
   // Variante dentro del flujo de una sección.
   &--inline {
+    position: relative;
+    margin-top: var(--space-6);
     padding: var(--space-6);
     border: 1px solid var(--border-subtle);
-    border-left: 2px solid var(--color-accent);
     border-radius: var(--radius-lg);
-    background: var(--color-surface);
+    overflow: hidden;
+    background:
+      linear-gradient(120deg, var(--color-accent-dim), transparent 42%),
+      var(--color-surface);
+
+    // Riel izquierdo. Va en ::after porque ::before es la capa de luz
+    // del hover compartido, igual que en las tarjetas.
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      z-index: 2;
+      width: 2px;
+      background: linear-gradient(180deg, var(--color-accent), var(--color-structural));
+      pointer-events: none;
+    }
   }
 
   // Variante panel suelto.
@@ -128,6 +221,16 @@
 
     .cta-block__title {
       font-size: var(--text-lg);
+    }
+  }
+
+  // Variante compacta, dentro del modal de proyecto.
+  &--modal {
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border-subtle);
+
+    .cta-block__title {
+      font-size: var(--text-sm);
     }
   }
 

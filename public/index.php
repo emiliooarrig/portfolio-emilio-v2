@@ -39,6 +39,15 @@ if (config('app.debug')) {
     ini_set('display_errors', '0');
 }
 
+// La sesión sostiene el acceso al panel, así que su cookie se cierra antes
+// de abrirla: sin acceso desde JavaScript, sin viajar a sitios ajenos y, en
+// cuanto haya HTTPS, sólo por HTTPS.
+session_set_cookie_params([
+    'httponly' => true,
+    'samesite' => 'Lax',
+    'secure'   => ($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off',
+]);
+
 session_start();
 
 App\Core\Database::instance(config('db'));

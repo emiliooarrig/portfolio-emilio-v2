@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS `contact_messages`;
 DROP TABLE IF EXISTS `experience_highlights`;
 DROP TABLE IF EXISTS `experiences`;
 DROP TABLE IF EXISTS `certifications`;
+DROP TABLE IF EXISTS `services`;
 DROP TABLE IF EXISTS `project_pipeline_steps`;
 DROP TABLE IF EXISTS `project_metrics`;
 DROP TABLE IF EXISTS `project_technologies`;
@@ -70,14 +71,14 @@ CREATE TABLE `profile` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
---  technologies — stack; alimenta chips del hero y tags de proyecto
+--  technologies — stack; alimenta los chips de "Sobre mí" y los tags de proyecto
 -- ------------------------------------------------------------
 CREATE TABLE `technologies` (
   `id`          SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`        VARCHAR(60)  NOT NULL,
   `slug`        VARCHAR(60)  NOT NULL,
   `category`    ENUM('lenguaje','base_datos','orquestacion','cloud','bi','herramienta') NOT NULL DEFAULT 'herramienta',
-  `is_featured` TINYINT(1)   NOT NULL DEFAULT 0,  -- aparece en el bento de stack (Inicio)
+  `is_featured` TINYINT(1)   NOT NULL DEFAULT 0,  -- reservado: hoy el stack se muestra completo por categoría
   `sort_order`  SMALLINT     NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_tech_slug` (`slug`),
@@ -104,7 +105,7 @@ CREATE TABLE `projects` (
   `bento_size`     ENUM('sm','md','lg','xl') NOT NULL DEFAULT 'md', -- peso en el grid
   `is_featured`    TINYINT(1)   NOT NULL DEFAULT 0,
   `is_published`   TINYINT(1)   NOT NULL DEFAULT 1,
-  `has_pipeline`   TINYINT(1)   NOT NULL DEFAULT 0, -- muestra el glass-panel en el detalle
+  `has_pipeline`   TINYINT(1)   NOT NULL DEFAULT 0, -- muestra el riel de flujo en el detalle
   `started_on`     DATE         NULL,
   `ended_on`       DATE         NULL,
   `sort_order`     SMALLINT     NOT NULL DEFAULT 0,
@@ -144,7 +145,7 @@ CREATE TABLE `project_metrics` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
---  project_pipeline_steps — etapas del flujo de datos (glass panel)
+--  project_pipeline_steps — etapas del flujo de datos
 --  stage: raw = azul estructural · transform = intermedio · refined = ámbar
 -- ------------------------------------------------------------
 CREATE TABLE `project_pipeline_steps` (
@@ -157,6 +158,37 @@ CREATE TABLE `project_pipeline_steps` (
   PRIMARY KEY (`id`),
   KEY `idx_pps_project` (`project_id`, `sort_order`),
   CONSTRAINT `fk_pps_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------
+--  services — lo que ofrezco, contado para quien no es de sistemas
+--
+--  Es la fuente del carrusel de "Servicios". El texto de esta tabla lo lee
+--  un cliente potencial, no un colega: nada de jerga técnica aquí (el stack
+--  vive en `technologies` y el detalle duro, en `projects`).
+--
+--  `deliverables` va en JSON en vez de una tabla hija: son 2-4 viñetas
+--  cortas que sólo existen dentro de su tarjeta, nunca se consultan ni se
+--  ordenan por separado.
+-- ------------------------------------------------------------
+CREATE TABLE `services` (
+  `id`           SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `slug`         VARCHAR(80)  NOT NULL,
+  `title`        VARCHAR(120) NOT NULL,
+  `tagline`      VARCHAR(160) NULL,          -- frase corta de apoyo
+  `description`  VARCHAR(500) NOT NULL,      -- qué hago, en palabras del cliente
+  `deliverables` JSON         NULL,          -- ["Entregable 1", "Entregable 2"]
+  `outcome`      VARCHAR(200) NULL,          -- el "para qué te sirve"
+  `timeframe`    VARCHAR(60)  NULL,          -- tiempo típico: "2 a 4 semanas"
+  `icon`         VARCHAR(40)  NOT NULL DEFAULT 'spark', -- clave del SVG en la vista
+  `is_featured`  TINYINT(1)   NOT NULL DEFAULT 0,
+  `is_published` TINYINT(1)   NOT NULL DEFAULT 1,
+  `sort_order`   SMALLINT     NOT NULL DEFAULT 0,
+  `created_at`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_service_slug` (`slug`),
+  KEY `idx_service_published` (`is_published`, `sort_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------

@@ -51,4 +51,12 @@ class Request
     {
         return self::method() === 'POST';
     }
+
+    /**
+     * ¿La petición pide un fragmento (fetch del modal) en vez de una página?
+     */
+    public static function isAjax(): bool
+    {
+        return strtolower((string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
+    }
 }

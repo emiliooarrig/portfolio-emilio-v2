@@ -12,6 +12,8 @@
 
 html {
   scroll-behavior: smooth;
+  // El nav es fijo: las anclas deben frenar por debajo de él.
+  scroll-padding-top: calc(var(--nav-height) + var(--space-4));
   -webkit-text-size-adjust: 100%;
 }
 
@@ -38,6 +40,11 @@ body {
   background-size: 4rem 4rem;
   background-position: -1px -1px;
   background-attachment: fixed;
+
+  // Con el modal abierto el fondo no debe hacer scroll.
+  &.is-locked {
+    overflow: hidden;
+  }
 }
 
 // Vela sobre la retícula para que nunca compita con el contenido.
@@ -45,7 +52,9 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 0%, rgba(15, 22, 32, 0.72), var(--color-bg) 70%);
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(110, 168, 255, 0.10), transparent 55%),
+    radial-gradient(ellipse at 50% 0%, rgba(10, 14, 21, 0.82), var(--color-bg) 68%);
   pointer-events: none;
   z-index: -1;
 }
@@ -104,11 +113,40 @@ button {
   color: var(--color-text);
 }
 
+// Barras de scroll acordes al fondo: una barra blanca rompe la superficie.
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grid-line) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+  background-color: var(--color-grid-line);
+
+  &:hover {
+    background-color: var(--color-text-faint);
+  }
+}
+
 // ------------------------------------------------------------
 //  Utilidades tipográficas
 // ------------------------------------------------------------
-.mono {
-  font-family: var(--font-mono);
+// Texto utilitario: fechas, tags, métricas, etiquetas de formulario. Antes
+// se distinguía por ser monoespaciado; ahora hereda la familia del cuerpo y
+// lo que aporta es el número tabular (columnas que no bailan al contar) y el
+// interletraje neutro frente al de los títulos.
+.meta {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0;
 }
@@ -195,14 +233,47 @@ button {
   padding: var(--space-1) var(--space-2);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  background: rgba(91, 141, 239, 0.06);
+  background: rgba(110, 168, 255, 0.07);
   color: var(--color-text-muted);
   font-size: var(--text-2xs);
   white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--color-structural-dim);
+    border-color: var(--border-structural);
+    color: var(--color-text);
+    transform: translateY(-2px);
+  }
 
   &--ghost {
     background: none;
     color: var(--color-text-dim);
+  }
+}
+
+// Cascada de chips cuando el contenedor entra en viewport.
+.js .chip-list--animated .chip {
+  animation: chip-in var(--duration-base) var(--ease-out) both;
+  animation-play-state: paused;
+  animation-delay: calc(var(--chip-index, 0) * 45ms);
+}
+
+.js .chip-list--animated.is-revealed .chip {
+  animation-play-state: running;
+}
+
+@include reduced-motion {
+  .chip:hover {
+    transform: none;
+  }
+
+  .js .chip-list--animated .chip {
+    animation: none;
   }
 }
 
@@ -218,29 +289,16 @@ button {
   text-transform: uppercase;
   white-space: nowrap;
 
+  // "Destacado": el mismo ámbar, pero opaco. Es la única etiqueta que no se
+  // integra en su celda, sino que se despega de ella — de ahí el relleno
+  // sólido. El texto pasa a ser oscuro porque sobre ámbar lleno el ámbar no
+  // se lee; la traslucidez del resto de la tarjeta no se toca.
   &--accent {
-    background: var(--color-accent-dim);
-    border-color: var(--border-accent);
-    color: var(--color-accent);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-bg);
   }
 
-  &--vigente {
-    background: rgba(79, 178, 134, 0.12);
-    border-color: rgba(79, 178, 134, 0.3);
-    color: var(--color-success);
-  }
-
-  &--permanente {
-    background: var(--color-structural-dim);
-    border-color: var(--border-structural);
-    color: var(--color-structural);
-  }
-
-  &--expirada {
-    background: rgba(224, 104, 95, 0.1);
-    border-color: rgba(224, 104, 95, 0.28);
-    color: var(--color-danger);
-  }
 }
 
 // ------------------------------------------------------------
@@ -251,7 +309,6 @@ button {
   align-items: center;
   gap: var(--space-2);
   color: var(--color-structural);
-  font-family: var(--font-mono);
   font-size: var(--text-2xs);
 
   span {
@@ -263,16 +320,9 @@ button {
   }
 }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-5);
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
-
-  &:hover {
-    color: var(--color-accent);
+@include reduced-motion {
+  .link-arrow:hover span {
+    transform: none;
   }
 }
 

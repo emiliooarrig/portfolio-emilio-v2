@@ -6,22 +6,12 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Models\ContactMessage;
 
+/**
+ * Formulario de contacto. No tiene vista propia: vive en la sección
+ * #contacto de la landing y siempre regresa ahí.
+ */
 class ContactController extends Controller
 {
-    public function index(): void
-    {
-        $flash = $_SESSION['flash'] ?? null;
-        unset($_SESSION['flash']);
-
-        $this->render('contact/index', [
-            'errors' => $_SESSION['contact_errors'] ?? [],
-            'old'    => $_SESSION['contact_old'] ?? [],
-            'flash'  => $flash,
-        ], 'Contacto', 'Escríbeme para proyectos de datos, consultoría o colaboración.');
-
-        unset($_SESSION['contact_errors'], $_SESSION['contact_old']);
-    }
-
     public function store(): void
     {
         $input = [
@@ -34,7 +24,7 @@ class ContactController extends Controller
         // Honeypot: los bots llenan campos ocultos; se acepta en silencio y se descarta.
         if (Request::input('website') !== '') {
             $_SESSION['flash'] = ['type' => 'success', 'text' => 'Mensaje enviado. Te respondo pronto.'];
-            $this->redirect('/contacto');
+            $this->backToContact();
 
             return;
         }
@@ -49,6 +39,12 @@ class ContactController extends Controller
             $_SESSION['flash'] = ['type' => 'success', 'text' => 'Mensaje recibido. Te respondo en menos de 24 horas.'];
         }
 
-        $this->redirect('/contacto');
+        $this->backToContact();
+    }
+
+    private function backToContact(): void
+    {
+        header('Location: ' . url('/') . '#contacto');
+        exit;
     }
 }

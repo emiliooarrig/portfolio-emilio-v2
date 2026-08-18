@@ -1,0 +1,867 @@
+// ============================================================
+//  _admin.scss — panel de administración
+//
+//  El panel es una herramienta, no una página del sitio: barra lateral
+//  fija, una pantalla por sección y tablas densas. Sigue siendo el mismo
+//  sistema visual (superficie bento, ámbar para lo que importa), pero con
+//  la densidad al alza — aquí se viene a leer datos, no a ser seducido.
+//
+//  Sin JS: la lateral se convierte en una tira de pestañas en pantallas
+//  estrechas, y las tablas anchas hacen scroll dentro de su contenedor.
+// ============================================================
+
+@use '../tokens' as *;
+
+// `.page` es flex column por el footer de la landing; aquí manda el grid.
+.page--admin {
+  display: block;
+}
+
+.admin {
+  display: grid;
+  grid-template-columns: 16.5rem minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+  max-width: 96rem;
+  margin-inline: auto;
+  padding: var(--space-5);
+
+  @include below($bp-tablet) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+}
+
+// ------------------------------------------------------------
+//  Barra lateral
+// ------------------------------------------------------------
+.admin__sidebar {
+  @include bento-surface;
+
+  position: sticky;
+  top: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-height: calc(100svh - var(--space-6));
+  padding: var(--space-5);
+
+  @include below($bp-tablet) {
+    position: static;
+    max-height: none;
+    gap: var(--space-4);
+  }
+}
+
+.admin__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text);
+
+  &:hover {
+    color: var(--color-text);
+  }
+
+  &:hover .admin__mark {
+    border-color: var(--border-accent);
+    color: var(--color-accent);
+  }
+}
+
+.admin__mark {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-structural);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.admin__brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--leading-snug);
+}
+
+.admin__brand-name {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+}
+
+.admin__brand-role {
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+// ------------------------------------------------------------
+//  Navegación
+// ------------------------------------------------------------
+.admin__nav {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-height: 0;
+  overflow-y: auto;
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  // En estrecho la lateral pasa a ser una tira de pestañas: los grupos se
+  // ponen en fila y lo que sobra se resuelve deslizando, sin JS.
+  @include below($bp-tablet) {
+    flex-direction: row;
+    gap: var(--space-2);
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: var(--space-2);
+
+    ul {
+      flex-direction: row;
+      gap: var(--space-2);
+    }
+  }
+}
+
+.admin__nav-label {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-faint);
+  font-size: var(--text-3xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+
+  // Los rótulos de grupo sólo tienen sentido cuando la lateral es columna.
+  @include below($bp-tablet) {
+    display: none;
+  }
+}
+
+.admin__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  white-space: nowrap;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    transform: translateX(2px);
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+  }
+
+  // La pantalla en la que estás: fondo estructural y el icono en ámbar.
+  &.is-active {
+    background: var(--color-structural-dim);
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  &.is-active .admin__link-icon {
+    color: var(--color-accent);
+  }
+
+  &:hover .admin__link-icon {
+    color: var(--color-structural);
+  }
+}
+
+.admin__link-icon {
+  flex: 0 0 auto;
+  color: var(--color-text-faint);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+// ------------------------------------------------------------
+//  Pie de la lateral: quién está dentro y por dónde se sale
+// ------------------------------------------------------------
+.admin__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+
+  // En estrecho la lateral ya ocupa alto de sobra: el pie se pone en fila
+  // para no empujar la tabla fuera de la primera pantalla.
+  @include below($bp-tablet) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+  }
+}
+
+.admin__who {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+}
+
+.admin__who-since {
+  color: var(--color-text-faint);
+}
+
+.admin__out {
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.admin__logout {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-2xs);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    border-color: var(--border-accent);
+    color: var(--color-accent);
+  }
+
+  @include below($bp-tablet) {
+    width: auto;
+    margin-left: auto;
+  }
+}
+
+// ------------------------------------------------------------
+//  Área de trabajo
+// ------------------------------------------------------------
+.admin__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.admin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.admin-head__title {
+  font-size: var(--text-lg);
+}
+
+.admin-head__lead {
+  margin-top: var(--space-2);
+  max-width: 62ch;
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.admin-head__text {
+  min-width: 0;
+}
+
+.admin-head__aside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.admin-head__meta {
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
+.admin-note {
+  max-width: 70ch;
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  line-height: var(--leading-snug);
+}
+
+// ------------------------------------------------------------
+//  Tarjetas del resumen
+// ------------------------------------------------------------
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--bento-gap);
+}
+
+.admin-stat {
+  @include bento-surface;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  height: 100%;
+  padding: var(--space-5);
+  color: var(--color-text);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+
+  // Elevación con movimiento, nunca sólo sombra.
+  &:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-accent);
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+  }
+}
+
+.admin-stat__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+}
+
+.admin-stat__value {
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  line-height: 1;
+}
+
+.admin-stat__detail {
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+}
+
+// ------------------------------------------------------------
+//  Bloque con título propio (una tabla dentro de una celda)
+// ------------------------------------------------------------
+.admin-panel {
+  @include bento-surface;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.admin-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.admin-panel__title {
+  font-size: var(--text-md);
+}
+
+// ------------------------------------------------------------
+//  Tablas
+// ------------------------------------------------------------
+.admin-table__wrap {
+  @include bento-surface;
+
+  // El ancho que sobra se desliza aquí dentro: el body nunca hace scroll
+  // horizontal, por muchas columnas que tenga la tabla.
+  overflow-x: auto;
+
+  // Dentro de un bloque que ya es superficie, la tabla no repite el marco.
+  .admin-panel & {
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-2xs);
+
+  th,
+  td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  thead th {
+    border-bottom: 1px solid var(--border-strong);
+    color: var(--color-text-dim);
+    font-family: var(--font-body);
+    font-size: var(--text-3xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background-color var(--duration-fast) var(--ease-out);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: var(--color-surface-alt);
+    }
+  }
+
+  td strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  // Lo despublicado se ve, pero apagado: sigue estando ahí.
+  .is-hidden-row td,
+  .is-hidden-row td strong {
+    color: var(--color-text-faint);
+  }
+
+  // Sin leer: una marca ámbar en el canto, no un fondo que grite.
+  .is-unread-row td:first-child {
+    box-shadow: inset 2px 0 0 var(--color-accent);
+  }
+
+  // Campo/valor (perfil): la clave manda a la izquierda.
+  &--pairs th[scope='row'] {
+    width: 12rem;
+    color: var(--color-text-dim);
+    font-weight: 500;
+  }
+}
+
+.admin-table__sub {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+}
+
+a.admin-table__sub {
+  color: var(--color-text-dim);
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+.admin-table__none {
+  color: var(--color-text-faint);
+}
+
+.admin-table__narrow {
+  width: 3.5rem;
+}
+
+.admin-table__wide {
+  min-width: 16rem;
+  max-width: 30rem;
+}
+
+.admin-table__p {
+  color: var(--color-text-muted);
+
+  & + & {
+    margin-top: var(--space-2);
+  }
+}
+
+.admin-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.admin-empty {
+  padding: var(--space-7) var(--space-5);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+  text-align: center;
+}
+
+// ------------------------------------------------------------
+//  Píldoras de estado
+//
+//  Nunca sólo color: el texto dice lo mismo que el tono, que es lo que
+//  lee quien no distingue el ámbar del azul.
+// ------------------------------------------------------------
+.pill {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-3xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+
+  &--on {
+    border-color: rgba(79, 209, 160, 0.32);
+    background: rgba(79, 209, 160, 0.12);
+    color: var(--color-success);
+  }
+
+  &--off {
+    border-color: rgba(255, 107, 91, 0.3);
+    background: var(--color-alert-dim);
+    color: var(--color-alert);
+  }
+
+  // "Destacado": ámbar sólido, igual que la etiqueta de la landing.
+  &--accent {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  // La ausencia de bandera no merece resaltarse.
+  &--mute {
+    color: var(--color-text-faint);
+  }
+}
+
+// ------------------------------------------------------------
+//  Aviso de la acción anterior
+// ------------------------------------------------------------
+.admin-flash {
+  // Reutiliza `.flash` del formulario de contacto; aquí sólo se coloca.
+  margin: 0;
+}
+
+// ------------------------------------------------------------
+//  Formularios
+//
+//  Un formulario por pantalla, partido en bloques con leyenda: los datos
+//  que se ven, los que hay dentro, y lo que decide si sale publicado.
+// ------------------------------------------------------------
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.admin-form__group {
+  @include bento-surface;
+
+  margin: 0;
+  padding: var(--space-5);
+}
+
+.admin-form__legend {
+  padding: 0 var(--space-2);
+  margin-left: calc(var(--space-2) * -1);
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+}
+
+.admin-form__note {
+  max-width: 70ch;
+  margin-top: var(--space-2);
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  line-height: var(--leading-snug);
+}
+
+.admin-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-4) var(--space-5);
+  margin-top: var(--space-5);
+}
+
+/// Campo que ocupa la fila entera: los textos largos no se leen en columna.
+.admin-form__wide {
+  grid-column: 1 / -1;
+}
+
+.admin-form__flags {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.admin-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/// Borrar no compite con guardar: es un enlace, y está al final.
+.admin-form__delete {
+  margin-left: auto;
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+
+  &:hover {
+    color: var(--color-alert);
+  }
+}
+
+// ------------------------------------------------------------
+//  Casillas
+// ------------------------------------------------------------
+.admin-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.admin-check__box {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+.admin-check__label {
+  color: var(--color-text);
+  font-size: var(--text-2xs);
+}
+
+.form__row--check {
+  gap: var(--space-1);
+}
+
+// ------------------------------------------------------------
+//  Selector de stack
+// ------------------------------------------------------------
+.admin-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+}
+
+.admin-picker__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-picker__label {
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+// ------------------------------------------------------------
+//  Filas repetibles (métricas, pasos del flujo)
+//
+//  Sin JS no hay "añadir otra": van las que hay más tres huecos, y vaciar
+//  la primera columna es lo que quita una fila. Se guardan en este orden.
+// ------------------------------------------------------------
+.admin-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.admin-rows__head,
+.admin-rows__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 8rem;
+  gap: var(--space-3);
+
+  @include below($bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-rows--pipeline {
+  .admin-rows__head,
+  .admin-rows__row {
+    grid-template-columns: 1fr 1.6fr 11rem;
+
+    @include below($bp-mobile) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+.admin-rows__head {
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+
+  // En una columna, los rótulos dejan de corresponder con nada.
+  @include below($bp-mobile) {
+    display: none;
+  }
+}
+
+// ------------------------------------------------------------
+//  Acciones de fila en las tablas
+// ------------------------------------------------------------
+.admin-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  white-space: nowrap;
+
+  a,
+  button {
+    font-size: var(--text-3xs);
+  }
+}
+
+.admin-row-actions__edit {
+  color: var(--color-structural);
+}
+
+.admin-row-actions__delete {
+  color: var(--color-text-dim);
+
+  &:hover {
+    color: var(--color-alert);
+  }
+}
+
+/// Marcar leído es escritura: va en un <form>, pero se lee como un enlace.
+.admin-row-actions__toggle {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-dim);
+  font-family: var(--font-body);
+  transition: color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+// ------------------------------------------------------------
+//  Confirmación de borrado
+// ------------------------------------------------------------
+.admin-confirm {
+  @include bento-surface;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 46rem;
+  padding: var(--space-6);
+  // Borde de aviso: esta pantalla no se parece a ninguna otra del panel.
+  border-color: rgba(255, 107, 91, 0.3);
+}
+
+.admin-confirm__detail {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.admin-confirm__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.admin-confirm__key {
+  flex: 0 0 9rem;
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
+.admin-confirm__val {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-2xs);
+}
+
+.admin-confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.admin-confirm__hint {
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  line-height: var(--leading-snug);
+}
+
+// ------------------------------------------------------------
+//  Mensaje completo
+// ------------------------------------------------------------
+.admin-message {
+  @include bento-surface;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 52rem;
+  padding: var(--space-6);
+}
+
+.admin-message__meta {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.admin-message__body {
+  font-size: var(--text-xs);
+}
+
+.admin-message__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+}
+
+@include reduced-motion {
+  .admin-stat:hover,
+  .admin__link:hover {
+    transform: none;
+  }
+}

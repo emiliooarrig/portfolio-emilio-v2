@@ -13,3 +13,6 @@ CLAUDE.md
 # Sistema
 Thumbs.db
 .DS_Store
+
+.agents
+.claude

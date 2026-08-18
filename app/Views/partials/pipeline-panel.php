@@ -1,7 +1,6 @@
 <?php
 /**
- * Signature element — panel de vidrio con el pipeline de datos.
- * Único lugar del sitio con tratamiento Liquid Glass.
+ * Riel del pipeline de datos: celda bento como cualquier otra (sin vidrio).
  *
  * @var array<int, array<string, mixed>> $steps
  * @var string|null $eyebrow
@@ -9,21 +8,21 @@
  * @var string|null $caption
  */
 
-$eyebrow = $eyebrow ?? 'Signature';
+$eyebrow = $eyebrow ?? 'Del dato crudo al insight';
 $title   = $title   ?? 'Cómo viaja un dato conmigo';
-$caption = $caption ?? 'Crudo a la izquierda, decisión a la derecha.';
+$caption = $caption ?? 'ingesta → decisión';
 
 if (empty($steps)) {
     return;
 }
 ?>
-<div class="glass-panel pipeline" data-pipeline>
+<div class="pipeline bento-card--hoverable" data-pipeline>
     <div class="pipeline__head">
         <div>
-            <p class="eyebrow mono"><?= e($eyebrow) ?></p>
-            <h2 class="pipeline__title"><?= e($title) ?></h2>
+            <p class="eyebrow meta"><?= e($eyebrow) ?></p>
+            <h3 class="pipeline__title"><?= e($title) ?></h3>
         </div>
-        <p class="pipeline__caption mono"><?= e($caption) ?></p>
+        <p class="pipeline__caption meta"><?= e($caption) ?></p>
     </div>
 
     <div class="pipeline__flow" aria-hidden="true">
@@ -37,7 +36,7 @@ if (empty($steps)) {
         <?php foreach ($steps as $index => $step): ?>
             <li class="pipeline__step pipeline__step--<?= e($step['stage']) ?>" style="--step-index: <?= $index ?>">
                 <span class="pipeline__node" aria-hidden="true"></span>
-                <p class="pipeline__label mono"><?= e($step['label']) ?></p>
+                <p class="pipeline__label meta"><?= e($step['label']) ?></p>
                 <?php if (! empty($step['description'])): ?>
                     <p class="pipeline__desc"><?= e($step['description']) ?></p>
                 <?php endif; ?>

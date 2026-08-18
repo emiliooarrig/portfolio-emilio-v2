@@ -5,35 +5,48 @@
 
 @use '../tokens' as *;
 
-.cert-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
-  gap: var(--bento-gap);
-}
+.bento--certs {
+  grid-auto-flow: row dense;
 
-.cert-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-5);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  transition:
-    background-color var(--duration-base) var(--ease-out),
-    border-color var(--duration-base) var(--ease-out);
-
-  &:hover {
-    background: var(--color-surface-alt);
-    border-color: var(--border-strong);
+  .cert-card {
+    @include bento-span(4, 2);
   }
 }
 
-.cert-card__head {
+// ------------------------------------------------------------
+//  Tarjeta de credencial
+// ------------------------------------------------------------
+.cert-card {
+  @include bento-surface;
+
+  // El filo y la luz se posicionan contra la tarjeta.
+  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: var(--space-3);
+  min-height: 15rem;
+  padding: var(--cell-padding);
+  overflow: hidden;
+
+  // Filo superior que se despliega al hover. Va en ::after porque ::before
+  // es la capa de luz del mixin, igual que en las tarjetas de proyecto.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 2;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-structural), var(--color-accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  &:hover::after,
+  &:focus-within::after {
+    transform: scaleX(1);
+  }
 }
 
 .cert-card__issuer {
@@ -74,5 +87,15 @@
     color: var(--color-text-muted);
     font-size: var(--text-2xs);
     overflow-wrap: anywhere;
+  }
+}
+
+.cert-card__foot {
+  padding-top: var(--space-3);
+}
+
+@include reduced-motion {
+  .cert-card::after {
+    transition: none;
   }
 }

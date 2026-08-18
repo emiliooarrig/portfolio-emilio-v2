@@ -53,7 +53,7 @@ abstract class Controller
         return $this->capture($this->viewPath('partials/' . $view), $data);
     }
 
-    protected function notFound(string $message = 'La página que buscas no existe.'): void
+    protected function notFound(string $message = 'Esta página no existe. Puede que el enlace esté mal escrito o que ya no esté disponible.'): void
     {
         http_response_code(404);
         $this->render('errors/404', ['message' => $message], 'Página no encontrada');
@@ -79,11 +79,17 @@ abstract class Controller
             throw new RuntimeException('Vista no encontrada: ' . $file);
         }
 
-        extract($data, EXTR_SKIP);
+        // Igual que en `partial()`: la vista se incluye en un ámbito limpio.
+        // Con `extract(EXTR_SKIP)`, cualquier variable de este método sería
+        // intocable para la vista — pasarle una clave `file` o `data` no
+        // haría nada y costaría un rato averiguar por qué.
+        return (static function (string $__file, array $__data): string {
+            extract($__data, EXTR_SKIP);
 
-        ob_start();
-        require $file;
+            ob_start();
+            require $__file;
 
-        return (string) ob_get_clean();
+            return (string) ob_get_clean();
+        })($file, $data);
     }
 }

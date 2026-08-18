@@ -1,5 +1,5 @@
 // ============================================================
-//  _nav.scss — navegación principal y footer
+//  _nav.scss — nav sticky con scroll-spy y footer de cierre
 // ============================================================
 
 @use '../tokens' as *;
@@ -9,10 +9,30 @@
   inset: 0 0 auto;
   z-index: 50;
   height: var(--nav-height);
-  background: rgba(15, 22, 32, 0.82);
-  border-bottom: 1px solid var(--border-subtle);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(10, 14, 21, 0.72);
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+
+  // Al despegarse del hero el nav se asienta.
+  &.is-scrolled {
+    background: rgba(10, 14, 21, 0.92);
+    border-bottom-color: var(--border-subtle);
+  }
+}
+
+// Barra de progreso del scroll: dato crudo → dato refinado.
+.site-nav__progress {
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-structural), var(--color-accent));
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: left;
+  transition: transform 80ms linear;
 }
 
 .site-nav__inner {
@@ -32,14 +52,19 @@
   &:hover {
     color: var(--color-text);
 
-    .site-nav__mark { color: var(--color-accent); }
+    .site-nav__mark {
+      color: var(--color-accent);
+      transform: rotate(-8deg) scale(1.06);
+    }
   }
 }
 
 .site-nav__mark {
   display: flex;
   color: var(--color-structural);
-  transition: color var(--duration-fast) var(--ease-out);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring);
 }
 
 .site-nav__brand-text {
@@ -82,25 +107,37 @@
   border-radius: var(--radius-sm);
   color: var(--color-text-muted);
   font-size: var(--text-2xs);
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-base) var(--ease-out);
+
+  // Subrayado que crece desde el centro: transición, no salto.
+  &::after {
+    content: '';
+    position: absolute;
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: 4px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
 
   &:hover {
-    background: var(--color-surface);
     color: var(--color-text);
+
+    &::after {
+      transform: scaleX(0.4);
+      background: var(--color-structural);
+    }
   }
 
   &.is-active {
     color: var(--color-text);
 
     &::after {
-      content: '';
-      position: absolute;
-      left: var(--space-3);
-      right: var(--space-3);
-      bottom: 2px;
-      height: 1px;
+      transform: scaleX(1);
       background: var(--color-accent);
     }
   }
@@ -116,6 +153,11 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   color: var(--color-text);
+  transition: border-color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    border-color: var(--border-structural);
+  }
 }
 
 .site-nav__toggle-bars {
@@ -162,7 +204,7 @@
     padding: var(--space-5);
     background: var(--color-bg);
     border-bottom: 1px solid var(--border-subtle);
-    transform: translateY(-8px);
+    transform: translateY(-10px);
     opacity: 0;
     visibility: hidden;
     transition:
@@ -189,6 +231,26 @@
     border-bottom: 1px solid var(--border-subtle);
     border-radius: 0;
     font-size: var(--text-xs);
+
+    &::after {
+      left: 0;
+      right: auto;
+      bottom: 0;
+      width: 2px;
+      height: 100%;
+      transform: scaleY(0);
+      transition: transform var(--duration-base) var(--ease-out);
+    }
+
+    &:hover::after   { transform: scaleY(0.5); }
+    &.is-active::after { transform: scaleY(1); }
+  }
+}
+
+@include reduced-motion {
+  .site-nav__link::after,
+  .site-nav__mark {
+    transition: none;
   }
 }
 
@@ -196,8 +258,9 @@
 //  Footer
 // ------------------------------------------------------------
 .site-footer {
+  position: relative;
   border-top: 1px solid var(--border-subtle);
-  background: linear-gradient(180deg, transparent, rgba(22, 32, 44, 0.6));
+  background: linear-gradient(180deg, transparent, rgba(26, 36, 51, 0.7));
 }
 
 .site-footer__cta {
@@ -235,11 +298,25 @@
 }
 
 .site-footer__link {
+  position: relative;
   color: var(--color-text-muted);
   font-size: var(--text-2xs);
 
+  &::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 -3px 0;
+    height: 1px;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
   &:hover {
     color: var(--color-accent);
+
+    &::after { transform: scaleX(1); }
   }
 }
 
@@ -253,5 +330,53 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-4);
+  }
+}
+
+// Botón "volver arriba": aparece pasado el primer viewport.
+.to-top {
+  position: fixed;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--border-structural);
+  border-radius: 50%;
+  background: rgba(26, 36, 51, 0.9);
+  color: var(--color-structural);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    visibility var(--duration-base),
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  &:hover {
+    color: var(--color-accent);
+    border-color: var(--border-accent);
+  }
+
+  @include below($bp-mobile) {
+    right: var(--space-4);
+    bottom: var(--space-4);
+  }
+}
+
+@include reduced-motion {
+  .to-top {
+    transition-property: opacity, visibility, color, border-color;
+    transform: none;
   }
 }

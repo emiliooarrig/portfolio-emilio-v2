@@ -5,11 +5,54 @@
 
 @use '../tokens' as *;
 
+.bento--experience {
+  .bento-cell--exp-intro { @include bento-place(1, 5); }
+  .bento-cell--exp-list  { @include bento-place(5, 13); }
+
+  @include below($bp-tablet) {
+    .bento-cell--exp-intro,
+    .bento-cell--exp-list { grid-column: 1 / 5; }
+  }
+}
+
+.bento-cell--exp-intro {
+  gap: var(--space-4);
+  align-self: start;
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-4));
+
+  @include below($bp-tablet) {
+    position: static;
+  }
+}
+
+.exp-intro__range {
+  color: var(--color-accent);
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+
+.exp-intro__text {
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  line-height: var(--leading-body);
+}
+
+.bento-cell--exp-list {
+  padding: 0;
+  background: none;
+  border: none;
+  box-shadow: none;
+}
+
+// ------------------------------------------------------------
+//  Timeline
+// ------------------------------------------------------------
 .timeline {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--bento-gap);
 }
 
 .timeline__item {
@@ -22,8 +65,8 @@
   &::before {
     content: '';
     position: absolute;
-    top: 3rem;
-    bottom: calc(var(--space-5) * -1);
+    top: 3.5rem;
+    bottom: calc(var(--bento-gap) * -1);
     left: 1.75rem;
     width: 1px;
     background: var(--border-subtle);
@@ -43,11 +86,26 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background: var(--color-surface);
+  transition:
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring);
 }
 
 .timeline__index {
   color: var(--color-text-dim);
   font-size: var(--text-2xs);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.timeline__item:hover {
+  .timeline__marker {
+    border-color: var(--border-structural);
+    transform: scale(1.06);
+  }
+
+  .timeline__index {
+    color: var(--color-structural);
+  }
 }
 
 .timeline__item--current {
@@ -61,16 +119,11 @@
   }
 }
 
+// El hover (elevación + luz progresiva) llega con .bento-card--hoverable.
 .timeline__content {
-  padding: var(--space-5);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  transition: background-color var(--duration-base) var(--ease-out);
+  @include bento-surface;
 
-  &:hover {
-    background: var(--color-surface-alt);
-  }
+  padding: var(--cell-padding);
 }
 
 .timeline__head {
@@ -146,8 +199,13 @@
       width: 10px;
       height: 1px;
       background: var(--color-accent);
-      opacity: 0.7;
+      opacity: 0.75;
+      transition: width var(--duration-base) var(--ease-out);
     }
+  }
+
+  li:hover::before {
+    width: 16px;
   }
 }
 
@@ -157,7 +215,7 @@
     gap: var(--space-3);
 
     &::before {
-      top: 2.25rem;
+      top: 2.5rem;
       left: 1.25rem;
     }
   }
@@ -178,5 +236,11 @@
 
   .timeline__content {
     padding: var(--space-4);
+  }
+}
+
+@include reduced-motion {
+  .timeline__item:hover .timeline__marker {
+    transform: none;
   }
 }

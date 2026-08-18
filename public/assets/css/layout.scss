@@ -1,5 +1,6 @@
 // ============================================================
-//  layout.scss — contenedor, secciones y retícula de 12 columnas
+//  layout.scss — contenedor, secciones ancladas y retícula de 12 columnas
+//  Todo el sitio es un scroll continuo: las secciones son destinos de ancla.
 // ============================================================
 
 @use 'tokens' as *;
@@ -13,20 +14,6 @@
 .page__main {
   flex: 1 0 auto;
   padding-top: var(--nav-height);
-
-  // Transición de página: entrada corta, sin desplazamiento pesado.
-  animation: page-enter var(--duration-slow) var(--ease-out) both;
-}
-
-@keyframes page-enter {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
-}
-
-@include reduced-motion {
-  .page__main {
-    animation: none;
-  }
 }
 
 .container {
@@ -41,21 +28,33 @@
 }
 
 // ------------------------------------------------------------
-//  Secciones — ritmo espacial desigual, a propósito
+//  Secciones ancladas — ritmo espacial desigual, a propósito
 // ------------------------------------------------------------
 .section {
-  padding-block: var(--space-8);
+  position: relative;
+  padding-block: var(--space-9);
+  // Refuerza el frenado del ancla en navegadores que ignoran scroll-padding.
+  scroll-margin-top: calc(var(--nav-height) + var(--space-4));
+
+  // Costura entre secciones: una línea que sólo se nota si la buscas.
+  & + .section::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--border-subtle) 18%,
+      var(--border-subtle) 82%,
+      transparent
+    );
+  }
 
   &--hero {
-    padding-top: var(--space-7);
-  }
-
-  &--tight {
-    padding-top: var(--space-6);
-  }
-
-  &--projects {
-    border-top: 1px solid var(--border-subtle);
+    padding-block: var(--space-8) var(--space-9);
+    overflow: hidden;
   }
 
   &--error {
@@ -119,7 +118,7 @@
 }
 
 // ------------------------------------------------------------
-//  Retícula base de 12 columnas
+//  Retícula base de 12 columnas — todas las secciones la comparten
 // ------------------------------------------------------------
 .bento {
   display: grid;
@@ -133,65 +132,6 @@
   @include below($bp-mobile) {
     grid-template-columns: 1fr;
   }
-}
-
-// Split de contenido + panel lateral, alineado a la misma retícula
-.grid-split {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
-  gap: var(--space-6);
-  align-items: start;
-
-  &--form {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
-  }
-
-  @include below($bp-tablet) {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-  }
-}
-
-// ------------------------------------------------------------
-//  Panel: superficie neutra fuera del bento
-// ------------------------------------------------------------
-.panel {
-  padding: var(--space-5);
-  background: var(--color-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-
-  &--sticky {
-    position: sticky;
-    top: calc(var(--nav-height) + var(--space-4));
-
-    @include below($bp-tablet) {
-      position: static;
-    }
-  }
-
-  &--form {
-    padding: var(--space-6);
-
-    @include below($bp-mobile) {
-      padding: var(--space-5);
-    }
-  }
-}
-
-.panel__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: var(--space-5);
-}
-
-.panel__note {
-  margin-top: var(--space-5);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-subtle);
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
 }
 
 // ------------------------------------------------------------
@@ -213,6 +153,9 @@
   color: var(--color-text-muted);
 }
 
-.section--error .hero__actions {
+.error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   justify-content: center;
 }

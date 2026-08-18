@@ -1,0 +1,241 @@
+// ============================================================
+//  _modal.scss — detalle de proyecto como overlay sobre la landing
+//  Nunca navega fuera: sólo cambia la URL con history.pushState.
+// ============================================================
+
+@use '../tokens' as *;
+
+.project-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6) var(--space-5);
+
+  &[hidden] {
+    display: none;
+  }
+
+  @include below($bp-mobile) {
+    padding: 0;
+  }
+}
+
+// Backdrop: se desvanece por su cuenta, independiente del diálogo.
+.project-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 21, 0.78);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: backdrop-in var(--duration-base) var(--ease-out) both;
+}
+
+.project-modal__dialog {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(64rem, 100%);
+  max-height: min(88vh, 60rem);
+  background: var(--color-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  animation: modal-in var(--duration-slow) var(--ease-out) both;
+
+  @include below($bp-mobile) {
+    width: 100%;
+    max-height: 100vh;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+  }
+}
+
+// Cierre: la animación inversa, nunca un corte seco.
+.project-modal.is-closing {
+  .project-modal__backdrop {
+    animation: backdrop-out var(--duration-base) var(--ease-out) both;
+  }
+
+  .project-modal__dialog {
+    animation: modal-out var(--duration-base) var(--ease-out) both;
+  }
+}
+
+.project-modal__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: rgba(10, 14, 21, 0.75);
+  color: var(--color-text-muted);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring);
+
+  &:hover {
+    color: var(--color-accent);
+    border-color: var(--border-accent);
+    transform: rotate(90deg);
+  }
+}
+
+.project-modal__body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grid-line) transparent;
+  padding: var(--space-7);
+
+  @include below($bp-mobile) {
+    padding: var(--space-5);
+  }
+}
+
+// Estado de carga mientras llega el fragmento.
+.project-modal__loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-8);
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+  justify-content: center;
+}
+
+.project-modal__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border-structural);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@include reduced-motion {
+  .project-modal__dialog,
+  .project-modal__backdrop,
+  .project-modal.is-closing .project-modal__dialog,
+  .project-modal.is-closing .project-modal__backdrop {
+    animation-name: reveal-fade;
+    animation-duration: var(--duration-fast);
+  }
+
+  .project-modal__close:hover { transform: none; }
+  .project-modal__spinner     { animation: none; }
+}
+
+// ============================================================
+//  Contenido del detalle (fragmento inyectado)
+// ============================================================
+.project-detail__head {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: var(--space-6);
+  align-items: start;
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.project-detail__title {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-xl);
+}
+
+.project-detail__subtitle {
+  max-width: 40rem;
+  margin-bottom: var(--space-5);
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+  line-height: var(--leading-snug);
+}
+
+.project-detail__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.project-detail__metrics {
+  padding: var(--space-5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.project-detail__pipeline {
+  margin-block: var(--space-6);
+}
+
+.project-detail__body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-6);
+}
+
+.project-block {
+  &__title {
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  // El resultado es el foco del detalle: ancho completo y acento.
+  &--outcome {
+    grid-column: 1 / -1;
+    padding: var(--space-5);
+    border: 1px solid var(--border-subtle);
+    border-left: 2px solid var(--color-accent);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg);
+
+    .project-block__title {
+      color: var(--color-accent);
+      border-bottom-color: transparent;
+    }
+
+    .prose {
+      color: var(--color-text);
+      font-size: var(--text-sm);
+    }
+  }
+}
+
+.project-detail__role {
+  grid-column: 1 / -1;
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
+.project-detail__foot {
+  margin-top: var(--space-7);
+}
+
+@include below($bp-tablet) {
+  .project-detail__head,
+  .project-detail__body {
+    grid-template-columns: 1fr;
+  }
+
+  .project-detail__title {
+    font-size: var(--text-lg);
+  }
+}

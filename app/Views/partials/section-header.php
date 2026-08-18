@@ -1,24 +1,26 @@
 <?php
 /**
- * Encabezado de sección con motivo blueprint.
+ * Encabezado de sección.
+ *
+ * El único <h1> del sitio es el nombre en el hero: aquí van <h2>.
  *
  * @var string $title
  * @var string|null $eyebrow
  * @var string|null $lead
- * @var string|null $meta   dato corto en mono, alineado a la derecha
+ * @var string|null $meta   dato corto, alineado a la derecha
  */
 
 $eyebrow = $eyebrow ?? null;
 $lead    = $lead    ?? null;
 $meta    = $meta    ?? null;
 ?>
-<header class="section-header">
+<header class="section-header reveal">
     <div class="section-header__main">
         <?php if ($eyebrow): ?>
-            <p class="eyebrow mono"><?= e($eyebrow) ?></p>
+            <p class="eyebrow meta"><?= e($eyebrow) ?></p>
         <?php endif; ?>
 
-        <h1 class="section-header__title"><?= e($title) ?></h1>
+        <h2 class="section-header__title"><?= e($title) ?></h2>
 
         <?php if ($lead): ?>
             <p class="section-header__lead"><?= e($lead) ?></p>
@@ -26,6 +28,6 @@ $meta    = $meta    ?? null;
     </div>
 
     <?php if ($meta): ?>
-        <p class="section-header__meta mono"><?= e($meta) ?></p>
+        <p class="section-header__meta meta"><?= e($meta) ?></p>
     <?php endif; ?>
 </header>

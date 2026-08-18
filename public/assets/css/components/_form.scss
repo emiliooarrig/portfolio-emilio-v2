@@ -1,9 +1,31 @@
 // ============================================================
-//  _form.scss — formulario de contacto
+//  _form.scss — sección Contacto
 //  Los inputs van hundidos: reciben contenido, no lo emiten.
 // ============================================================
 
 @use '../tokens' as *;
+
+.bento--contact {
+  .bento-cell--form   { @include bento-place(1, 8); }
+  .bento-cell--direct { @include bento-place(8, 13); }
+
+  @include below($bp-tablet) {
+    .bento-cell--form,
+    .bento-cell--direct { grid-column: 1 / 5; }
+  }
+}
+
+.bento-cell--form {
+  padding: var(--space-6);
+
+  @include below($bp-mobile) {
+    padding: var(--space-5);
+  }
+}
+
+.bento-cell--direct {
+  gap: var(--space-2);
+}
 
 .form {
   display: flex;
@@ -22,6 +44,11 @@
   font-size: var(--text-2xs);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.form__row:focus-within .form__label {
+  color: var(--color-accent);
 }
 
 .form__optional {
@@ -42,7 +69,8 @@
   font-size: var(--text-xs);
   transition:
     border-color var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out);
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
 
   &::placeholder {
     color: var(--color-text-faint);
@@ -56,6 +84,7 @@
     outline: none;
     border-color: var(--color-structural);
     background: var(--color-bg);
+    box-shadow: 0 0 0 3px var(--color-structural-dim);
   }
 
   &:focus-visible {
@@ -70,14 +99,43 @@
     line-height: var(--leading-body);
   }
 
+  // Desplegable: mismo campo hundido, con su flecha dibujada a mano — la del
+  // sistema llega en el color del sistema y se ve pegada sobre el fondo.
+  &--select {
+    min-height: 2.75rem;
+    padding-right: var(--space-7);
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--color-text-dim) 50%),
+      linear-gradient(135deg, var(--color-text-dim) 50%, transparent 50%);
+    background-position:
+      calc(100% - 1.15rem) calc(50% + 1px),
+      calc(100% - 0.85rem) calc(50% + 1px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+
+    option {
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+  }
+
   &.is-invalid {
-    border-color: rgba(224, 104, 95, 0.55);
+    border-color: rgba(255, 107, 91, 0.55);
   }
 }
 
 .form__error {
   color: var(--color-danger);
   font-size: var(--text-2xs);
+}
+
+// Ayuda bajo el campo: la usa el panel, donde un campo puede necesitar una
+// línea de contexto ("vacío = sigue en marcha") que no cabe en la etiqueta.
+.form__hint {
+  color: var(--color-text-dim);
+  font-size: var(--text-3xs);
+  line-height: var(--leading-snug);
 }
 
 .form__submit {
@@ -92,6 +150,14 @@
   overflow: hidden;
 }
 
+.contact__note {
+  margin-top: auto;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-subtle);
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+}
+
 // ------------------------------------------------------------
 //  Mensajes de estado
 // ------------------------------------------------------------
@@ -101,44 +167,23 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   font-size: var(--text-2xs);
+  animation: reveal-up var(--duration-slow) var(--ease-out) both;
 
   &--success {
-    background: rgba(79, 178, 134, 0.1);
-    border-color: rgba(79, 178, 134, 0.3);
+    background: rgba(79, 209, 160, 0.1);
+    border-color: rgba(79, 209, 160, 0.3);
     color: var(--color-success);
   }
 
   &--error {
-    background: rgba(224, 104, 95, 0.1);
-    border-color: rgba(224, 104, 95, 0.3);
-    color: var(--color-danger);
+    background: var(--color-alert-dim);
+    border-color: rgba(255, 107, 91, 0.3);
+    color: var(--color-alert);
   }
 }
 
-// ------------------------------------------------------------
-//  Stack agrupado (Sobre mí)
-// ------------------------------------------------------------
-.stack-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: var(--space-5);
-}
-
-.stack-grid__group {
-  padding: var(--space-5);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-}
-
-.stack-grid__title {
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--border-subtle);
-  color: var(--color-text-dim);
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+@include reduced-motion {
+  .flash {
+    animation-name: reveal-fade;
+  }
 }

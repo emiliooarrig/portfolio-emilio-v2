@@ -1,18 +1,26 @@
 // ============================================================
 //  main.scss — punto de entrada. Compila a main.css
-//  Compilar:  sass public/assets/css/main.scss public/assets/css/main.css
+//  Compilar:  npm run css
 //  Watch:     npm run css:watch
 // ============================================================
 
+@use 'fonts';
 @use 'tokens';
 @use 'base';
 @use 'layout';
+@use 'animations';
 
 @use 'components/nav';
 @use 'components/cta';
+@use 'components/hero';
 @use 'components/bento';
-@use 'components/glass-panel';
+@use 'components/carousel';
+@use 'components/about';
+@use 'components/pipeline';
 @use 'components/timeline';
 @use 'components/cert-card';
-@use 'components/project-detail';
 @use 'components/form';
+@use 'components/auth';
+@use 'components/admin';
+@use 'components/modal';
+@use 'components/cursor';

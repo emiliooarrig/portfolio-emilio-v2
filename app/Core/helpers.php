@@ -75,32 +75,24 @@ if (! function_exists('partial')) {
      */
     function partial(string $name, array $data = []): string
     {
-        $file = APP_PATH . '/Views/partials/' . $name . '.php';
+        // El parcial se incluye dentro de una función anónima y no aquí
+        // mismo por una razón concreta: `extract(EXTR_SKIP)` no pisa las
+        // variables que ya existen, así que si esta función tuviera un
+        // `$name` en su ámbito, un parcial que espera recibir `name` se
+        // quedaría con el nombre del parcial. Dentro sólo viven `$__file`
+        // y `$__data`, que ninguna vista usa.
+        return (static function (string $__file, array $__data): string {
+            if (! is_file($__file)) {
+                return '';
+            }
 
-        if (! is_file($file)) {
-            return '';
-        }
+            extract($__data, EXTR_SKIP);
 
-        extract($data, EXTR_SKIP);
+            ob_start();
+            require $__file;
 
-        ob_start();
-        require $file;
-
-        return (string) ob_get_clean();
-    }
-}
-
-if (! function_exists('is_active')) {
-    /**
-     * ¿La ruta actual corresponde a esta sección de navegación?
-     */
-    function is_active(string $currentPath, string $routePath): bool
-    {
-        if ($routePath === '/') {
-            return $currentPath === '/';
-        }
-
-        return $currentPath === $routePath || str_starts_with($currentPath, $routePath . '/');
+            return (string) ob_get_clean();
+        })(APP_PATH . '/Views/partials/' . $name . '.php', $data);
     }
 }
 
@@ -186,6 +178,44 @@ if (! function_exists('paragraphs')) {
             static fn (string $block): string => '<p' . $attr . '>' . nl2br(e(trim($block))) . '</p>',
             $blocks
         ));
+    }
+}
+
+if (! function_exists('slugify')) {
+    /**
+     * "Migración a la nube" → "migracion-a-la-nube".
+     *
+     * Sin acentos, sin signos y sin espacios: es lo que acaba en la URL de
+     * un proyecto. Se traduce a mano en vez de con iconv//TRANSLIT porque
+     * ese depende de la configuración regional del servidor y en Windows
+     * devuelve cosas distintas.
+     */
+    function slugify(string $text): string
+    {
+        $text = mb_strtolower(trim($text), 'UTF-8');
+
+        $text = strtr($text, [
+            'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a', 'ã' => 'a',
+            'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e',
+            'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i',
+            'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o', 'õ' => 'o',
+            'ú' => 'u', 'ù' => 'u', 'ü' => 'u', 'û' => 'u',
+            'ñ' => 'n', 'ç' => 'c', '&' => ' y ',
+        ]);
+
+        $text = preg_replace('/[^a-z0-9]+/', '-', $text) ?? '';
+
+        return trim($text, '-');
+    }
+}
+
+if (! function_exists('plural')) {
+    /**
+     * Concuerda un conteo con su palabra: "1 métrica" / "3 métricas".
+     */
+    function plural(int $count, string $singular, string $plural): string
+    {
+        return $count . ' ' . ($count === 1 ? $singular : $plural);
     }
 }
 
