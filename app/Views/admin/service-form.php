@@ -88,12 +88,6 @@ use App\Models\Service;
         <legend class="admin-form__legend">Publicación</legend>
 
         <div class="admin-form__grid">
-            <?= partial('admin-field', [
-                'name' => 'sort_order', 'label' => 'Orden', 'type' => 'number',
-                'value' => $values['sort_order'], 'error' => $errors['sort_order'] ?? '',
-                'hint'  => 'Es el orden en que se recorre el carrusel.',
-            ]) ?>
-
             <div class="admin-form__flags">
                 <?= partial('admin-field', [
                     'name' => 'is_published', 'label' => 'Publicado', 'type' => 'checkbox',
@@ -109,8 +103,10 @@ use App\Models\Service;
     </fieldset>
 
     <?= partial('admin-form-actions', [
-        'label'     => $isNew ? 'Crear servicio' : 'Guardar cambios',
-        'back'      => $back,
-        'deleteUrl' => $deleteUrl,
+        'label'      => $isNew ? 'Crear servicio' : 'Guardar cambios',
+        'back'       => $back,
+        'deleteUrl'  => $deleteUrl,
+        'deleteName' => (string) $values['title'],
+        'deleteText' => 'Desaparece del carrusel de servicios, con sus entregables. No hay deshacer.',
     ]) ?>
 </form>

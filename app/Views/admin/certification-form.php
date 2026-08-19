@@ -83,11 +83,6 @@
         <legend class="admin-form__legend">Publicación</legend>
 
         <div class="admin-form__grid">
-            <?= partial('admin-field', [
-                'name' => 'sort_order', 'label' => 'Orden', 'type' => 'number',
-                'value' => $values['sort_order'], 'error' => $errors['sort_order'] ?? '',
-            ]) ?>
-
             <div class="admin-form__flags">
                 <?= partial('admin-field', [
                     'name' => 'is_published', 'label' => 'Publicada', 'type' => 'checkbox',
@@ -98,8 +93,10 @@
     </fieldset>
 
     <?= partial('admin-form-actions', [
-        'label'     => $isNew ? 'Crear certificación' : 'Guardar cambios',
-        'back'      => $back,
-        'deleteUrl' => $deleteUrl,
+        'label'      => $isNew ? 'Crear certificación' : 'Guardar cambios',
+        'back'       => $back,
+        'deleteUrl'  => $deleteUrl,
+        'deleteName' => (string) $values['title'],
+        'deleteText' => 'Desaparece del muro de certificaciones. No hay deshacer.',
     ]) ?>
 </form>

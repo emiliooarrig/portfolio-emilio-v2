@@ -11,6 +11,8 @@ import { initPipeline } from './pipeline.js';
 import { initCardGlow } from './card-glow.js';
 import { initServicesCarousel } from './services-carousel.js';
 import { initCursor } from './cursor.js';
+import { initHeroBrush } from './hero-brush.js';
+import { initAlerts } from './alerts.js';
 
 /**
  * Menú de navegación en móvil.
@@ -140,4 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initCardGlow();
     initServicesCarousel();
     initCursor();
+    initHeroBrush();
+    initAlerts();
 });

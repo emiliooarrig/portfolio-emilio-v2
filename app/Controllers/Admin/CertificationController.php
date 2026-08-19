@@ -159,7 +159,6 @@ class CertificationController extends AdminController
             'description'    => $cert['description']    ?? '',
             'issued_on'      => $cert['issued_on']      ?? '',
             'expires_on'     => $cert['expires_on']     ?? '',
-            'sort_order'     => $cert['sort_order']     ?? $this->nextOrder(),
             'is_published'   => (int) ($cert['is_published'] ?? 1),
         ];
 
@@ -187,18 +186,7 @@ class CertificationController extends AdminController
             'description'    => $this->postText('description'),
             'issued_on'      => $this->postText('issued_on'),
             'expires_on'     => $this->postText('expires_on'),
-            'sort_order'     => $this->postInt('sort_order'),
             'is_published'   => $this->postFlag('is_published'),
         ];
-    }
-
-    private function nextOrder(): int
-    {
-        $orders = array_map(
-            static fn (array $c): int => (int) $c['sort_order'],
-            (new Certification())->adminList()
-        );
-
-        return $orders === [] ? 10 : max($orders) + 10;
     }
 }

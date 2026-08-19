@@ -22,7 +22,7 @@ class Service extends Model
                     outcome, timeframe, icon, is_featured
                FROM services
               WHERE is_published = 1
-           ORDER BY sort_order ASC, id ASC'
+           ORDER BY id ASC'
         );
 
         return array_map([$this, 'withDeliverables'], $rows);
@@ -64,9 +64,9 @@ class Service extends Model
     {
         $rows = $this->all(
             'SELECT id, slug, title, tagline, description, deliverables, outcome,
-                    timeframe, icon, is_featured, is_published, sort_order, updated_at
+                    timeframe, icon, is_featured, is_published, updated_at
                FROM services
-           ORDER BY sort_order ASC, id ASC'
+           ORDER BY id ASC'
         );
 
         return array_map([$this, 'withDeliverables'], $rows);
@@ -165,8 +165,8 @@ class Service extends Model
         return $this->db()->execute(
             'INSERT INTO services
                 (`slug`, `title`, `tagline`, `description`, `deliverables`, `outcome`,
-                 `timeframe`, `icon`, `is_featured`, `is_published`, `sort_order`)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                 `timeframe`, `icon`, `is_featured`, `is_published`)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             $this->columns($input)
         );
     }
@@ -183,7 +183,7 @@ class Service extends Model
             'UPDATE services SET
                 `slug` = ?, `title` = ?, `tagline` = ?, `description` = ?, `deliverables` = ?,
                 `outcome` = ?, `timeframe` = ?, `icon` = ?, `is_featured` = ?,
-                `is_published` = ?, `sort_order` = ?
+                `is_published` = ?
               WHERE id = ?',
             $params
         );
@@ -219,7 +219,6 @@ class Service extends Model
             (string) ($input['icon'] ?? 'spark'),
             (int) ($input['is_featured'] ?? 0),
             (int) ($input['is_published'] ?? 0),
-            (int) ($input['sort_order'] ?? 0),
         ];
     }
 }

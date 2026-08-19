@@ -18,7 +18,7 @@ class Certification extends Model
                        description, issued_on, expires_on
                   FROM certifications
                  WHERE is_published = 1
-              ORDER BY sort_order ASC, issued_on DESC';
+              ORDER BY id ASC';
 
         $params = [];
 
@@ -62,9 +62,9 @@ class Certification extends Model
     {
         return $this->all(
             'SELECT id, title, issuer, credential_id, credential_url, badge_image,
-                    description, issued_on, expires_on, is_published, sort_order
+                    description, issued_on, expires_on, is_published
                FROM certifications
-           ORDER BY sort_order ASC, issued_on DESC'
+           ORDER BY id ASC'
         );
     }
 
@@ -141,8 +141,8 @@ class Certification extends Model
         return $this->db()->execute(
             'INSERT INTO certifications
                 (`title`, `issuer`, `credential_id`, `credential_url`, `badge_image`,
-                 `description`, `issued_on`, `expires_on`, `is_published`, `sort_order`)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                 `description`, `issued_on`, `expires_on`, `is_published`)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
             $this->columns($input)
         );
     }
@@ -159,7 +159,7 @@ class Certification extends Model
             'UPDATE certifications SET
                 `title` = ?, `issuer` = ?, `credential_id` = ?, `credential_url` = ?,
                 `badge_image` = ?, `description` = ?, `issued_on` = ?, `expires_on` = ?,
-                `is_published` = ?, `sort_order` = ?
+                `is_published` = ?
               WHERE id = ?',
             $params
         );
@@ -188,7 +188,6 @@ class Certification extends Model
             // la fecha sigue siendo el dato.
             $this->nullify((string) ($input['expires_on'] ?? '')),
             (int) ($input['is_published'] ?? 0),
-            (int) ($input['sort_order'] ?? 0),
         ];
     }
 }

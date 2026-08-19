@@ -3,8 +3,8 @@ CLAUDE.md
 # Dependencias
 /node_modules/
 
-# Configuración local (credenciales de BD)
-/config/config.local.php
+# Variables de entorno (credenciales de BD)
+.env
 
 # Artefactos de compilación de SCSS
 *.css.map

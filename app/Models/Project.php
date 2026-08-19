@@ -10,6 +10,19 @@ use App\Core\Model;
 class Project extends Model
 {
     /**
+     * Del más reciente al más antiguo, por el intervalo del proyecto.
+     *
+     * Lo que sigue abierto no tiene fecha de fin, así que cuenta como que
+     * termina hoy: es lo más reciente que hay y encabeza la lista. Los
+     * proyectos sin ninguna fecha caen al final, que es donde se nota que
+     * les falta el dato en vez de colarse entre los de este año.
+     */
+    private const RECENT_FIRST = '(started_on IS NULL AND ended_on IS NULL) ASC,
+                                  COALESCE(ended_on, CURDATE()) DESC,
+                                  started_on DESC,
+                                  id DESC';
+
+    /**
      * Proyectos publicados con su stack ya hidratado.
      *
      * @return array<int, array<string, mixed>>
@@ -20,7 +33,7 @@ class Project extends Model
                        is_featured, started_on, ended_on
                   FROM projects
                  WHERE is_published = 1
-              ORDER BY is_featured DESC, sort_order ASC, id ASC';
+              ORDER BY ' . self::RECENT_FIRST;
 
         $params = [];
 
@@ -55,29 +68,6 @@ class Project extends Model
         $project['pipeline']     = $this->pipelineFor($id);
 
         return $project;
-    }
-
-    /**
-     * Vecinos para navegar entre proyectos desde el detalle.
-     *
-     * @return array{prev: array<string, mixed>|null, next: array<string, mixed>|null}
-     */
-    public function neighbours(int $sortOrder, int $id): array
-    {
-        return [
-            'prev' => $this->one(
-                'SELECT slug, title FROM projects
-                  WHERE is_published = 1 AND (sort_order < ? OR (sort_order = ? AND id < ?))
-               ORDER BY sort_order DESC, id DESC LIMIT 1',
-                [$sortOrder, $sortOrder, $id]
-            ),
-            'next' => $this->one(
-                'SELECT slug, title FROM projects
-                  WHERE is_published = 1 AND (sort_order > ? OR (sort_order = ? AND id > ?))
-               ORDER BY sort_order ASC, id ASC LIMIT 1',
-                [$sortOrder, $sortOrder, $id]
-            ),
-        ];
     }
 
     public function countPublished(): int
@@ -124,7 +114,7 @@ class Project extends Model
                FROM project_technologies pt
                JOIN technologies t ON t.id = pt.technology_id
               WHERE pt.project_id IN ($placeholders)
-           ORDER BY pt.sort_order ASC, t.name ASC",
+           ORDER BY t.name ASC",
             $projectIds
         );
 
@@ -146,7 +136,7 @@ class Project extends Model
             'SELECT label, value, unit
                FROM project_metrics
               WHERE project_id = ?
-           ORDER BY sort_order ASC, id ASC',
+           ORDER BY id ASC',
             [$projectId]
         );
     }
@@ -160,7 +150,7 @@ class Project extends Model
             'SELECT label, description, stage
                FROM project_pipeline_steps
               WHERE project_id = ?
-           ORDER BY sort_order ASC, id ASC',
+           ORDER BY id ASC',
             [$projectId]
         );
     }
@@ -183,12 +173,12 @@ class Project extends Model
     {
         $rows = $this->all(
             'SELECT p.id, p.slug, p.title, p.subtitle, p.bento_size, p.is_featured,
-                    p.is_published, p.has_pipeline, p.sort_order, p.started_on,
+                    p.is_published, p.has_pipeline, p.started_on,
                     p.ended_on, p.updated_at,
                     (SELECT COUNT(*) FROM project_metrics m WHERE m.project_id = p.id)        AS metric_count,
                     (SELECT COUNT(*) FROM project_pipeline_steps s WHERE s.project_id = p.id) AS step_count
                FROM projects p
-           ORDER BY p.sort_order ASC, p.id ASC'
+           ORDER BY ' . self::RECENT_FIRST
         );
 
         return $this->withTechnologies($rows);
@@ -313,8 +303,8 @@ class Project extends Model
             'INSERT INTO projects
                 (`slug`, `title`, `subtitle`, `summary`, `context`, `solution`, `outcome`,
                  `role`, `client`, `cover_image`, `repo_url`, `demo_url`, `bento_size`,
-                 `is_featured`, `is_published`, `has_pipeline`, `started_on`, `ended_on`, `sort_order`)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                 `is_featured`, `is_published`, `has_pipeline`, `started_on`, `ended_on`)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             $this->columns($input)
         );
     }
@@ -332,8 +322,7 @@ class Project extends Model
                 `slug` = ?, `title` = ?, `subtitle` = ?, `summary` = ?, `context` = ?,
                 `solution` = ?, `outcome` = ?, `role` = ?, `client` = ?, `cover_image` = ?,
                 `repo_url` = ?, `demo_url` = ?, `bento_size` = ?, `is_featured` = ?,
-                `is_published` = ?, `has_pipeline` = ?, `started_on` = ?, `ended_on` = ?,
-                `sort_order` = ?
+                `is_published` = ?, `has_pipeline` = ?, `started_on` = ?, `ended_on` = ?
               WHERE id = ?',
             $params
         );
@@ -351,7 +340,7 @@ class Project extends Model
     public function technologyIds(int $id): array
     {
         $rows = $this->all(
-            'SELECT technology_id FROM project_technologies WHERE project_id = ? ORDER BY sort_order ASC',
+            'SELECT technology_id FROM project_technologies WHERE project_id = ? ORDER BY technology_id ASC',
             [$id]
         );
 
@@ -384,10 +373,10 @@ class Project extends Model
     {
         $this->db()->execute('DELETE FROM project_technologies WHERE project_id = ?', [$id]);
 
-        foreach (array_values($technologyIds) as $order => $technologyId) {
+        foreach ($technologyIds as $technologyId) {
             $this->db()->execute(
-                'INSERT INTO project_technologies (project_id, technology_id, sort_order) VALUES (?, ?, ?)',
-                [$id, $technologyId, ($order + 1) * 10]
+                'INSERT INTO project_technologies (project_id, technology_id) VALUES (?, ?)',
+                [$id, $technologyId]
             );
         }
     }
@@ -399,15 +388,14 @@ class Project extends Model
     {
         $this->db()->execute('DELETE FROM project_metrics WHERE project_id = ?', [$id]);
 
-        foreach (array_values($rows) as $order => $row) {
+        foreach ($rows as $row) {
             $this->db()->execute(
-                'INSERT INTO project_metrics (project_id, label, value, unit, sort_order) VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO project_metrics (project_id, label, value, unit) VALUES (?, ?, ?, ?)',
                 [
                     $id,
                     $this->fit($row['label'] ?? '', 80),
                     $this->fit($row['value'] ?? '', 40),
                     $this->fit($row['unit'] ?? '', 20),
-                    ($order + 1) * 10,
                 ]
             );
         }
@@ -420,16 +408,15 @@ class Project extends Model
     {
         $this->db()->execute('DELETE FROM project_pipeline_steps WHERE project_id = ?', [$id]);
 
-        foreach (array_values($rows) as $order => $row) {
+        foreach ($rows as $row) {
             $this->db()->execute(
-                'INSERT INTO project_pipeline_steps (project_id, label, description, stage, sort_order)
-                 VALUES (?, ?, ?, ?, ?)',
+                'INSERT INTO project_pipeline_steps (project_id, label, description, stage)
+                 VALUES (?, ?, ?, ?)',
                 [
                     $id,
                     $this->fit($row['label'] ?? '', 60),
                     $this->fit($row['description'] ?? '', 200),
                     (string) ($row['stage'] ?? 'raw'),
-                    ($order + 1) * 10,
                 ]
             );
         }
@@ -466,7 +453,6 @@ class Project extends Model
             (int) ($input['has_pipeline'] ?? 0),
             $this->nullify((string) ($input['started_on'] ?? '')),
             $this->nullify((string) ($input['ended_on'] ?? '')),
-            (int) ($input['sort_order'] ?? 0),
         ];
     }
 }

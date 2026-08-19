@@ -36,7 +36,7 @@ $title = $pageTitle !== '' ? $pageTitle . ' · Panel' : 'Panel';
 
 <a class="skip-link" href="#panel">Ir al contenido</a>
 
-<div class="admin">
+<div class="admin" data-token="<?= e($token) ?>">
 
     <?= partial('admin-sidebar', [
         'profile'    => $profile,
@@ -47,19 +47,36 @@ $title = $pageTitle !== '' ? $pageTitle . ' · Panel' : 'Panel';
 
     <main class="admin__main" id="panel">
 
-        <?php // Lo que pasó con la acción anterior. Vive en la sesión y se
-              // borra al leerse, así que recargar no lo repite. ?>
-        <?php if (is_array($flash)): ?>
-            <p class="flash admin-flash flash--<?= e($flash['type']) ?>"
-               role="<?= $flash['type'] === 'error' ? 'alert' : 'status' ?>">
-                <?= e($flash['text']) ?>
-            </p>
-        <?php endif; ?>
-
         <?= $content ?>
     </main>
 
 </div>
+
+<?php // Lo que pasó con la acción anterior. Vive en la sesión y se borra al
+      // leerse, así que recargar no la repite. ?>
+<?php if (is_array($flash)): ?>
+    <?= partial('alert', ['type' => $flash['type'], 'text' => $flash['text']]) ?>
+<?php endif; ?>
+
+<?php // Molde de la pregunta de borrado: `alerts.js` lo clona cada vez que hay
+      // que confirmar algo, así el diálogo se dibuja una sola vez y en PHP. ?>
+<?= partial('alert', [
+    'type'     => 'warning',
+    'title'    => '¿Borrar?',
+    'text'     => '',
+    'confirm'  => 'Sí, borrar',
+    'cancel'   => 'Cancelar',
+    'template' => 'confirm',
+]) ?>
+
+<?php // El panel funciona sin JavaScript: la alerta ya se ve y se cierra sola
+      // con su botón, y borrar sigue teniendo su pantalla de confirmación.
+      // Esto sólo asciende la alerta a modal y convierte el borrado en pregunta. ?>
+<script type="module">
+    import { initAlerts } from '<?= asset('js/alerts.js') ?>';
+
+    initAlerts();
+</script>
 
 </body>
 </html>

@@ -22,7 +22,7 @@
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th scope="col" class="admin-table__narrow">#</th>
+                    <th scope="col" class="admin-table__narrow">ID</th>
                     <th scope="col">Servicio</th>
                     <th scope="col">Gancho</th>
                     <th scope="col">Entregables</th>
@@ -35,7 +35,7 @@
             <tbody>
                 <?php foreach ($services as $service): ?>
                     <tr<?= (int) $service['is_published'] === 1 ? '' : ' class="is-hidden-row"' ?>>
-                        <td class="meta admin-table__narrow"><?= (int) $service['sort_order'] ?></td>
+                        <td class="meta admin-table__narrow"><?= (int) $service['id'] ?></td>
 
                         <td>
                             <strong><?= e($service['title']) ?></strong>
@@ -69,9 +69,10 @@
 
                         <td>
                             <?= partial('admin-row-actions', [
-                                'edit'      => '/admin/servicios/' . (int) $service['id'] . '/editar',
-                                'delete'    => '/admin/servicios/' . (int) $service['id'] . '/eliminar',
-                                'editLabel' => (string) $service['title'],
+                                'edit'        => '/admin/servicios/' . (int) $service['id'] . '/editar',
+                                'delete'      => '/admin/servicios/' . (int) $service['id'] . '/eliminar',
+                                'name'        => (string) $service['title'],
+                                'confirmText' => 'Desaparece del carrusel de servicios, con sus entregables. No hay deshacer.',
                             ]) ?>
                         </td>
                     </tr>

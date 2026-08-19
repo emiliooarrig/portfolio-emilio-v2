@@ -159,7 +159,6 @@ class ServiceController extends AdminController
             'outcome'      => $service['outcome']   ?? '',
             'timeframe'    => $service['timeframe'] ?? '',
             'icon'         => $service['icon']      ?? 'spark',
-            'sort_order'   => $service['sort_order'] ?? $this->nextOrder(),
             'is_featured'  => (int) ($service['is_featured'] ?? 0),
             'is_published' => (int) ($service['is_published'] ?? 1),
             // Las viñetas se editan una por línea; en la base viven en JSON.
@@ -193,20 +192,9 @@ class ServiceController extends AdminController
             'outcome'      => $this->postText('outcome'),
             'timeframe'    => $this->postText('timeframe'),
             'icon'         => $this->postText('icon'),
-            'sort_order'   => $this->postInt('sort_order'),
             'is_featured'  => $this->postFlag('is_featured'),
             'is_published' => $this->postFlag('is_published'),
             'deliverables' => $this->postLines('deliverables'),
         ];
-    }
-
-    private function nextOrder(): int
-    {
-        $orders = array_map(
-            static fn (array $s): int => (int) $s['sort_order'],
-            (new Service())->adminList()
-        );
-
-        return $orders === [] ? 10 : max($orders) + 10;
     }
 }

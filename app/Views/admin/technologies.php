@@ -33,7 +33,7 @@ $unused = count(array_filter(
                     <th scope="col">Categoría</th>
                     <th scope="col">Tecnología</th>
                     <th scope="col">Slug</th>
-                    <th scope="col" class="admin-table__narrow">#</th>
+                    <th scope="col" class="admin-table__narrow">ID</th>
                     <th scope="col">Proyectos</th>
                     <th scope="col"><span class="visually-hidden">Acciones</span></th>
                 </tr>
@@ -47,7 +47,7 @@ $unused = count(array_filter(
 
                         <td class="meta admin-table__none"><?= e($tech['slug']) ?></td>
 
-                        <td class="meta admin-table__narrow"><?= (int) $tech['sort_order'] ?></td>
+                        <td class="meta admin-table__narrow"><?= (int) $tech['id'] ?></td>
 
                         <?php // Cero no es un error, pero sí un dato: ese chip no lo respalda ningún proyecto. ?>
                         <td class="meta<?= (int) $tech['project_count'] === 0 ? ' admin-table__none' : '' ?>">
@@ -56,9 +56,10 @@ $unused = count(array_filter(
 
                         <td>
                             <?= partial('admin-row-actions', [
-                                'edit'      => '/admin/tecnologias/' . (int) $tech['id'] . '/editar',
-                                'delete'    => '/admin/tecnologias/' . (int) $tech['id'] . '/eliminar',
-                                'editLabel' => (string) $tech['name'],
+                                'edit'        => '/admin/tecnologias/' . (int) $tech['id'] . '/editar',
+                                'delete'      => '/admin/tecnologias/' . (int) $tech['id'] . '/eliminar',
+                                'name'        => (string) $tech['name'],
+                                'confirmText' => 'Se borra del stack y de los proyectos que la usaban. No hay deshacer.',
                             ]) ?>
                         </td>
                     </tr>

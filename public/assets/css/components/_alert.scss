@@ -1,0 +1,173 @@
+// ============================================================
+//  _alert.scss — alertas del sitio
+//
+//  Una sola pieza para todo lo que el backend contesta: guardado, borrado,
+//  error o aviso. Vive en `partials/alert.php` y se ve igual en la landing
+//  y en el panel.
+//
+//  Reutiliza el lenguaje del modal de proyecto —velo oscuro, superficie
+//  elevada, `modal-in`— porque es la misma idea: algo que se pone delante
+//  de la página. Lo único propio es el disco del ícono, que es quien dice
+//  de un vistazo si salió bien o mal.
+// ============================================================
+
+@use '../tokens' as *;
+
+.alert {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: var(--space-5);
+  border: none;
+  // El diálogo es su propio velo: al cerrarse se lleva el fondo con él, sin
+  // depender de JavaScript para retirar una capa aparte.
+  background: rgba(10, 14, 21, 0.78);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  color: var(--color-text);
+  animation: backdrop-in var(--duration-base) var(--ease-out) both;
+  overscroll-behavior: contain;
+
+  &:not([open]) {
+    display: none;
+  }
+
+  // Con `showModal()` el velo ya lo pinta el propio diálogo: el del navegador
+  // sobraría y oscurecería el doble.
+  &::backdrop {
+    background: transparent;
+  }
+}
+
+.alert__panel {
+  position: relative;
+  width: min(26rem, 100%);
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  text-align: center;
+  animation: modal-in var(--duration-slow) var(--ease-out) both;
+}
+
+// El disco del ícono es el único color de la alerta: el resto es el gris de
+// siempre, para que el tono no compita con el texto.
+.alert__icon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto var(--space-4);
+  background: var(--alert-tone-dim);
+  border: 2px solid var(--alert-tone);
+  border-radius: 50%;
+  color: var(--alert-tone);
+  animation: alert-pop var(--duration-slow) var(--ease-spring) both;
+}
+
+.alert__title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-md);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+}
+
+.alert__text {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  line-height: var(--leading-body);
+}
+
+.alert__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  // Cuando la alerta pregunta son dos botones, y sin este hueco se tocan: la
+  // misma separación que en la pantalla de confirmación del panel.
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+// Barra de tiempo: sólo la ponen las alertas que se cierran solas, y la
+// pinta `alerts.js` — sin JavaScript no hay cuenta atrás que anunciar.
+.alert__timer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--alert-tone);
+  transform-origin: left center;
+  animation: alert-timer var(--alert-timer, 4200ms) linear both;
+}
+
+// Salida: la misma inversa del modal, nunca un corte seco.
+.alert.is-closing {
+  animation: backdrop-out var(--duration-base) var(--ease-out) both;
+
+  .alert__panel {
+    animation: modal-out var(--duration-base) var(--ease-out) both;
+  }
+}
+
+// ------------------------------------------------------------
+//  Tonos
+// ------------------------------------------------------------
+.alert--success {
+  --alert-tone: var(--color-success);
+  --alert-tone-dim: rgba(79, 209, 160, 0.12);
+}
+
+.alert--error {
+  --alert-tone: var(--color-alert);
+  --alert-tone-dim: var(--color-alert-dim);
+}
+
+.alert--warning {
+  --alert-tone: var(--color-accent);
+  --alert-tone-dim: var(--color-accent-dim);
+}
+
+.alert--info {
+  --alert-tone: var(--color-structural);
+  --alert-tone-dim: var(--color-structural-dim);
+}
+
+@include below($bp-mobile) {
+  .alert {
+    padding: var(--space-4);
+  }
+
+  .alert__panel {
+    padding: var(--space-5);
+  }
+}
+
+// Sin movimiento: aparece y desaparece, y la cuenta atrás deja de correr a
+// la vista (el cierre automático sigue, pero sin barra que se mueva).
+@include reduced-motion {
+  .alert,
+  .alert.is-closing {
+    animation: reveal-fade var(--duration-base) linear both;
+  }
+
+  .alert__panel,
+  .alert.is-closing .alert__panel,
+  .alert__icon {
+    animation: reveal-fade var(--duration-base) linear both;
+  }
+
+  .alert__timer {
+    display: none;
+  }
+}

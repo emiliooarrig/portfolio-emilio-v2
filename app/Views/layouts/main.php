@@ -113,6 +113,12 @@ $description = $openProject
 
 <?= partial('project-modal', ['project' => $openProject]) ?>
 
+<?php // Resultado de la última acción del backend (envío del formulario de
+      // contacto). Va al final: es una capa sobre la página, no parte de ella. ?>
+<?php if (is_array($flash ?? null)): ?>
+    <?= partial('alert', ['type' => $flash['type'], 'text' => $flash['text']]) ?>
+<?php endif; ?>
+
 <script type="module" src="<?= asset('js/main.js') ?>"></script>
 </body>
 </html>

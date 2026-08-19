@@ -22,7 +22,7 @@
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th scope="col" class="admin-table__narrow">#</th>
+                    <th scope="col" class="admin-table__narrow">ID</th>
                     <th scope="col">Proyecto</th>
                     <th scope="col">Stack</th>
                     <th scope="col">Bento</th>
@@ -36,7 +36,7 @@
             <tbody>
                 <?php foreach ($projects as $project): ?>
                     <tr<?= (int) $project['is_published'] === 1 ? '' : ' class="is-hidden-row"' ?>>
-                        <td class="meta admin-table__narrow"><?= (int) $project['sort_order'] ?></td>
+                        <td class="meta admin-table__narrow"><?= (int) $project['id'] ?></td>
 
                         <td>
                             <strong><?= e($project['title']) ?></strong>
@@ -89,9 +89,10 @@
 
                         <td>
                             <?= partial('admin-row-actions', [
-                                'edit'      => '/admin/proyectos/' . (int) $project['id'] . '/editar',
-                                'delete'    => '/admin/proyectos/' . (int) $project['id'] . '/eliminar',
-                                'editLabel' => (string) $project['title'],
+                                'edit'        => '/admin/proyectos/' . (int) $project['id'] . '/editar',
+                                'delete'      => '/admin/proyectos/' . (int) $project['id'] . '/eliminar',
+                                'name'        => (string) $project['title'],
+                                'confirmText' => 'Se borra el proyecto y con él su stack, sus métricas y su flujo. No hay deshacer.',
                             ]) ?>
                         </td>
                     </tr>

@@ -379,10 +379,28 @@ html {
 }
 
 .spec-list__key {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--color-text-dim);
   font-size: var(--text-2xs);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+// El ícono va en el gris de la clave: forma parte de la etiqueta, no compite
+// con el dato. Las filas de marca (LinkedIn, GitHub) traen su logo relleno.
+.spec-list__icon {
+  display: flex;
+  flex: none;
+  color: var(--color-text-dim);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+// Sólo las filas que llevan a algún lado se encienden al pasar por encima.
+.spec-list__row--link:hover .spec-list__icon,
+.spec-list__row--link:focus-within .spec-list__icon {
+  color: var(--color-accent);
 }
 
 .spec-list__val {

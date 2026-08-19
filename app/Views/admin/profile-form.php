@@ -10,6 +10,8 @@
  * @var array<string, string> $errors
  * @var string                $back
  * @var string                $token
+ * @var array<string, string> $avatarRules  accept/formats/limit de la foto
+ * @var array<string, string> $cvRules      accept/formats/limit del CV
  */
 ?>
 <?= partial('admin-head', [
@@ -17,7 +19,8 @@
     'lead'  => 'La fila única que alimenta el hero, «Sobre mí» y los datos de contacto.',
 ]) ?>
 
-<form class="admin-form" method="post" action="<?= url($action) ?>" novalidate>
+<?php // enctype: sin él el navegador manda sólo el nombre del archivo, no el archivo. ?>
+<form class="admin-form" method="post" action="<?= url($action) ?>" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="_token" value="<?= e($token) ?>">
 
     <fieldset class="admin-form__group">
@@ -115,19 +118,23 @@
 
     <fieldset class="admin-form__group">
         <legend class="admin-form__legend">Archivos</legend>
-        <p class="admin-form__note">Rutas dentro de <code>/public</code>. El panel no sube archivos: se copian a esa carpeta y aquí se apunta a ellos.</p>
+        <p class="admin-form__note">Elige el archivo y el panel se encarga del resto: lo guarda dentro de <code>/public</code> con su propio nombre y borra el anterior.</p>
 
         <div class="admin-form__grid">
-            <?= partial('admin-field', [
-                'name' => 'avatar_path', 'label' => 'Foto',
-                'value' => $values['avatar_path'], 'error' => $errors['avatar_path'] ?? '',
-                'placeholder' => '/assets/img/emilio.jpg',
+            <?= partial('admin-file', [
+                'name'    => 'avatar', 'label' => 'Foto',
+                'current' => $values['avatar_path'], 'error' => $errors['avatar'] ?? '',
+                'accept'  => $avatarRules['accept'], 'formats' => $avatarRules['formats'],
+                'limit'   => $avatarRules['limit'],
+                'preview' => 'image', 'remove' => 'remove_avatar',
             ]) ?>
 
-            <?= partial('admin-field', [
-                'name' => 'cv_path', 'label' => 'CV',
-                'value' => $values['cv_path'], 'error' => $errors['cv_path'] ?? '',
-                'placeholder' => '/assets/docs/cv-emilio-guzman.pdf',
+            <?= partial('admin-file', [
+                'name'    => 'cv', 'label' => 'CV',
+                'current' => $values['cv_path'], 'error' => $errors['cv'] ?? '',
+                'accept'  => $cvRules['accept'], 'formats' => $cvRules['formats'],
+                'limit'   => $cvRules['limit'],
+                'preview' => 'doc', 'remove' => 'remove_cv',
             ]) ?>
         </div>
     </fieldset>

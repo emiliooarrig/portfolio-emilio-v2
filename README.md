@@ -33,17 +33,31 @@ docker exec -i mysql-local mysql -uroot -proot < database/seeds.sql
 
 ### Credenciales
 
-`config/config.php` trae valores por defecto (`127.0.0.1:3306`, `root`/`root`, base `emiguzman`). Para cambiarlos sin tocar el repositorio, crea `config/config.local.php`:
+La conexión a la base de datos se configura con variables de entorno. Copia la
+plantilla y ajusta los valores:
 
-```php
-<?php
-return [
-    'db'  => ['host' => '127.0.0.1', 'user' => 'root', 'pass' => 'tu_password'],
-    'app' => ['debug' => false],
-];
+```bash
+cp .env.example .env
 ```
 
-Ese archivo está en `.gitignore`.
+```dotenv
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=emiguzman
+DB_USER=root
+DB_PASS=
+DB_CHARSET=utf8mb4
+```
+
+`.env` está en `.gitignore`, así que las credenciales nunca viajan al repositorio.
+`config/config.php` las lee con `App\Core\Env` y mantiene valores por defecto de
+entorno local para cada llave, de modo que el sitio arranca aunque el archivo no
+exista todavía.
+
+En producción no hace falta subir el `.env`: si el hosting (o el `SetEnv` de
+Apache) define las variables, ésas ganan sobre el archivo. El mismo `.env`
+acepta además `APP_NAME`, `APP_BASE_PATH`, `APP_DEBUG`, `APP_TIMEZONE` y
+`APP_LOCALE`.
 
 **Acceso al panel:** los seeds crean `admin` / `admin123` en `admin_users`. Es una
 contraseña de ejemplo y está publicada en este repositorio: cámbiala antes de subir
@@ -63,7 +77,7 @@ El *document root* debe apuntar a `public/`. El `.htaccess` incluido redirige to
 
 ```
 /app
-  /Core           Router, Controller, Model, Database (mysqli), Request, Auth, Csrf, helpers
+  /Core           Router, Controller, Model, Database (mysqli), Env, Request, Auth, Csrf, helpers
   /Controllers    Home (la landing completa), Project (detalle del modal), Contact, Error, Auth
                   Admin/ (uno por sección del panel, sobre Admin\AdminController)
   /Models         Profile, Project, Service, Certification, Experience, Technology, ContactMessage, AdminUser
@@ -146,11 +160,28 @@ Cómo funciona por dentro:
   lo ya tecleado.
 - Guardar siempre redirige (POST-redirect-GET): recargar después de guardar no
   vuelve a guardar.
-- Todo POST lleva token CSRF, y **borrar se confirma en su propia pantalla**, que
-  dice qué se lleva por delante y recuerda que despublicar suele bastar.
+- Todo POST lleva token CSRF. **Borrar siempre pregunta antes**: el ícono de la
+  papelera abre la alerta del sitio con el nombre de la fila y lo que se lleva por
+  delante, sin salir del listado. El borrado es duro (`DELETE FROM`, con las
+  filas hijas cayendo por `ON DELETE CASCADE`): no hay papelera ni deshacer, y por
+  eso la pregunta. Sin JavaScript ese mismo enlace lleva a la pantalla de
+  confirmación de siempre, que sigue ahí y recuerda que despublicar suele bastar.
+- Las acciones de cada fila son íconos —lápiz y papelera—, no texto: en una tabla
+  se reconocen antes de leerse. El nombre de la fila viaja en el `aria-label`, que
+  es lo que anuncia un lector de pantalla y lo que sale al pasar por encima.
+- **La foto del perfil y el CV se suben desde el formulario**, no se escriben como
+  ruta (`Core/Upload.php`). El tipo se decide leyendo el archivo, no por su
+  extensión; se guarda en `public/assets/img` o `public/assets/docs` con un nombre
+  propio (slug + sufijo aleatorio) y, cuando se reemplaza o se quita, el anterior
+  se borra del disco — sólo dentro de la carpeta que la propia regla declara.
+  Nada se escribe en disco hasta que el resto del formulario valida, así que un
+  error no deja archivos sueltos. Formatos: JPG, PNG, WEBP o AVIF hasta 4 MB para
+  la foto; PDF hasta 8 MB para el CV.
 
-Va sin JS: la lateral se vuelve una tira de pestañas deslizable en pantallas
-estrechas por CSS, y las tablas anchas hacen scroll dentro de su contenedor. Las
+Funciona sin JS: la lateral se vuelve una tira de pestañas deslizable en pantallas
+estrechas por CSS, y las tablas anchas hacen scroll dentro de su contenedor. El
+único script que carga es `alerts.js`, y sólo mejora la alerta de la última
+acción — sin él se ve igual y se cierra igual. Las
 listas repetibles (métricas, pasos del flujo) son grupos de campos con tres huecos
 libres; vaciar el primer campo de una fila es lo que la borra.
 
@@ -184,6 +215,36 @@ sin cookies propias ni "recordarme". El login **no** acepta correo: se entra con
 | `project-modal.js` | fetch del detalle, apertura/cierre, trampa de foco e `history.pushState` |
 | `pipeline.js` | pausa la animación del riel fuera de pantalla |
 | `cursor.js` | cursor propio (punto + anillo). Sólo con puntero fino; en táctil no se construye |
+| `hero-brush.js` | el ámbar del nombre persigue al puntero como una pincelada |
+| `alerts.js` | comportamiento de las alertas: modal, Escape, clic fuera y cierre automático |
+
+### Alertas
+
+Todo lo que el backend contesta —guardado, borrado, error o aviso— sale por la
+misma pieza: `partials/alert.php`. Una sola línea la lanza desde cualquier vista:
+
+```php
+<?= partial('alert', ['type' => 'success', 'text' => 'Perfil guardado.']) ?>
+```
+
+`type` es `success`, `error`, `warning` o `info`, y decide el tono y el ícono;
+`title` y `confirm` se pueden pasar si el texto por defecto del tipo no encaja.
+La usan el layout público (resultado del formulario de contacto), el del panel
+(el aviso de la última acción) y el login.
+
+Con `cancel` la alerta **pregunta** en vez de avisar: dos botones, el destructivo
+en rojo. Así montada y con `template`, el layout del panel deja un molde que
+`alerts.js` clona cada vez que alguien pulsa una papelera — el diálogo se dibuja
+una sola vez y en PHP, y el JavaScript sólo lo rellena con lo que trae el
+disparador (`data-confirm-title`, `data-confirm-text`). Al aceptar, envía el
+borrado por POST con el token del panel.
+
+Es un `<dialog>` que llega abierto en el HTML: **se ve y se cierra sin
+JavaScript**, porque su botón usa `method="dialog"`. `alerts.js` sólo añade lo
+que el HTML no da — la asciende a modal (foco atrapado, Escape, resto de la
+página inerte), la cierra al hacer clic fuera del panel, y cierra sola las de
+éxito a los 4,2 s, con una barra que se detiene si el puntero o el teclado
+entran en la alerta.
 
 ## Contenido dinámico
 
@@ -199,7 +260,35 @@ Todo el contenido visible sale de la base de datos `emiguzman`; no hay texto de 
 | `contact_messages` | bandeja del formulario |
 | `admin_users` | acceso al panel de administración |
 
-Campos de control pensados para el panel: `is_published`, `sort_order`, `is_featured`, `bento_size` (`sm`/`md`/`lg`/`xl` = ancho de la celda en el grid de 12 columnas) y `has_pipeline`.
+Campos de control pensados para el panel: `is_published`, `is_featured`, `bento_size` (`sm`/`md`/`lg`/`xl` = ancho de la celda en el grid de 12 columnas) y `has_pipeline`.
+
+### Cómo se ordena
+
+No hay columna de orden. Se retiró de todas las tablas (migración
+`2026-08-18-sin-orden-manual.sql`) porque era un dato que había que mantener a
+mano y que repetía lo que ya decían otros:
+
+- **Proyectos y experiencia** se ordenan por su intervalo de fechas, del más
+  reciente al más antiguo. Lo que sigue abierto no tiene `ended_on`, así que
+  cuenta como que termina hoy y encabeza la lista; después manda la fecha de
+  fin y, en empate, la de inicio. Un proyecto sin ninguna fecha cae al final,
+  donde se nota que le falta el dato.
+- **Stack, certificaciones y servicios** no tienen un orden que mostrar: salen
+  por su `id`, que es el orden en que se dieron de alta. El stack, además, se
+  agrupa por categoría y dentro va por nombre, que es como se lee en "Sobre mí".
+- **Las filas hijas** (stack de un proyecto, métricas, pasos del flujo, logros
+  de un puesto) salen por su `id`. Al guardar se borran y se vuelven a insertar
+  en el orden del formulario, así que el `id` *es* ese orden: guardarlo aparte
+  era repetirlo.
+
+Por lo mismo desapareció `experiences.is_current`: decía lo que ya decía la
+fecha de fin y podía contradecirla. Ahora se deriva al leer
+(`(ended_on IS NULL) AS is_current`), así que la fecha es la única versión del
+hecho — dejar el "Fin" vacío es lo que marca el puesto actual.
+
+El `id` que genera la base se ve en las tablas del panel, para poder nombrar una
+fila sin ambigüedad. No se escribe desde ningún formulario: lo asigna el
+`AUTO_INCREMENT`, que es el único que puede garantizar que no se repita.
 
 > La tabla `home_metrics` quedó sin uso al retirarse la celda "lectura rápida" del hero.
 > Se conserva en el esquema por si el panel de administración la retoma.
@@ -223,6 +312,6 @@ Las decisiones de diseño están documentadas en `CLAUDE.md` y viven en `public/
 ## Pendiente
 
 - **Archivos de las fuentes:** dejar `sekuya.woff2` y `stack-sans-headline.woff2` en `public/assets/fonts/` (nombres exactos en el README de esa carpeta). Hasta entonces el sitio se ve con `Segoe UI` y los dos `<link rel="preload">` del layout dan 404.
-- Panel de administración: falta el alta de cuentas desde dentro (hoy sólo existe el usuario semilla) y subir archivos —imágenes y CV— en vez de escribir su ruta a mano.
+- Panel de administración: falta el alta de cuentas desde dentro (hoy sólo existe el usuario semilla) y subir las portadas de proyecto (`projects.cover_image`) en vez de escribir su ruta a mano — la foto del perfil y el CV ya se suben.
 - Sustituir los datos de ejemplo de `database/seeds.sql` por la información real.
-- Imágenes de portada de proyectos (`projects.cover_image`) y PDF del CV en `public/assets/docs/`.
+- Imágenes de portada de proyectos (`projects.cover_image`) en `public/assets/img/`. El CV y la foto ya se suben desde el panel.

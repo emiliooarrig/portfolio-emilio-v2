@@ -258,12 +258,6 @@ foreach ($technologies as $technology) {
         <legend class="admin-form__legend">Publicación</legend>
 
         <div class="admin-form__grid">
-            <?= partial('admin-field', [
-                'name' => 'sort_order', 'label' => 'Orden', 'type' => 'number',
-                'value' => $values['sort_order'], 'error' => $errors['sort_order'] ?? '',
-                'hint'  => 'De menor a mayor. Van de diez en diez para poder colar uno en medio.',
-            ]) ?>
-
             <div class="admin-form__flags">
                 <?= partial('admin-field', [
                     'name' => 'is_published', 'label' => 'Publicado', 'type' => 'checkbox',
@@ -287,8 +281,10 @@ foreach ($technologies as $technology) {
     </fieldset>
 
     <?= partial('admin-form-actions', [
-        'label'     => $isNew ? 'Crear proyecto' : 'Guardar cambios',
-        'back'      => $back,
-        'deleteUrl' => $deleteUrl,
+        'label'      => $isNew ? 'Crear proyecto' : 'Guardar cambios',
+        'back'       => $back,
+        'deleteUrl'  => $deleteUrl,
+        'deleteName' => (string) $values['title'],
+        'deleteText' => 'Se borra el proyecto y con él su stack, sus métricas y su flujo. No hay deshacer.',
     ]) ?>
 </form>

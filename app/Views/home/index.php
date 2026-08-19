@@ -15,7 +15,7 @@
  * @var int $projectCount
  * @var array<string, string> $contactErrors
  * @var array<string, string> $contactOld
- * @var array{type: string, text: string}|null $flash
+ * @var array{type: string, text: string}|null $flash  lo pinta el layout, como alerta
  */
 ?>
 <?= partial('section-inicio', ['profile' => $profile]) ?>
@@ -49,5 +49,4 @@
     'profile' => $profile,
     'errors'  => $contactErrors,
     'old'     => $contactOld,
-    'flash'   => $flash,
 ]) ?>

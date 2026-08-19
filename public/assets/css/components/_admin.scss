@@ -551,14 +551,6 @@ a.admin-table__sub {
 }
 
 // ------------------------------------------------------------
-//  Aviso de la acción anterior
-// ------------------------------------------------------------
-.admin-flash {
-  // Reutiliza `.flash` del formulario de contacto; aquí sólo se coloca.
-  margin: 0;
-}
-
-// ------------------------------------------------------------
 //  Formularios
 //
 //  Un formulario por pantalla, partido en bloques con leyenda: los datos
@@ -620,6 +612,9 @@ a.admin-table__sub {
 
 /// Borrar no compite con guardar: es un enlace, y está al final.
 .admin-form__delete {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   margin-left: auto;
   color: var(--color-text-dim);
   font-size: var(--text-2xs);
@@ -654,6 +649,91 @@ a.admin-table__sub {
 
 .form__row--check {
   gap: var(--space-1);
+}
+
+// ------------------------------------------------------------
+//  Campo de archivo
+// ------------------------------------------------------------
+//  El control nativo se queda: es el único que abre el diálogo del sistema
+//  y el único que funciona sin JavaScript, que en el panel no hay. Lo que se
+//  estiliza es su caja (la misma hundida del resto de campos) y su botón,
+//  con ::file-selector-button. El nombre del archivo elegido lo escribe el
+//  navegador al lado del botón, así que no hace falta pintarlo.
+.admin-file__input {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-dim);
+  font-size: var(--text-2xs);
+  line-height: 1.6;
+  cursor: pointer;
+
+  &::file-selector-button {
+    margin-right: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: var(--color-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-2xs);
+    cursor: pointer;
+    transition:
+      border-color var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out);
+  }
+
+  &:hover::file-selector-button,
+  &:focus::file-selector-button {
+    border-color: var(--border-accent);
+    color: var(--color-accent);
+  }
+}
+
+// Lo que ya está guardado, antes de ofrecer cambiarlo: se ve lo que hay.
+.admin-file__current {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface-sunk);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.admin-file__thumb {
+  flex: none;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+
+  &--doc {
+    display: grid;
+    place-items: center;
+    background: var(--color-surface);
+    color: var(--color-text-dim);
+  }
+}
+
+.admin-file__meta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.admin-file__name {
+  color: var(--color-text);
+  font-size: var(--text-2xs);
+  // El nombre lo pone el servidor y lleva sufijo: si no cabe, se parte.
+  overflow-wrap: anywhere;
+}
+
+.admin-file__open {
+  font-size: var(--text-3xs);
+}
+
+.admin-file__remove {
+  margin-top: var(--space-1);
 }
 
 // ------------------------------------------------------------
@@ -732,38 +812,45 @@ a.admin-table__sub {
 .admin-row-actions {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
   white-space: nowrap;
-
-  a,
-  button {
-    font-size: var(--text-3xs);
-  }
 }
 
-.admin-row-actions__edit {
-  color: var(--color-structural);
-}
-
-.admin-row-actions__delete {
-  color: var(--color-text-dim);
-
-  &:hover {
-    color: var(--color-alert);
-  }
-}
-
-/// Marcar leído es escritura: va en un <form>, pero se lee como un enlace.
-.admin-row-actions__toggle {
+/// Cada acción de la fila es un cuadro con su ícono: en una tabla se reconoce
+/// antes de leerse, y el nombre de la fila viaja en el `aria-label` — no en un
+/// texto que se repetiría veinte veces en la misma columna.
+.admin-row-actions__action {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
   padding: 0;
-  border: none;
-  background: none;
+  background: var(--color-surface-sunk);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
   color: var(--color-text-dim);
-  font-family: var(--font-body);
-  transition: color var(--duration-fast) var(--ease-out);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 
   &:hover {
-    color: var(--color-accent);
+    background: var(--color-surface);
+    border-color: var(--border-strong);
+    color: var(--color-text);
+  }
+
+  &--edit:hover {
+    border-color: var(--border-accent);
+    color: var(--color-structural);
+  }
+
+  // Borrar se enciende en rojo sólo al apuntarlo: en reposo pesa lo mismo que
+  // las demás, para que no atraiga el dedo.
+  &--delete:hover {
+    border-color: rgba(255, 107, 91, 0.4);
+    color: var(--color-alert);
   }
 }
 

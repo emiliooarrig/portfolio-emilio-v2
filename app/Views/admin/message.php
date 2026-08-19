@@ -53,7 +53,14 @@ $subject  = (string) ($message['subject'] ?: 'Sin asunto');
             </button>
         </form>
 
-        <a class="admin-form__delete" href="<?= url($back . '/' . (int) $message['id'] . '/eliminar') ?>">Borrar</a>
+        <a class="admin-form__delete"
+           href="<?= url($back . '/' . (int) $message['id'] . '/eliminar') ?>"
+           data-confirm
+           data-confirm-title="¿Borrar el mensaje de «<?= e($message['name']) ?>»?"
+           data-confirm-text="Se borra el mensaje y su contenido. No hay deshacer.">
+            <?= partial('admin-icon', ['name' => 'trash', 'size' => 15]) ?>
+            Borrar
+        </a>
     </div>
 
 </article>

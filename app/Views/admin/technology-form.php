@@ -43,18 +43,14 @@ use App\Models\Technology;
                 'options' => Technology::CATEGORIES,
                 'hint'    => 'Agrupa los chips en «Sobre mí».',
             ]) ?>
-
-            <?= partial('admin-field', [
-                'name' => 'sort_order', 'label' => 'Orden', 'type' => 'number',
-                'value' => $values['sort_order'], 'error' => $errors['sort_order'] ?? '',
-                'hint'  => 'Dentro de su categoría, de menor a mayor.',
-            ]) ?>
         </div>
     </fieldset>
 
     <?= partial('admin-form-actions', [
-        'label'     => $isNew ? 'Añadir al stack' : 'Guardar cambios',
-        'back'      => $back,
-        'deleteUrl' => $deleteUrl,
+        'label'      => $isNew ? 'Añadir al stack' : 'Guardar cambios',
+        'back'       => $back,
+        'deleteUrl'  => $deleteUrl,
+        'deleteName' => (string) $values['name'],
+        'deleteText' => 'Se borra del stack y de los proyectos que la usaban. No hay deshacer.',
     ]) ?>
 </form>

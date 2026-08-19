@@ -79,10 +79,9 @@ CREATE TABLE `technologies` (
   `slug`        VARCHAR(60)  NOT NULL,
   `category`    ENUM('lenguaje','base_datos','orquestacion','cloud','bi','herramienta') NOT NULL DEFAULT 'herramienta',
   `is_featured` TINYINT(1)   NOT NULL DEFAULT 0,  -- reservado: hoy el stack se muestra completo por categoría
-  `sort_order`  SMALLINT     NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_tech_slug` (`slug`),
-  KEY `idx_tech_featured` (`is_featured`, `sort_order`)
+  KEY `idx_tech_featured` (`is_featured`, `category`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
@@ -108,12 +107,11 @@ CREATE TABLE `projects` (
   `has_pipeline`   TINYINT(1)   NOT NULL DEFAULT 0, -- muestra el riel de flujo en el detalle
   `started_on`     DATE         NULL,
   `ended_on`       DATE         NULL,
-  `sort_order`     SMALLINT     NOT NULL DEFAULT 0,
   `created_at`     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`     TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_project_slug` (`slug`),
-  KEY `idx_project_published` (`is_published`, `sort_order`)
+  KEY `idx_project_published` (`is_published`, `started_on`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
@@ -122,7 +120,6 @@ CREATE TABLE `projects` (
 CREATE TABLE `project_technologies` (
   `project_id`    INT UNSIGNED      NOT NULL,
   `technology_id` SMALLINT UNSIGNED NOT NULL,
-  `sort_order`    SMALLINT          NOT NULL DEFAULT 0,
   PRIMARY KEY (`project_id`, `technology_id`),
   KEY `idx_pt_tech` (`technology_id`),
   CONSTRAINT `fk_pt_project` FOREIGN KEY (`project_id`)    REFERENCES `projects` (`id`)     ON DELETE CASCADE,
@@ -138,9 +135,8 @@ CREATE TABLE `project_metrics` (
   `label`      VARCHAR(80)  NOT NULL,
   `value`      VARCHAR(40)  NOT NULL,
   `unit`       VARCHAR(20)  NULL,
-  `sort_order` SMALLINT     NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `idx_pm_project` (`project_id`, `sort_order`),
+  KEY `idx_pm_project` (`project_id`),
   CONSTRAINT `fk_pm_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -154,9 +150,8 @@ CREATE TABLE `project_pipeline_steps` (
   `label`       VARCHAR(60)  NOT NULL,
   `description` VARCHAR(200) NULL,
   `stage`       ENUM('raw','transform','refined') NOT NULL DEFAULT 'raw',
-  `sort_order`  SMALLINT     NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `idx_pps_project` (`project_id`, `sort_order`),
+  KEY `idx_pps_project` (`project_id`),
   CONSTRAINT `fk_pps_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -183,12 +178,11 @@ CREATE TABLE `services` (
   `icon`         VARCHAR(40)  NOT NULL DEFAULT 'spark', -- clave del SVG en la vista
   `is_featured`  TINYINT(1)   NOT NULL DEFAULT 0,
   `is_published` TINYINT(1)   NOT NULL DEFAULT 1,
-  `sort_order`   SMALLINT     NOT NULL DEFAULT 0,
   `created_at`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_service_slug` (`slug`),
-  KEY `idx_service_published` (`is_published`, `sort_order`)
+  KEY `idx_service_published` (`is_published`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
@@ -205,7 +199,6 @@ CREATE TABLE `certifications` (
   `issued_on`       DATE         NOT NULL,
   `expires_on`      DATE         NULL,
   `is_published`    TINYINT(1)   NOT NULL DEFAULT 1,
-  `sort_order`      SMALLINT     NOT NULL DEFAULT 0,
   `created_at`      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`      TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -224,10 +217,8 @@ CREATE TABLE `experiences` (
   `company_url`   VARCHAR(255) NULL,
   `summary`       TEXT         NULL,
   `started_on`    DATE         NOT NULL,
-  `ended_on`      DATE         NULL,          -- NULL = actual
-  `is_current`    TINYINT(1)   NOT NULL DEFAULT 0,
+  `ended_on`      DATE         NULL,          -- NULL = sigue en marcha (no se guarda aparte)
   `is_published`  TINYINT(1)   NOT NULL DEFAULT 1,
-  `sort_order`    SMALLINT     NOT NULL DEFAULT 0,
   `created_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -241,9 +232,8 @@ CREATE TABLE `experience_highlights` (
   `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `experience_id` INT UNSIGNED NOT NULL,
   `description`   VARCHAR(400) NOT NULL,
-  `sort_order`    SMALLINT     NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `idx_eh_experience` (`experience_id`, `sort_order`),
+  KEY `idx_eh_experience` (`experience_id`),
   CONSTRAINT `fk_eh_experience` FOREIGN KEY (`experience_id`) REFERENCES `experiences` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -257,7 +247,6 @@ CREATE TABLE `home_metrics` (
   `unit`       VARCHAR(20) NULL,
   `caption`    VARCHAR(120) NULL,
   `is_published` TINYINT(1) NOT NULL DEFAULT 1,
-  `sort_order` SMALLINT    NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

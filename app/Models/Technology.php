@@ -19,7 +19,7 @@ class Technology extends Model
         $rows = $this->all(
             'SELECT id, name, slug, category
                FROM technologies
-           ORDER BY category ASC, sort_order ASC, name ASC'
+           ORDER BY category ASC, name ASC'
         );
 
         return $this->groupBy($rows, 'category');
@@ -46,10 +46,10 @@ class Technology extends Model
     public function adminList(): array
     {
         return $this->all(
-            'SELECT t.id, t.name, t.slug, t.category, t.is_featured, t.sort_order,
+            'SELECT t.id, t.name, t.slug, t.category, t.is_featured,
                     (SELECT COUNT(*) FROM project_technologies pt WHERE pt.technology_id = t.id) AS project_count
                FROM technologies t
-           ORDER BY t.category ASC, t.sort_order ASC, t.name ASC'
+           ORDER BY t.category ASC, t.name ASC'
         );
     }
 
@@ -94,7 +94,7 @@ class Technology extends Model
     public function forPicker(): array
     {
         return $this->all(
-            'SELECT id, name, category FROM technologies ORDER BY category ASC, sort_order ASC, name ASC'
+            'SELECT id, name, category FROM technologies ORDER BY category ASC, name ASC'
         );
     }
 
@@ -143,7 +143,7 @@ class Technology extends Model
     public function create(array $input): int
     {
         return $this->db()->execute(
-            'INSERT INTO technologies (`name`, `slug`, `category`, `sort_order`) VALUES (?, ?, ?, ?)',
+            'INSERT INTO technologies (`name`, `slug`, `category`) VALUES (?, ?, ?)',
             $this->columns($input)
         );
     }
@@ -157,7 +157,7 @@ class Technology extends Model
         $params[] = $id;
 
         $this->db()->execute(
-            'UPDATE technologies SET `name` = ?, `slug` = ?, `category` = ?, `sort_order` = ? WHERE id = ?',
+            'UPDATE technologies SET `name` = ?, `slug` = ?, `category` = ? WHERE id = ?',
             $params
         );
     }
@@ -184,7 +184,6 @@ class Technology extends Model
             $this->fit((string) ($input['name'] ?? ''), 60),
             $slug,
             (string) ($input['category'] ?? 'herramienta'),
-            (int) ($input['sort_order'] ?? 0),
         ];
     }
 }

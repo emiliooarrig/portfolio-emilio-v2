@@ -33,5 +33,13 @@ $title = $pageTitle !== '' ? $pageTitle . ' — ' . $profile['full_name'] : (str
     <?= $content ?>
 </main>
 
+<?php // Igual que en el panel: la alerta ya funciona sin JavaScript y esto
+      // sólo la asciende a modal. ?>
+<script type="module">
+    import { initAlerts } from '<?= asset('js/alerts.js') ?>';
+
+    initAlerts();
+</script>
+
 </body>
 </html>

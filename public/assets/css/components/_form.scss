@@ -125,6 +125,48 @@
   }
 }
 
+// ------------------------------------------------------------
+//  Íconos de campo
+// ------------------------------------------------------------
+//  Van dentro de la caja, del lado por donde se empieza a escribir, y no
+//  reciben puntero: son una señal de qué se espera en el campo, no un botón.
+.form__field {
+  position: relative;
+  display: flex;
+}
+
+.form__icon {
+  position: absolute;
+  top: 50%;
+  left: var(--space-4);
+  display: flex;
+  color: var(--color-text-faint);
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: color var(--duration-fast) var(--ease-out);
+
+  // El área de texto crece: su ícono se ancla a la primera línea, no al
+  // centro de una caja que cambia de alto.
+  &--area {
+    top: calc(var(--space-3) + 0.2rem);
+    transform: none;
+  }
+}
+
+// El ícono sigue a la etiqueta: los dos se encienden con el campo enfocado.
+.form__row:focus-within .form__icon {
+  color: var(--color-accent);
+}
+
+.form__field.is-invalid .form__icon {
+  color: var(--color-danger);
+}
+
+// Hueco para el ícono: su ancho más el aire que ya tenía el campo.
+.form__input--iconed {
+  padding-left: calc(var(--space-4) + 18px + var(--space-3));
+}
+
 .form__error {
   color: var(--color-danger);
   font-size: var(--text-2xs);
@@ -158,32 +200,5 @@
   font-size: var(--text-2xs);
 }
 
-// ------------------------------------------------------------
-//  Mensajes de estado
-// ------------------------------------------------------------
-.flash {
-  margin-bottom: var(--space-5);
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-2xs);
-  animation: reveal-up var(--duration-slow) var(--ease-out) both;
-
-  &--success {
-    background: rgba(79, 209, 160, 0.1);
-    border-color: rgba(79, 209, 160, 0.3);
-    color: var(--color-success);
-  }
-
-  &--error {
-    background: var(--color-alert-dim);
-    border-color: rgba(255, 107, 91, 0.3);
-    color: var(--color-alert);
-  }
-}
-
-@include reduced-motion {
-  .flash {
-    animation-name: reveal-fade;
-  }
-}
+// Los mensajes que devuelve el backend ya no son una tira dentro del
+// formulario: salen como alerta sobre la página (`_alert.scss`).

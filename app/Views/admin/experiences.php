@@ -24,7 +24,7 @@ use App\Models\Experience;
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th scope="col" class="admin-table__narrow">#</th>
+                    <th scope="col" class="admin-table__narrow">ID</th>
                     <th scope="col">Puesto</th>
                     <th scope="col">Empresa</th>
                     <th scope="col">Contratación</th>
@@ -38,7 +38,7 @@ use App\Models\Experience;
             <tbody>
                 <?php foreach ($experiences as $experience): ?>
                     <tr<?= (int) $experience['is_published'] === 1 ? '' : ' class="is-hidden-row"' ?>>
-                        <td class="meta admin-table__narrow"><?= (int) $experience['sort_order'] ?></td>
+                        <td class="meta admin-table__narrow"><?= (int) $experience['id'] ?></td>
 
                         <td>
                             <strong><?= e($experience['role']) ?></strong>
@@ -72,9 +72,10 @@ use App\Models\Experience;
 
                         <td>
                             <?= partial('admin-row-actions', [
-                                'edit'      => '/admin/experiencia/' . (int) $experience['id'] . '/editar',
-                                'delete'    => '/admin/experiencia/' . (int) $experience['id'] . '/eliminar',
-                                'editLabel' => (string) $experience['role'],
+                                'edit'        => '/admin/experiencia/' . (int) $experience['id'] . '/editar',
+                                'delete'      => '/admin/experiencia/' . (int) $experience['id'] . '/eliminar',
+                                'name'        => (string) $experience['role'],
+                                'confirmText' => 'Se borra el puesto y con él sus logros. Desaparece del timeline. No hay deshacer.',
                             ]) ?>
                         </td>
                     </tr>

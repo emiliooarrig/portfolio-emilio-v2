@@ -162,7 +162,6 @@ class TechnologyController extends AdminController
             'name'       => $technology['name']       ?? '',
             'slug'       => $technology['slug']       ?? '',
             'category'   => $technology['category']   ?? 'herramienta',
-            'sort_order' => $technology['sort_order'] ?? $this->nextOrder(),
         ];
 
         $this->render('admin/technology-form', [
@@ -184,17 +183,6 @@ class TechnologyController extends AdminController
             'name'       => $this->postText('name'),
             'slug'       => $this->postText('slug'),
             'category'   => $this->postText('category'),
-            'sort_order' => $this->postInt('sort_order'),
         ];
-    }
-
-    private function nextOrder(): int
-    {
-        $orders = array_map(
-            static fn (array $t): int => (int) $t['sort_order'],
-            (new Technology())->adminList()
-        );
-
-        return $orders === [] ? 10 : max($orders) + 10;
     }
 }

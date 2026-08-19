@@ -164,8 +164,6 @@ class ExperienceController extends AdminController
             'summary'         => $experience['summary']         ?? '',
             'started_on'      => $experience['started_on']      ?? '',
             'ended_on'        => $experience['ended_on']        ?? '',
-            'sort_order'      => $experience['sort_order']      ?? $this->nextOrder(),
-            'is_current'      => (int) ($experience['is_current'] ?? 0),
             'is_published'    => (int) ($experience['is_published'] ?? 1),
             'highlights'      => $id > 0 ? implode("\n", $model->highlightsOf($id)) : '',
         ];
@@ -198,20 +196,8 @@ class ExperienceController extends AdminController
             'summary'         => $this->postText('summary'),
             'started_on'      => $this->postText('started_on'),
             'ended_on'        => $this->postText('ended_on'),
-            'sort_order'      => $this->postInt('sort_order'),
-            'is_current'      => $this->postFlag('is_current'),
             'is_published'    => $this->postFlag('is_published'),
             'highlights'      => $this->postLines('highlights'),
         ];
-    }
-
-    private function nextOrder(): int
-    {
-        $orders = array_map(
-            static fn (array $e): int => (int) $e['sort_order'],
-            (new Experience())->adminList()
-        );
-
-        return $orders === [] ? 10 : max($orders) + 10;
     }
 }

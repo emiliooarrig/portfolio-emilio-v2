@@ -177,7 +177,6 @@ class ProjectController extends AdminController
             'bento_size'   => $project['bento_size']   ?? 'md',
             'started_on'   => $project['started_on']   ?? '',
             'ended_on'     => $project['ended_on']     ?? '',
-            'sort_order'   => $project['sort_order']   ?? $this->nextOrder(),
             'is_featured'  => (int) ($project['is_featured'] ?? 0),
             'is_published' => (int) ($project['is_published'] ?? 1),
             'has_pipeline' => (int) ($project['has_pipeline'] ?? 0),
@@ -221,7 +220,6 @@ class ProjectController extends AdminController
             'bento_size'   => $this->postText('bento_size'),
             'started_on'   => $this->postText('started_on'),
             'ended_on'     => $this->postText('ended_on'),
-            'sort_order'   => $this->postInt('sort_order'),
             'is_featured'  => $this->postFlag('is_featured'),
             'is_published' => $this->postFlag('is_published'),
             'has_pipeline' => $this->postFlag('has_pipeline'),
@@ -239,14 +237,5 @@ class ProjectController extends AdminController
         $model->syncTechnologies($id, $input['technologies']);
         $model->syncMetrics($id, $input['metrics']);
         $model->syncPipeline($id, $input['pipeline']);
-    }
-
-    /** Un proyecto nuevo entra al final, no en medio del orden ya decidido. */
-    private function nextOrder(): int
-    {
-        $projects = (new Project())->adminList();
-        $orders   = array_map(static fn (array $p): int => (int) $p['sort_order'], $projects);
-
-        return $orders === [] ? 10 : max($orders) + 10;
     }
 }

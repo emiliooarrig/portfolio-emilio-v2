@@ -6,6 +6,7 @@
 //  nombre, profesión y CTAs.
 // ============================================================
 
+@use 'sass:list';
 @use '../tokens' as *;
 
 .hero {
@@ -139,6 +140,86 @@
     animation:
       hero-in var(--duration-hero) var(--ease-out) var(--word-delay) both,
       sheen 2.2s var(--ease-out) calc(var(--word-delay) + 650ms) 1 forwards;
+  }
+}
+
+// ------------------------------------------------------------
+//  Pincel: el ámbar del nombre persigue al puntero
+// ------------------------------------------------------------
+//  Sobre cada palabra vive una copia exacta de sí misma en ámbar
+//  (`::after` con `attr(data-text)`), invisible salvo por donde la máscara
+//  la descubre. La máscara son varios círculos: el punto actual del puntero
+//  y las posiciones por las que acaba de pasar, cada vez más pequeñas y
+//  tenues. Al moverse rápido esos círculos se separan y el trazo se estira;
+//  quieto, se apilan y queda la punta redonda del pincel.
+//
+//  hero-brush.js sólo escribe las coordenadas (--brush-x0…5 / --brush-y0…5)
+//  en píxeles relativos a cada palabra; el tamaño, el degradado y el desvanecido
+//  se deciden aquí.
+
+// Cada muestra de la estela: (radio relativo, opacidad).
+$brush-trail: (1, 1), (0.9, 0.74), (0.78, 0.54), (0.66, 0.38), (0.54, 0.24), (0.42, 0.13);
+
+@function brush-mask($trail) {
+  $layers: ();
+  $index: 0;
+
+  @each $scale, $alpha in $trail {
+    $layers: list.append(
+      $layers,
+      radial-gradient(
+        circle calc(var(--brush-radius) * #{$scale}) at
+          calc(var(--brush-x#{$index}, -100vw) + var(--brush-bleed))
+          calc(var(--brush-y#{$index}, -100vw) + var(--brush-bleed)),
+        rgba(#000, $alpha) 0%,
+        rgba(#000, $alpha * 0.6) 45%,
+        rgba(#000, 0) 100%
+      ),
+      comma
+    );
+
+    $index: $index + 1;
+  }
+
+  @return $layers;
+}
+
+// Sin máscaras el ::after taparía la palabra entera de ámbar: mejor no ponerlo.
+@supports (mask-image: radial-gradient(#000, transparent)) or
+  (-webkit-mask-image: radial-gradient(#000, transparent)) {
+
+  .hero__name {
+    --brush-radius: 0.6em;
+    // La máscara recorta a la caja del ::after, y el resplandor del trazo se
+    // sale de las letras: la caja crece este margen (y el texto vuelve a su
+    // sitio con el mismo padding) para que no se corte en seco.
+    --brush-bleed: 0.45em;
+  }
+
+  .hero__word {
+    position: relative;
+
+    &::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: calc(var(--brush-bleed) * -1);
+      padding: var(--brush-bleed);
+      color: var(--color-accent);
+      // La sombra también se recorta con la máscara: acompaña al trazo
+      // en vez de rodear la palabra completa.
+      text-shadow: 0 0 0.32em rgba(255, 177, 61, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      -webkit-mask-image: brush-mask($brush-trail);
+      mask-image: brush-mask($brush-trail);
+      // Entra rápido bajo el puntero y se seca despacio al salir.
+      transition: opacity var(--duration-slow) var(--ease-out);
+    }
+  }
+
+  .hero__name.is-brushing .hero__word::after {
+    opacity: 1;
+    transition-duration: var(--duration-fast);
   }
 }
 

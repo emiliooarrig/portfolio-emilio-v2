@@ -56,7 +56,7 @@ use App\Models\Experience;
             <?= partial('admin-field', [
                 'name' => 'ended_on', 'label' => 'Fin', 'type' => 'date',
                 'value' => $values['ended_on'], 'error' => $errors['ended_on'] ?? '',
-                'hint'  => 'Déjalo vacío si es el puesto actual.',
+                'hint'  => 'Vacío = sigue en marcha. Es lo único que marca el puesto actual, y lo que pone «Actual» en el timeline.',
             ]) ?>
 
             <div class="admin-form__wide">
@@ -90,30 +90,20 @@ use App\Models\Experience;
         <legend class="admin-form__legend">Publicación</legend>
 
         <div class="admin-form__grid">
-            <?= partial('admin-field', [
-                'name' => 'sort_order', 'label' => 'Orden', 'type' => 'number',
-                'value' => $values['sort_order'], 'error' => $errors['sort_order'] ?? '',
-                'hint'  => 'El timeline se lee de arriba abajo en este orden.',
-            ]) ?>
-
             <div class="admin-form__flags">
                 <?= partial('admin-field', [
                     'name' => 'is_published', 'label' => 'Publicada', 'type' => 'checkbox',
                     'value' => $values['is_published'],
-                ]) ?>
-
-                <?= partial('admin-field', [
-                    'name' => 'is_current', 'label' => 'Puesto actual', 'type' => 'checkbox',
-                    'value' => $values['is_current'],
-                    'hint'  => 'Si lo marcas, la fecha de fin se guarda vacía.',
                 ]) ?>
             </div>
         </div>
     </fieldset>
 
     <?= partial('admin-form-actions', [
-        'label'     => $isNew ? 'Crear puesto' : 'Guardar cambios',
-        'back'      => $back,
-        'deleteUrl' => $deleteUrl,
+        'label'      => $isNew ? 'Crear puesto' : 'Guardar cambios',
+        'back'       => $back,
+        'deleteUrl'  => $deleteUrl,
+        'deleteName' => (string) $values['role'],
+        'deleteText' => 'Se borra el puesto y con él sus logros. Desaparece del timeline. No hay deshacer.',
     ]) ?>
 </form>

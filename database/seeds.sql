@@ -55,34 +55,34 @@ VALUES
 -- ------------------------------------------------------------
 --  technologies
 -- ------------------------------------------------------------
-INSERT INTO `technologies` (`id`, `name`, `slug`, `category`, `is_featured`, `sort_order`) VALUES
-(1,  'Python',        'python',        'lenguaje',      1, 10),
-(2,  'SQL',           'sql',           'lenguaje',      1, 20),
-(3,  'PHP',           'php',           'lenguaje',      0, 30),
-(4,  'PostgreSQL',    'postgresql',    'base_datos',    1, 40),
-(5,  'MySQL',         'mysql',         'base_datos',    1, 50),
-(6,  'BigQuery',      'bigquery',      'base_datos',    1, 60),
-(7,  'Apache Airflow','airflow',       'orquestacion',  1, 70),
-(8,  'dbt',           'dbt',           'orquestacion',  1, 80),
-(9,  'Apache Spark',  'spark',         'orquestacion',  0, 90),
-(10, 'Kafka',         'kafka',         'orquestacion',  0, 100),
-(11, 'Google Cloud',  'gcp',           'cloud',         1, 110),
-(12, 'AWS',           'aws',           'cloud',         0, 120),
-(13, 'Docker',        'docker',        'herramienta',   1, 130),
-(14, 'Terraform',     'terraform',     'herramienta',   0, 140),
-(15, 'Power BI',      'power-bi',      'bi',            1, 150),
-(16, 'Looker Studio', 'looker-studio', 'bi',            0, 160),
-(17, 'Git',           'git',           'herramienta',   0, 170),
-(18, 'Pandas',        'pandas',        'herramienta',   0, 180);
+INSERT INTO `technologies` (`id`, `name`, `slug`, `category`, `is_featured`) VALUES
+(1,  'Python',        'python',        'lenguaje',      1),
+(2,  'SQL',           'sql',           'lenguaje',      1),
+(3,  'PHP',           'php',           'lenguaje',      0),
+(4,  'PostgreSQL',    'postgresql',    'base_datos',    1),
+(5,  'MySQL',         'mysql',         'base_datos',    1),
+(6,  'BigQuery',      'bigquery',      'base_datos',    1),
+(7,  'Apache Airflow','airflow',       'orquestacion',  1),
+(8,  'dbt',           'dbt',           'orquestacion',  1),
+(9,  'Apache Spark',  'spark',         'orquestacion',  0),
+(10, 'Kafka',         'kafka',         'orquestacion',  0),
+(11, 'Google Cloud',  'gcp',           'cloud',         1),
+(12, 'AWS',           'aws',           'cloud',         0),
+(13, 'Docker',        'docker',        'herramienta',   1),
+(14, 'Terraform',     'terraform',     'herramienta',   0),
+(15, 'Power BI',      'power-bi',      'bi',            1),
+(16, 'Looker Studio', 'looker-studio', 'bi',            0),
+(17, 'Git',           'git',           'herramienta',   0),
+(18, 'Pandas',        'pandas',        'herramienta',   0);
 
 -- ------------------------------------------------------------
 --  home_metrics
 -- ------------------------------------------------------------
-INSERT INTO `home_metrics` (`label`, `value`, `unit`, `caption`, `sort_order`) VALUES
-('Años en datos',        '5',    '+',    'Del ETL nocturno al streaming', 10),
-('Pipelines en producción','24',  '',     'Orquestados y monitoreados',    20),
-('Registros procesados', '180',  'M/mes','Batch + near real-time',        30),
-('Tiempo de reporte',    '-72',  '%',    'De 8 h a 2 h en cierre mensual',40);
+INSERT INTO `home_metrics` (`label`, `value`, `unit`, `caption`) VALUES
+('Años en datos',        '5',    '+',    'Del ETL nocturno al streaming'),
+('Pipelines en producción','24',  '',     'Orquestados y monitoreados'),
+('Registros procesados', '180',  'M/mes','Batch + near real-time'),
+('Tiempo de reporte',    '-72',  '%',    'De 8 h a 2 h en cierre mensual');
 
 -- ------------------------------------------------------------
 --  projects
@@ -90,7 +90,7 @@ INSERT INTO `home_metrics` (`label`, `value`, `unit`, `caption`, `sort_order`) V
 INSERT INTO `projects`
 (`id`, `slug`, `title`, `subtitle`, `summary`, `context`, `solution`, `outcome`, `role`, `client`,
  `cover_image`, `repo_url`, `demo_url`, `bento_size`, `is_featured`, `is_published`, `has_pipeline`,
- `started_on`, `ended_on`, `sort_order`)
+ `started_on`, `ended_on`)
 VALUES
 (1, 'plataforma-datos-retail', 'La venta de 120 tiendas en un solo lugar',
  'De la caja registradora al reporte de dirección, en 15 minutos',
@@ -100,7 +100,7 @@ VALUES
  'El reporte diario pasó de tardar 10 horas a estar listo en 15 minutos, y las tres áreas que discutían cifras distintas hoy leen la misma.',
  'Data Engineer (líder técnico)', 'Cadena retail nacional',
  NULL, 'https://github.com/emilioguzman/retail-data-platform', NULL,
- 'xl', 1, 1, 1, '2024-02-01', '2024-11-30', 10),
+ 'xl', 1, 1, 1, '2024-02-01', '2024-11-30'),
 
 (2, 'pipeline-streaming-iot', 'Avisar antes de que se pare la máquina',
  '4,500 sensores de planta vigilados al mismo tiempo',
@@ -110,7 +110,7 @@ VALUES
  'Las alertas se adelantaron un promedio de 40 minutos a la falla; dos paros de línea evitados en el primer trimestre.',
  'Data Engineer', 'Manufactura industrial',
  NULL, NULL, NULL,
- 'lg', 1, 1, 1, '2023-05-01', '2023-12-15', 20),
+ 'lg', 1, 1, 1, '2023-05-01', '2023-12-15'),
 
 (3, 'observabilidad-datos', 'Detectar el error antes que el cliente',
  'Un vigilante que no se distrae',
@@ -120,7 +120,7 @@ VALUES
  'Enterarse de un problema pasó de tardar 2 días a tardar 20 minutos.',
  'Data Engineer', 'Proyecto interno',
  NULL, 'https://github.com/emilioguzman/data-observability', NULL,
- 'md', 1, 1, 0, '2024-03-01', NULL, 30),
+ 'md', 1, 1, 0, '2024-03-01', NULL),
 
 (4, 'migracion-onprem-cloud', 'Mudanza a la nube sin cerrar un solo día',
  '11 años de información movidos sin parar la operación',
@@ -130,7 +130,7 @@ VALUES
  'Cuatro horas de corte un domingo, ni un registro perdido y 38% menos de costo cada mes.',
  'Ingeniero de TI', 'Sector financiero',
  NULL, NULL, NULL,
- 'lg', 0, 1, 0, '2022-08-01', '2023-03-31', 40),
+ 'lg', 0, 1, 0, '2022-08-01', '2023-03-31'),
 
 (5, 'capa-semantica-bi', 'Un solo significado para cada número',
  'Un solo lugar donde vive la definición de "cliente activo"',
@@ -140,57 +140,57 @@ VALUES
  'Las juntas de resultados dejaron de empezar con una discusión sobre de dónde salió el número.',
  'Analytics Engineer', 'Retail y servicios',
  NULL, NULL, NULL,
- 'md', 0, 1, 0, '2023-01-10', '2023-06-30', 50);
+ 'md', 0, 1, 0, '2023-01-10', '2023-06-30');
 
 -- ------------------------------------------------------------
 --  project_technologies
 -- ------------------------------------------------------------
-INSERT INTO `project_technologies` (`project_id`, `technology_id`, `sort_order`) VALUES
-(1, 6, 10), (1, 7, 20), (1, 8, 30), (1, 1, 40), (1, 15, 50),
-(2, 10, 10), (2, 9, 20), (2, 1, 30), (2, 11, 40),
-(3, 7, 10), (3, 1, 20), (3, 2, 30), (3, 13, 40),
-(4, 4, 10), (4, 2, 20), (4, 14, 30), (4, 12, 40),
-(5, 8, 10), (5, 2, 20), (5, 16, 30);
+INSERT INTO `project_technologies` (`project_id`, `technology_id`) VALUES
+(1, 6), (1, 7), (1, 8), (1, 1), (1, 15),
+(2, 10), (2, 9), (2, 1), (2, 11),
+(3, 7), (3, 1), (3, 2), (3, 13),
+(4, 4), (4, 2), (4, 14), (4, 12),
+(5, 8), (5, 2), (5, 16);
 
 -- ------------------------------------------------------------
 --  project_metrics
 -- ------------------------------------------------------------
-INSERT INTO `project_metrics` (`project_id`, `label`, `value`, `unit`, `sort_order`) VALUES
-(1, 'Tiendas integradas',    '120',  '',      10),
-(1, 'Latencia de reporte',   '15',   'min',   20),
-(1, 'Modelos dbt',           '64',   '',      30),
-(2, 'Sensores en línea',     '4,500','',      10),
-(2, 'Eventos por minuto',    '90',   'K',     20),
-(2, 'Adelanto de alerta',    '40',   'min',   30),
-(3, 'Tablas monitoreadas',   '32',   '',      10),
-(3, 'Detección media',       '20',   'min',   20),
-(4, 'Histórico migrado',     '11',   'años',  10),
-(4, 'Ventana de corte',      '4',    'h',     20),
-(4, 'Ahorro en infra',       '-38',  '%',     30),
-(5, 'Métricas estandarizadas','60',  '',      10);
+INSERT INTO `project_metrics` (`project_id`, `label`, `value`, `unit`) VALUES
+(1, 'Tiendas integradas',    '120',  ''),
+(1, 'Latencia de reporte',   '15',   'min'),
+(1, 'Modelos dbt',           '64',   ''),
+(2, 'Sensores en línea',     '4,500',''),
+(2, 'Eventos por minuto',    '90',   'K'),
+(2, 'Adelanto de alerta',    '40',   'min'),
+(3, 'Tablas monitoreadas',   '32',   ''),
+(3, 'Detección media',       '20',   'min'),
+(4, 'Histórico migrado',     '11',   'años'),
+(4, 'Ventana de corte',      '4',    'h'),
+(4, 'Ahorro en infra',       '-38',  '%'),
+(5, 'Métricas estandarizadas','60',  '');
 
 -- ------------------------------------------------------------
 --  project_pipeline_steps
 --  project_id NULL = pipeline genérico mostrado en el Inicio
 -- ------------------------------------------------------------
-INSERT INTO `project_pipeline_steps` (`project_id`, `label`, `description`, `stage`, `sort_order`) VALUES
-(NULL, 'Ingesta',      'APIs, POS, sensores, archivos planos',       'raw',       10),
-(NULL, 'Staging',      'Datos crudos versionados e inmutables',      'raw',       20),
-(NULL, 'Transformación','Modelado dimensional y pruebas de calidad', 'transform', 30),
-(NULL, 'Capa semántica','Métricas con una sola definición',          'transform', 40),
-(NULL, 'Decisión',     'Tableros y alertas que alguien usa',         'refined',   50),
+INSERT INTO `project_pipeline_steps` (`project_id`, `label`, `description`, `stage`) VALUES
+(NULL, 'Ingesta',      'APIs, POS, sensores, archivos planos',       'raw'),
+(NULL, 'Staging',      'Datos crudos versionados e inmutables',      'raw'),
+(NULL, 'Transformación','Modelado dimensional y pruebas de calidad', 'transform'),
+(NULL, 'Capa semántica','Métricas con una sola definición',          'transform'),
+(NULL, 'Decisión',     'Tableros y alertas que alguien usa',         'refined'),
 
-(1, 'POS de tienda',      'Extracción incremental cada 15 min',      'raw',       10),
-(1, 'Landing BigQuery',   'Particionado por fecha de operación',     'raw',       20),
-(1, 'dbt · staging',      'Normalización y deduplicado',             'transform', 30),
-(1, 'dbt · marts',        'Ventas, inventario y mermas',             'transform', 40),
-(1, 'Power BI',           'Tablero directivo de cierre diario',      'refined',   50),
+(1, 'POS de tienda',      'Extracción incremental cada 15 min',      'raw'),
+(1, 'Landing BigQuery',   'Particionado por fecha de operación',     'raw'),
+(1, 'dbt · staging',      'Normalización y deduplicado',             'transform'),
+(1, 'dbt · marts',        'Ventas, inventario y mermas',             'transform'),
+(1, 'Power BI',           'Tablero directivo de cierre diario',      'refined'),
 
-(2, 'Sensores',           '4,500 dispositivos, 90K eventos/min',     'raw',       10),
-(2, 'Kafka',              'Tópicos por línea de producción',         'raw',       20),
-(2, 'Spark Streaming',    'Ventanas móviles de 5 minutos',           'transform', 30),
-(2, 'Detección',          'Umbrales dinámicos por sensor',           'transform', 40),
-(2, 'Alerta a planta',    'Notificación al equipo de mantenimiento', 'refined',   50);
+(2, 'Sensores',           '4,500 dispositivos, 90K eventos/min',     'raw'),
+(2, 'Kafka',              'Tópicos por línea de producción',         'raw'),
+(2, 'Spark Streaming',    'Ventanas móviles de 5 minutos',           'transform'),
+(2, 'Detección',          'Umbrales dinámicos por sensor',           'transform'),
+(2, 'Alerta a planta',    'Notificación al equipo de mantenimiento', 'refined');
 
 -- ------------------------------------------------------------
 --  services — carrusel de "Servicios"
@@ -198,104 +198,104 @@ INSERT INTO `project_pipeline_steps` (`project_id`, `label`, `description`, `sta
 --  cero nombres de herramientas; el resultado antes que el método.
 -- ------------------------------------------------------------
 INSERT INTO `services`
-(`slug`, `title`, `tagline`, `description`, `deliverables`, `outcome`, `timeframe`, `icon`, `is_featured`, `sort_order`)
+(`slug`, `title`, `tagline`, `description`, `deliverables`, `outcome`, `timeframe`, `icon`, `is_featured`)
 VALUES
 ('paginas-web', 'Páginas web que sí traen clientes',
  'Tu negocio explicado en diez segundos',
  'Diseño y programo tu sitio desde cero: rápido, que se vea bien en el celular y que le diga a quien entra qué haces y por qué vale la pena buscarte. Nada de plantillas que se ven igual a las de todos.',
  JSON_ARRAY('Diseño hecho a tu medida', 'Se ve bien en celular y computadora', 'Formulario de contacto que sí te llega'),
  'Que quien te busque en internet te encuentre y te escriba.',
- '2 a 4 semanas', 'browser', 1, 10),
+ '2 a 4 semanas', 'browser', 1),
 
 ('sistemas-a-medida', 'Sistemas para tu día a día',
  'Cuando la hoja de cálculo ya no da para más',
  'Programo el sistema que tu equipo usa todos los días: registrar clientes, controlar inventario, dar seguimiento a pedidos. Hecho a la medida de cómo trabajas tú, no al revés.',
  JSON_ARRAY('Un usuario y permisos por persona', 'Pantallas simples, sin manual de 40 hojas', 'Acompañamiento a tu equipo las primeras semanas'),
  'Todos trabajan sobre la misma información, sin archivos sueltos.',
- '1 a 3 meses', 'layers', 1, 20),
+ '1 a 3 meses', 'layers', 1),
 
 ('automatizacion', 'Automatizar lo repetitivo',
  'Lo que hoy toma horas, hecho solo',
  'El reporte que alguien arma a mano cada lunes, los correos que se mandan uno por uno, la información que se copia de un lado a otro: todo eso puede hacerse solo y sin errores de dedo.',
  JSON_ARRAY('Reviso contigo cómo se hace hoy', 'Lo dejo corriendo solo y a tiempo', 'Te aviso si algún día falla'),
  'Tu equipo deja de copiar y pegar y vuelve a lo suyo.',
- '1 a 3 semanas', 'bolt', 1, 30),
+ '1 a 3 semanas', 'bolt', 1),
 
 ('orden-en-tu-informacion', 'Orden en tu información',
  'Tus números en un solo lugar',
  'Junto lo que hoy vive disperso —el sistema de ventas, las hojas de cálculo, lo que sigue en papel— en un solo lugar confiable, para que todos lean la misma cifra.',
  JSON_ARRAY('Reviso dónde está hoy cada dato', 'Un solo lugar donde consultarlo', 'Limpieza de duplicados y errores viejos'),
  'Se acaban las juntas que empiezan discutiendo de dónde salió el número.',
- '3 a 6 semanas', 'boxes', 0, 40),
+ '3 a 6 semanas', 'boxes', 0),
 
 ('reportes-y-tableros', 'Reportes que se entienden solos',
  'Saber cómo va el negocio sin pedirle nada a nadie',
  'Armo la pantalla donde ves ventas, gastos o lo que necesites medir: se actualiza sola, se lee desde el celular y está escrita en palabras normales.',
  JSON_ARRAY('Tú eliges qué se mide', 'Se actualiza sin que nadie lo toque', 'Se lee desde el celular'),
  'Decides con los números de hoy, no con el reporte del mes pasado.',
- '2 a 4 semanas', 'chart', 0, 50),
+ '2 a 4 semanas', 'chart', 0),
 
 ('soporte', 'Soporte y acompañamiento',
  'Alguien que conteste cuando algo se cae',
  'Me hago cargo de que lo que ya tienes siga funcionando: respaldos, actualizaciones, seguridad y una persona a quien llamarle cuando algo no prende.',
  JSON_ARRAY('Respaldos automáticos de tu información', 'Revisiones periódicas antes de que falle', 'Atención directa cuando algo se rompe'),
  'Si algo falla, ya hay quien lo levante — y no eres tú.',
- 'Mensual', 'shield', 0, 60);
+ 'Mensual', 'shield', 0);
 
 -- ------------------------------------------------------------
 --  certifications
 -- ------------------------------------------------------------
 INSERT INTO `certifications`
-(`title`, `issuer`, `credential_id`, `credential_url`, `badge_image`, `description`, `issued_on`, `expires_on`, `sort_order`)
+(`title`, `issuer`, `credential_id`, `credential_url`, `badge_image`, `description`, `issued_on`, `expires_on`)
 VALUES
 ('Professional Data Engineer', 'Google Cloud', 'GCP-PDE-000000', 'https://www.credential.net/', NULL,
- 'Diseño de sistemas de datos, pipelines y modelos operables en Google Cloud.', '2024-06-18', '2027-06-18', 10),
+ 'Diseño de sistemas de datos, pipelines y modelos operables en Google Cloud.', '2024-06-18', '2027-06-18'),
 ('Azure Data Fundamentals (DP-900)', 'Microsoft', 'MS-DP900-000000', 'https://learn.microsoft.com/', NULL,
- 'Fundamentos de datos relacionales, no relacionales y analítica en Azure.', '2023-11-02', NULL, 20),
+ 'Fundamentos de datos relacionales, no relacionales y analítica en Azure.', '2023-11-02', NULL),
 ('dbt Analytics Engineering', 'dbt Labs', 'DBT-AE-000000', 'https://www.getdbt.com/', NULL,
- 'Modelado, pruebas y documentación de transformaciones con dbt.', '2023-07-14', NULL, 30),
+ 'Modelado, pruebas y documentación de transformaciones con dbt.', '2023-07-14', NULL),
 ('AWS Certified Cloud Practitioner', 'Amazon Web Services', 'AWS-CCP-000000', 'https://aws.amazon.com/certification/', NULL,
- 'Fundamentos de arquitectura, costos y seguridad en AWS.', '2022-09-30', '2025-09-30', 40),
+ 'Fundamentos de arquitectura, costos y seguridad en AWS.', '2022-09-30', '2025-09-30'),
 ('Scrum Foundation Professional', 'CertiProf', 'SFPC-000000', NULL, NULL,
- 'Marco de trabajo ágil aplicado a equipos de datos.', '2022-03-11', NULL, 50),
+ 'Marco de trabajo ágil aplicado a equipos de datos.', '2022-03-11', NULL),
 ('Databricks Lakehouse Fundamentals', 'Databricks', 'DB-LF-000000', NULL, NULL,
- 'Arquitectura lakehouse, Delta Lake y gobierno de datos.', '2024-01-25', NULL, 60);
+ 'Arquitectura lakehouse, Delta Lake y gobierno de datos.', '2024-01-25', NULL);
 
 -- ------------------------------------------------------------
 --  experiences
 -- ------------------------------------------------------------
 INSERT INTO `experiences`
-(`id`, `company`, `role`, `location`, `employment_type`, `company_url`, `summary`, `started_on`, `ended_on`, `is_current`, `sort_order`)
+(`id`, `company`, `role`, `location`, `employment_type`, `company_url`, `summary`, `started_on`, `ended_on`)
 VALUES
 (1, 'Grupo Datalab', 'Data Engineer Senior', 'Guadalajara, MX', 'tiempo_completo', NULL,
  'Responsable de la plataforma de datos: ingesta, modelado, orquestación y calidad para las áreas comercial y de operaciones.',
- '2024-01-15', NULL, 1, 10),
+ '2024-01-15', NULL),
 (2, 'Sistemas Norte', 'Data Engineer', 'Remoto', 'tiempo_completo', NULL,
  'Construcción de pipelines batch y streaming para clientes de manufactura y retail.',
- '2022-03-01', '2024-01-10', 0, 20),
+ '2022-03-01', '2024-01-10'),
 (3, 'Consultoría TI Vega', 'Ingeniero de TI', 'Guadalajara, MX', 'tiempo_completo', NULL,
  'Administración de infraestructura, bases de datos y automatización de procesos internos.',
- '2020-06-01', '2022-02-25', 0, 30),
+ '2020-06-01', '2022-02-25'),
 (4, 'Freelance', 'Desarrollador y analista de datos', 'Remoto', 'freelance', NULL,
  'Automatización de reportes y desarrollo web a la medida para pequeñas empresas.',
- '2019-02-01', '2020-05-30', 0, 40);
+ '2019-02-01', '2020-05-30');
 
-INSERT INTO `experience_highlights` (`experience_id`, `description`, `sort_order`) VALUES
-(1, 'Diseñé el data warehouse en BigQuery que hoy consumen 5 áreas de negocio.', 10),
-(1, 'Reduje el tiempo de cierre diario de 10 horas a 15 minutos con ingesta incremental.', 20),
-(1, 'Implementé observabilidad de datos sobre 32 tablas críticas con alertas a Slack.', 30),
-(1, 'Mentoreo a dos analistas en modelado dimensional y buenas prácticas de SQL.', 40),
+INSERT INTO `experience_highlights` (`experience_id`, `description`) VALUES
+(1, 'Diseñé el data warehouse en BigQuery que hoy consumen 5 áreas de negocio.'),
+(1, 'Reduje el tiempo de cierre diario de 10 horas a 15 minutos con ingesta incremental.'),
+(1, 'Implementé observabilidad de datos sobre 32 tablas críticas con alertas a Slack.'),
+(1, 'Mentoreo a dos analistas en modelado dimensional y buenas prácticas de SQL.'),
 
-(2, 'Desarrollé el pipeline de telemetría IoT para 4,500 sensores industriales.', 10),
-(2, 'Migré 11 años de histórico de SQL Server on-premise a PostgreSQL gestionado.', 20),
-(2, 'Estandaricé 60 métricas de negocio en una capa semántica con dbt.', 30),
+(2, 'Desarrollé el pipeline de telemetría IoT para 4,500 sensores industriales.'),
+(2, 'Migré 11 años de histórico de SQL Server on-premise a PostgreSQL gestionado.'),
+(2, 'Estandaricé 60 métricas de negocio en una capa semántica con dbt.'),
 
-(3, 'Administré la infraestructura de servidores y respaldos de 3 sedes.', 10),
-(3, 'Automaticé reportes operativos que antes tomaban 12 horas-persona al mes.', 20),
-(3, 'Implementé monitoreo de disponibilidad con alertas y bitácora de incidentes.', 30),
+(3, 'Administré la infraestructura de servidores y respaldos de 3 sedes.'),
+(3, 'Automaticé reportes operativos que antes tomaban 12 horas-persona al mes.'),
+(3, 'Implementé monitoreo de disponibilidad con alertas y bitácora de incidentes.'),
 
-(4, 'Construí tableros de venta y cobranza para 6 clientes pequeños.', 10),
-(4, 'Desarrollé integraciones entre sistemas de facturación y hojas de cálculo.', 20);
+(4, 'Construí tableros de venta y cobranza para 6 clientes pequeños.'),
+(4, 'Desarrollé integraciones entre sistemas de facturación y hojas de cálculo.');
 
 -- ------------------------------------------------------------
 --  contact_messages — ejemplos para la bandeja del panel

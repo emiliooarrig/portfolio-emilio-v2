@@ -27,6 +27,7 @@ $unread = count(array_filter(
         <table class="admin-table">
             <thead>
                 <tr>
+                    <th scope="col" class="admin-table__narrow">ID</th>
                     <th scope="col">Recibido</th>
                     <th scope="col">De</th>
                     <th scope="col">Asunto</th>
@@ -39,6 +40,7 @@ $unread = count(array_filter(
             <tbody>
                 <?php foreach ($messages as $message): ?>
                     <tr<?= (int) $message['is_read'] === 0 ? ' class="is-unread-row"' : '' ?>>
+                        <td class="meta admin-table__narrow"><?= (int) $message['id'] ?></td>
                         <td class="meta"><?= e(date('d/m/Y H:i', (int) strtotime((string) $message['created_at']))) ?></td>
 
                         <td>
@@ -66,21 +68,34 @@ $unread = count(array_filter(
                         </td>
 
                         <td>
+                            <?php
+                                $about  = ' el mensaje de ' . $message['name'];
+                                $isRead = (int) $message['is_read'] === 1;
+                                $toggle = $isRead ? 'Marcar como nuevo' : 'Marcar como leído';
+                            ?>
                             <span class="admin-row-actions">
-                                <a class="admin-row-actions__edit" href="<?= url('/admin/mensajes/' . (int) $message['id']) ?>">
-                                    Leer<span class="visually-hidden"> el mensaje de <?= e($message['name']) ?></span>
+                                <a class="admin-row-actions__action admin-row-actions__action--edit"
+                                   href="<?= url('/admin/mensajes/' . (int) $message['id']) ?>"
+                                   title="Leer<?= e($about) ?>" aria-label="Leer<?= e($about) ?>">
+                                    <?= partial('admin-icon', ['name' => 'eye']) ?>
                                 </a>
 
                                 <?php // Marcar es escribir, así que va por POST y con token. ?>
                                 <form method="post" action="<?= url('/admin/mensajes/' . (int) $message['id'] . '/leido') ?>">
                                     <input type="hidden" name="_token" value="<?= e($token) ?>">
-                                    <button class="admin-row-actions__toggle" type="submit">
-                                        <?= (int) $message['is_read'] === 1 ? 'Marcar nuevo' : 'Marcar leído' ?>
+                                    <button class="admin-row-actions__action" type="submit"
+                                            title="<?= e($toggle . $about) ?>" aria-label="<?= e($toggle . $about) ?>">
+                                        <?= partial('admin-icon', ['name' => $isRead ? 'undo' : 'check']) ?>
                                     </button>
                                 </form>
 
-                                <a class="admin-row-actions__delete" href="<?= url('/admin/mensajes/' . (int) $message['id'] . '/eliminar') ?>">
-                                    Borrar<span class="visually-hidden"> el mensaje de <?= e($message['name']) ?></span>
+                                <a class="admin-row-actions__action admin-row-actions__action--delete"
+                                   href="<?= url('/admin/mensajes/' . (int) $message['id'] . '/eliminar') ?>"
+                                   title="Borrar<?= e($about) ?>" aria-label="Borrar<?= e($about) ?>"
+                                   data-confirm
+                                   data-confirm-title="¿Borrar el mensaje de «<?= e($message['name']) ?>»?"
+                                   data-confirm-text="Se borra el mensaje y su contenido. No hay deshacer.">
+                                    <?= partial('admin-icon', ['name' => 'trash']) ?>
                                 </a>
                             </span>
                         </td>

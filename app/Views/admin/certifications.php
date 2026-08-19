@@ -25,7 +25,7 @@
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th scope="col" class="admin-table__narrow">#</th>
+                    <th scope="col" class="admin-table__narrow">ID</th>
                     <th scope="col">Certificación</th>
                     <th scope="col">Emisor</th>
                     <th scope="col">Emitida</th>
@@ -38,7 +38,7 @@
             <tbody>
                 <?php foreach ($certifications as $cert): ?>
                     <tr<?= (int) $cert['is_published'] === 1 ? '' : ' class="is-hidden-row"' ?>>
-                        <td class="meta admin-table__narrow"><?= (int) $cert['sort_order'] ?></td>
+                        <td class="meta admin-table__narrow"><?= (int) $cert['id'] ?></td>
 
                         <td class="admin-table__wide"><strong><?= e($cert['title']) ?></strong></td>
 
@@ -68,9 +68,10 @@
 
                         <td>
                             <?= partial('admin-row-actions', [
-                                'edit'      => '/admin/certificaciones/' . (int) $cert['id'] . '/editar',
-                                'delete'    => '/admin/certificaciones/' . (int) $cert['id'] . '/eliminar',
-                                'editLabel' => (string) $cert['title'],
+                                'edit'        => '/admin/certificaciones/' . (int) $cert['id'] . '/editar',
+                                'delete'      => '/admin/certificaciones/' . (int) $cert['id'] . '/eliminar',
+                                'name'        => (string) $cert['title'],
+                                'confirmText' => 'Desaparece del muro de certificaciones. No hay deshacer.',
                             ]) ?>
                         </td>
                     </tr>

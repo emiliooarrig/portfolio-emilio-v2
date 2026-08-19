@@ -10,7 +10,8 @@
  */
 
 // El nombre entra palabra por palabra: cada una lleva su índice de retardo.
-$words = preg_split('/\s+/u', trim((string) $profile['full_name'])) ?: [];
+$fullName = trim((string) $profile['full_name']);
+$words    = preg_split('/\s+/u', $fullName) ?: [];
 ?>
 <section class="hero" id="inicio">
 
@@ -21,9 +22,12 @@ $words = preg_split('/\s+/u', trim((string) $profile['full_name'])) ?: [];
     </div>
 
     <div class="hero__inner">
-        <h1 class="hero__name">
+        <?php // `data-text` duplica la palabra en un ::after: es la capa ámbar que
+              // el pincel descubre bajo el puntero. El aria-label deja el nombre
+              // en una sola pieza para el lector de pantalla, sin la repetición. ?>
+        <h1 class="hero__name" aria-label="<?= e($fullName) ?>" data-hero-brush>
             <?php foreach ($words as $index => $word): ?>
-                <span class="hero__word" style="--word-index: <?= $index ?>"><?= e($word) ?></span>
+                <span class="hero__word" style="--word-index: <?= $index ?>" data-text="<?= e($word) ?>"><?= e($word) ?></span>
             <?php endforeach; ?>
         </h1>
 

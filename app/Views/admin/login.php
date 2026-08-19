@@ -10,6 +10,13 @@
  * @var array<string, mixed> $profile
  */
 ?>
+<?php // Lo que traiga el intento anterior sale como alerta sobre la tarjeta. ?>
+<?php if ($error): ?>
+    <?= partial('alert', ['type' => 'error', 'text' => $error]) ?>
+<?php elseif ($notice): ?>
+    <?= partial('alert', ['type' => 'success', 'text' => $notice]) ?>
+<?php endif; ?>
+
 <div class="auth__card">
 
     <div class="auth__brand">
@@ -27,11 +34,6 @@
     <h1 class="auth__title">Panel de administración</h1>
     <p class="auth__lead">Entra con tu usuario para editar el contenido del sitio.</p>
 
-    <?php if ($error): ?>
-        <p class="flash flash--error" role="alert"><?= e($error) ?></p>
-    <?php elseif ($notice): ?>
-        <p class="flash flash--success" role="status"><?= e($notice) ?></p>
-    <?php endif; ?>
 
     <form class="form" method="post" action="<?= url('/admin/login') ?>" novalidate>
         <input type="hidden" name="_token" value="<?= e($token) ?>">

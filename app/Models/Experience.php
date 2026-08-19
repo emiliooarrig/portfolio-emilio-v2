@@ -10,6 +10,24 @@ use App\Core\Model;
 class Experience extends Model
 {
     /**
+     * Del más reciente al más antiguo, por el intervalo del puesto.
+     *
+     * El que sigue en marcha no tiene fecha de fin, así que cuenta como que
+     * termina hoy y encabeza el timeline. `started_on` desempata dos puestos
+     * que acabaron el mismo día.
+     */
+    private const RECENT_FIRST = 'COALESCE(ended_on, CURDATE()) DESC, started_on DESC, id DESC';
+
+    /**
+     * «Sigue en marcha» no se guarda: es no tener fecha de fin.
+     *
+     * Guardarlo aparte (la vieja columna `is_current`) era repetir el mismo
+     * hecho en dos sitios, y dos sitios se pueden contradecir: un puesto
+     * marcado como actual con fecha de fin dejaba el timeline mintiendo.
+     */
+    private const IS_CURRENT = '(ended_on IS NULL) AS is_current';
+
+    /**
      * Experiencias publicadas con sus logros ya hidratados.
      *
      * @return array<int, array<string, mixed>>
@@ -17,10 +35,10 @@ class Experience extends Model
     public function published(?int $limit = null): array
     {
         $sql = 'SELECT id, company, role, location, employment_type, company_url,
-                       summary, started_on, ended_on, is_current
+                       summary, started_on, ended_on, ' . self::IS_CURRENT . '
                   FROM experiences
                  WHERE is_published = 1
-              ORDER BY sort_order ASC, started_on DESC';
+              ORDER BY ' . self::RECENT_FIRST;
 
         $params = [];
 
@@ -56,7 +74,7 @@ class Experience extends Model
         return $this->one(
             'SELECT company, role, started_on
                FROM experiences
-              WHERE is_published = 1 AND is_current = 1
+              WHERE is_published = 1 AND ended_on IS NULL
            ORDER BY started_on DESC
               LIMIT 1'
         );
@@ -96,7 +114,7 @@ class Experience extends Model
             "SELECT experience_id, description
                FROM experience_highlights
               WHERE experience_id IN ($placeholders)
-           ORDER BY sort_order ASC, id ASC",
+           ORDER BY id ASC",
             $experienceIds
         );
 
@@ -123,11 +141,10 @@ class Experience extends Model
     {
         return $this->all(
             'SELECT e.id, e.company, e.role, e.location, e.employment_type, e.company_url,
-                    e.summary, e.started_on, e.ended_on, e.is_current, e.is_published,
-                    e.sort_order,
+                    e.summary, e.started_on, e.ended_on, e.is_published, ' . self::IS_CURRENT . ',
                     (SELECT COUNT(*) FROM experience_highlights h WHERE h.experience_id = e.id) AS highlight_count
                FROM experiences e
-           ORDER BY e.sort_order ASC, e.started_on DESC'
+           ORDER BY ' . self::RECENT_FIRST
         );
     }
 
@@ -159,7 +176,7 @@ class Experience extends Model
     {
         $rows = $this->all(
             'SELECT description FROM experience_highlights
-              WHERE experience_id = ? ORDER BY sort_order ASC, id ASC',
+              WHERE experience_id = ? ORDER BY id ASC',
             [$id]
         );
 
@@ -209,13 +226,8 @@ class Experience extends Model
             $errors['started_on'] = 'Fecha no válida.';
         }
 
-        $current = (int) ($input['is_current'] ?? 0) === 1;
-
         if ($end !== '' && ! $this->isDate($end)) {
             $errors['ended_on'] = 'Fecha no válida.';
-        } elseif ($current && $end !== '') {
-            // Si sigue vigente, la fecha de fin es la contradicción, no el dato.
-            $errors['ended_on'] = 'Un puesto actual no lleva fecha de fin.';
         } elseif ($end !== '' && $start !== '' && $errors === [] && $end < $start) {
             $errors['ended_on'] = 'El fin no puede ser anterior al inicio.';
         }
@@ -238,8 +250,8 @@ class Experience extends Model
         return $this->db()->execute(
             'INSERT INTO experiences
                 (`company`, `role`, `location`, `employment_type`, `company_url`, `summary`,
-                 `started_on`, `ended_on`, `is_current`, `is_published`, `sort_order`)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                 `started_on`, `ended_on`, `is_published`)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
             $this->columns($input)
         );
     }
@@ -256,7 +268,7 @@ class Experience extends Model
             'UPDATE experiences SET
                 `company` = ?, `role` = ?, `location` = ?, `employment_type` = ?,
                 `company_url` = ?, `summary` = ?, `started_on` = ?, `ended_on` = ?,
-                `is_current` = ?, `is_published` = ?, `sort_order` = ?
+                `is_published` = ?
               WHERE id = ?',
             $params
         );
@@ -278,10 +290,10 @@ class Experience extends Model
     {
         $this->db()->execute('DELETE FROM experience_highlights WHERE experience_id = ?', [$id]);
 
-        foreach (array_values($highlights) as $order => $description) {
+        foreach ($highlights as $description) {
             $this->db()->execute(
-                'INSERT INTO experience_highlights (experience_id, description, sort_order) VALUES (?, ?, ?)',
-                [$id, mb_substr($description, 0, 400), ($order + 1) * 10]
+                'INSERT INTO experience_highlights (experience_id, description) VALUES (?, ?)',
+                [$id, mb_substr($description, 0, 400)]
             );
         }
     }
@@ -292,8 +304,6 @@ class Experience extends Model
      */
     private function columns(array $input): array
     {
-        $current = (int) ($input['is_current'] ?? 0);
-
         return [
             $this->fit((string) ($input['company'] ?? ''), 140),
             $this->fit((string) ($input['role'] ?? ''), 140),
@@ -302,12 +312,10 @@ class Experience extends Model
             $this->fit((string) ($input['company_url'] ?? ''), 255),
             $this->nullify((string) ($input['summary'] ?? '')),
             $this->nullify((string) ($input['started_on'] ?? '')),
-            // Actual manda: NULL en `ended_on` es lo que la landing lee como
-            // "Actual", y guardar las dos cosas dejaría el timeline mintiendo.
-            $current === 1 ? null : $this->nullify((string) ($input['ended_on'] ?? '')),
-            $current,
+            // Sin fecha de fin es lo que la landing lee como "Actual": no hay
+            // nada más que guardar para decirlo.
+            $this->nullify((string) ($input['ended_on'] ?? '')),
             (int) ($input['is_published'] ?? 0),
-            (int) ($input['sort_order'] ?? 0),
         ];
     }
 }
