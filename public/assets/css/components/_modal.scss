@@ -40,7 +40,7 @@
   max-height: min(90vh, 64rem);
   background: var(--color-sheet);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-overlay);
+  box-shadow: var(--shadow-float);
   overflow: hidden;
 
   &:focus-visible {
@@ -155,7 +155,7 @@
 }
 
 .project-detail__metric-value {
-  color: var(--color-signal);
+  color: var(--color-cobalt);
   font-size: var(--text-xl);
   font-weight: var(--weight-semibold);
   font-stretch: var(--stretch-heading);
@@ -180,10 +180,10 @@
   letter-spacing: 0;
 }
 
-// El resultado es el único acento del cuerpo.
+// El resultado se marca con una regla de tinta.
 .project-block--outcome {
   padding-left: var(--space-5);
-  border-left: 2px solid var(--color-signal);
+  border-left: 2px solid var(--color-ink);
 
   .prose {
     color: var(--color-ink);

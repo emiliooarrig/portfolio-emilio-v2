@@ -6,6 +6,7 @@
 import { initScrollSpy } from './scroll-spy.js';
 import { initProjectModal } from './project-modal.js';
 import { initAlerts } from './alerts.js';
+import { initTheme } from './theme.js';
 
 /**
  * Menú de navegación en móvil.
@@ -145,6 +146,7 @@ function initAnchors() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initNav();
     initHeroName();
     initScrollChrome();

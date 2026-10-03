@@ -35,15 +35,16 @@ $description = $openProject
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($title) ?></title>
     <meta name="description" content="<?= e($description) ?>">
-    <meta name="theme-color" content="#F7F8F9" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
+    <?php // Tema antes de pintar nada: claro salvo que se haya elegido oscuro
+          // con el botón (no sigue al sistema). Sin esto, recargar en oscuro
+          // destella en claro. El mismo script marca `js`: los estados ocultos
+          // (nombre del hero, apariciones) sólo existen si hay JS que los revele. ?>
+    <meta name="theme-color" content="#F5F6F8">
+    <script>(function(){var t='light';try{if(localStorage.getItem('theme')==='dark')t='dark'}catch(e){}var d=document.documentElement;d.dataset.theme=t;if(t==='dark')document.querySelector('meta[name="theme-color"]').content='#0E1014';d.classList.add('js');})();</script>
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="<?= e($title) ?>">
     <meta property="og:description" content="<?= e($description) ?>">
-
-    <?php // Marca `js` antes de pintar: el nombre del hero nace oculto sólo si hay JS que lo asiente. ?>
-    <script>document.documentElement.classList.add('js');</script>
 
     <?php // Mona Sans se sirve desde el propio dominio y se precarga: el CSS la
           // descubre tarde y el nombre del hero es lo primero que se pinta.

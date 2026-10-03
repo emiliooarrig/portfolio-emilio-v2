@@ -143,3 +143,63 @@
     flex: none;
   }
 }
+
+// ------------------------------------------------------------
+//  Botón de tema: luna en claro, sol en oscuro. Al cambiar, el icono
+//  gira 90° y cruza el fundido. Sin JS no se muestra.
+// ------------------------------------------------------------
+.theme-toggle {
+  position: relative;
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--color-ink);
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  &:hover {
+    background: var(--color-sheet-hover);
+  }
+}
+
+.js .theme-toggle {
+  display: grid;
+}
+
+.theme-toggle__icon {
+  grid-area: 1 / 1;
+  transition:
+    transform var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+.theme-toggle__icon--sun,
+[data-theme='dark'] .theme-toggle__icon--moon {
+  opacity: 0;
+  transform: rotate(-90deg);
+}
+
+[data-theme='dark'] .theme-toggle__icon--sun {
+  opacity: 1;
+  transform: none;
+}
+
+// El tema nuevo se revela en un círculo que crece desde el botón
+// (`theme.js` pone el centro y el radio). Sólo durante ese cambio: el
+// modal usa también View Transitions y no debe heredarlo.
+.is-theme-switching::view-transition-old(root) {
+  animation: none;
+}
+
+.is-theme-switching::view-transition-new(root) {
+  animation: theme-reveal 600ms var(--ease-in-out);
+}
+
+@keyframes theme-reveal {
+  from { clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 0)); }
+  to   { clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 0)); }
+}

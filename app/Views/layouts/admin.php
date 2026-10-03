@@ -26,8 +26,11 @@ $title = $pageTitle !== '' ? $pageTitle . ' · Panel' : 'Panel';
     <title><?= e($title) ?></title>
     <?php // El panel no se indexa ni se comparte: no es parte del sitio público. ?>
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#F7F8F9" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
+    <?php // Tema antes de pintar nada: claro salvo que se haya elegido oscuro
+          // con el botón (no sigue al sistema). Sin esto, recargar en oscuro
+          // destella en claro. ?>
+    <meta name="theme-color" content="#F5F6F8">
+    <script>(function(){var t='light';try{if(localStorage.getItem('theme')==='dark')t='dark'}catch(e){}var d=document.documentElement;d.dataset.theme=t;if(t==='dark')document.querySelector('meta[name="theme-color"]').content='#0E1014';})();</script>
 
     <link rel="preload" href="<?= url('/assets/fonts/mona-sans.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">

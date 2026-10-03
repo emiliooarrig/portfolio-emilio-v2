@@ -1,8 +1,7 @@
 // ============================================================
 //  _cta.scss — botones
 //
-//  Tinta sobre papel. El verde señal no se usa en botones: significa
-//  "funciona", no "haz clic".
+//  El primario es cobalto: el color de marca es también el de la acción.
 // ============================================================
 
 @use '../tokens' as *;
@@ -47,11 +46,11 @@
   }
 
   &--primary {
-    background: var(--color-ink);
-    color: var(--color-paper);
+    background: var(--color-cobalt-fill);
+    color: var(--color-on-cobalt);
 
     &:hover {
-      background: var(--color-ink-hover);
+      background: var(--color-cobalt-fill-hover);
     }
   }
 
@@ -75,7 +74,7 @@
   // Peligro: sólo el botón que confirma un borrado en el panel.
   &--danger {
     background: var(--color-danger);
-    color: var(--color-sheet); // blanco en el tema claro
+    color: var(--color-on-cobalt);
 
     &:hover {
       background: var(--color-danger);
@@ -84,8 +83,7 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .cta--danger {
-    color: var(--color-paper);
-  }
+// En oscuro el rojo se aclara: el texto pasa a la tinta del papel.
+[data-theme='dark'] .cta--danger {
+  color: var(--color-paper);
 }

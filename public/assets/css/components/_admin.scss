@@ -3,7 +3,7 @@
 //
 //  El panel es una herramienta, no una página del sitio: barra lateral
 //  fija, una pantalla por sección y tablas densas. Sigue siendo el mismo
-//  sistema visual (papel, tinta y la señal verde para lo que importa), con
+//  sistema visual (neutros y el cobalto para lo que importa), con
 //  la densidad al alza — aquí se viene a leer datos, no a ser seducido.
 //
 //  Sin JS: la lateral se convierte en una tira de pestañas en pantallas
@@ -169,7 +169,7 @@
     color: var(--color-ink);
   }
 
-  // La pantalla en la que estás: fondo de fila y el icono en verde señal.
+  // La pantalla en la que estás: fondo de fila y el icono en cobalto.
   &.is-active {
     background: var(--color-sheet-hover);
     color: var(--color-ink);
@@ -177,7 +177,7 @@
   }
 
   &.is-active .admin__link-icon {
-    color: var(--color-signal);
+    color: var(--color-cobalt);
   }
 
   &:hover .admin__link-icon {
@@ -341,7 +341,7 @@
 }
 
 .admin-stat__value {
-  color: var(--color-signal);
+  color: var(--color-cobalt);
   font-family: var(--font-sans);
   font-size: var(--text-xl);
   line-height: 1;
@@ -441,9 +441,9 @@
     color: var(--color-ink-faint);
   }
 
-  // Sin leer: una marca verde en el canto, no un fondo que grite.
+  // Sin leer: una marca cobalto en el canto, no un fondo que grite.
   .is-unread-row td:first-child {
-    box-shadow: inset 2px 0 0 var(--color-signal);
+    box-shadow: inset 2px 0 0 var(--color-cobalt);
   }
 
   // Campo/valor (perfil): la clave manda a la izquierda.
@@ -521,9 +521,9 @@ a.admin-table__sub {
   white-space: nowrap;
 
   &--on {
-    border-color: var(--color-signal);
-    background: var(--color-signal-soft);
-    color: var(--color-success);
+    border-color: var(--color-status);
+    background: var(--color-status-soft);
+    color: var(--color-status);
   }
 
   &--off {
@@ -633,7 +633,7 @@ a.admin-table__sub {
   flex: 0 0 auto;
   width: 1.15rem;
   height: 1.15rem;
-  accent-color: var(--color-signal);
+  accent-color: var(--color-cobalt);
   cursor: pointer;
 }
 

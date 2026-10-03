@@ -1,7 +1,7 @@
 // ============================================================
 //  tokens.scss — fuente de verdad del sistema visual
-//  Línea: modern minimal. Papel y tinta; un solo color con
-//  significado (la señal verde: "esto funciona").
+//  Línea: modern minimal con identidad (v3.1). Neutros limpios y un
+//  azul cobalto saturado como color de marca.
 // ============================================================
 
 // ------------------------------------------------------------
@@ -48,7 +48,7 @@ $bp-desktop: 75rem;   // 1200px
 }
 
 @mixin focus-ring {
-  outline: 2px solid var(--color-signal);
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
 }
 
@@ -72,70 +72,106 @@ $bp-desktop: 75rem;   // 1200px
 }
 
 // ------------------------------------------------------------
-//  Color — tema claro por defecto, oscuro automático
+//  Color — claro por defecto; el oscuro sólo con el botón
+//  (`data-theme` en <html>, lo pone el script del <head>). No sigue
+//  al sistema. Neutros con un matiz frío casi imperceptible; el
+//  cobalto es lo único saturado.
+//
+//  Dónde aparece el cobalto (y sólo ahí): botón primario, relleno de
+//  las filas de proyecto en hover, cursor, la cinta bajo el hero, la
+//  sección "Cómo trabajo" a sangre, las métricas, el foco de teclado y
+//  el motivo generativo. El verde queda sólo como `--color-status`
+//  (punto de disponibilidad y éxito).
 // ------------------------------------------------------------
-:root {
-  color-scheme: light dark;
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
 
-  // --- Papel ---------------------------------------------------
-  --color-paper:       #F7F8F9; // fondo de la página
-  --color-sheet:       #FFFFFF; // modal, alertas, superficies del panel
-  --color-sheet-hover: #F0F2F4; // fila en hover
-  --color-field:       #FFFFFF; // inputs
+  --color-paper:       #F5F6F8;
+  --color-sheet:       #FFFFFF;
+  --color-sheet-hover: #ECEEF2;
+  --color-field:       #FFFFFF;
 
-  // --- Tinta ---------------------------------------------------
-  --color-ink:       #14171C; // texto principal y botón primario
-  --color-ink-hover: #2A2F37;
-  --color-ink-soft:  #545B66; // texto secundario (6.4:1 sobre paper)
-  --color-ink-faint: #6B727D; // metadatos (4.6:1 sobre paper)
+  --color-ink:       #0F1115;
+  --color-ink-soft:  #4D5562;
+  --color-ink-faint: #67707D;
 
-  // --- Reglas (líneas) -----------------------------------------
-  --color-rule:        #E3E6EA;
-  --color-rule-strong: #C9CED5;
+  --color-rule:        #DFE2E7;
+  --color-rule-strong: #C3C8D0;
 
-  // --- Señal: "funciona" ---------------------------------------
-  // Único color con significado: disponibilidad, resultados, foco.
-  --color-signal:      #13795B; // 5.0:1 sobre paper
-  --color-signal-soft: #E3F2EC;
+  // Marca
+  --color-cobalt:      #2342E0; // 7.2:1 sobre blanco
+  --color-cobalt-deep: #1A31B0; // hover del primario y fondo de sección
+  --color-cobalt-soft: #E6EBFF;
+  --color-on-cobalt:   #FFFFFF;
 
-  // --- Semánticos (sólo alertas y formularios) -----------------
-  --color-success:      var(--color-signal);
+  // Semánticos: sólo estado y formularios, nunca decoración
+  --color-status:       #13795B; // punto "Disponible", éxito
+  --color-status-soft:  #DDF1E8;
   --color-danger:       #B42318;
   --color-danger-soft:  #FDECEA;
   --color-warning:      #8A5A00;
   --color-warning-soft: #FDF3DC;
 
-  // --- Elevación: sólo capas sobre la página -------------------
-  --shadow-overlay: 0 24px 64px rgba(20, 23, 28, 0.16);
-  --backdrop:       rgba(20, 23, 28, 0.42);
+  --shadow-float: 0 18px 50px rgba(15, 17, 21, 0.18);
+  --backdrop:     rgba(15, 17, 21, 0.45);
+
+  // Acento de interacción (foco, cursor): cobalto, o blanco sobre cobalto
+  --color-accent: var(--color-cobalt);
+
+  // Relleno cobalto con texto blanco (primario, filas, cursor, cinta y
+  // "Cómo trabajo"). En oscuro el cobalto de texto es claro y no aguanta
+  // blanco encima (3.2:1), así que el relleno pasa al profundo.
+  --color-cobalt-fill:       var(--color-cobalt);    // 7.2:1 con blanco
+  --color-cobalt-fill-hover: var(--color-cobalt-deep);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-paper:       #111315;
-    --color-sheet:       #181B1E;
-    --color-sheet-hover: #1F2327;
-    --color-field:       #15181B;
+:root[data-theme='dark'] {
+  color-scheme: dark;
 
-    --color-ink:       #ECEEF0;
-    --color-ink-hover: #FFFFFF;
-    --color-ink-soft:  #A4ABB5;
-    --color-ink-faint: #868E99;
+  --color-paper:       #0E1014;
+  --color-sheet:       #16191F;
+  --color-sheet-hover: #1D2129;
+  --color-field:       #12151A;
 
-    --color-rule:        #262A2F;
-    --color-rule-strong: #3A4047;
+  --color-ink:       #EEF0F4;
+  --color-ink-soft:  #A6AEBA;
+  --color-ink-faint: #858E9B;
 
-    --color-signal:      #4CC79A;
-    --color-signal-soft: #15322A;
+  --color-rule:        #252A32;
+  --color-rule-strong: #3A414C;
 
-    --color-danger:       #FF8A7A;
-    --color-danger-soft:  #3A1E1B;
-    --color-warning:      #E8B44C;
-    --color-warning-soft: #33280F;
+  --color-cobalt:      #6B86FF; // 5.9:1 sobre paper oscuro
+  --color-cobalt-deep: #2A3FD0;
+  --color-cobalt-soft: #172045;
+  --color-on-cobalt:   #FFFFFF;
 
-    --shadow-overlay: 0 24px 64px rgba(0, 0, 0, 0.55);
-    --backdrop:       rgba(0, 0, 0, 0.6);
-  }
+  --color-status:       #4CC79A;
+  --color-status-soft:  #15322A;
+  --color-danger:       #FF8A7A;
+  --color-danger-soft:  #3A1E1B;
+  --color-warning:      #E8B44C;
+  --color-warning-soft: #33280F;
+
+  --shadow-float: 0 18px 50px rgba(0, 0, 0, 0.55);
+  --backdrop:     rgba(0, 0, 0, 0.6);
+
+  --color-cobalt-fill:       var(--color-cobalt-deep); // 7.7:1 con blanco
+  --color-cobalt-fill-hover: #3A50E0;                  // 6.2:1 con blanco
+}
+
+/// Tokens redefinidos sobre la superficie cobalto: la sección "Cómo
+/// trabajo" siempre, y el <body> entero mientras se lee (data-surface).
+@mixin on-cobalt {
+  --color-paper:       var(--color-cobalt-fill);
+  --color-sheet:       var(--color-cobalt-fill);
+  --color-sheet-hover: rgba(255, 255, 255, 0.1);
+  --color-ink:         var(--color-on-cobalt);
+  --color-ink-soft:    rgba(255, 255, 255, 0.86);
+  --color-ink-faint:   rgba(255, 255, 255, 0.78);
+  --color-rule:        rgba(255, 255, 255, 0.28);
+  --color-rule-strong: rgba(255, 255, 255, 0.5);
+  --color-accent:      var(--color-on-cobalt);
 }
 
 // ------------------------------------------------------------
