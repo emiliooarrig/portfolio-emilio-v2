@@ -49,6 +49,7 @@ $description = $openProject
     <?php // Mona Sans se sirve desde el propio dominio y se precarga: el CSS la
           // descubre tarde y el nombre del hero es lo primero que se pinta.
           // Sin ?v=: la URL debe ser idéntica a la que pide main.css o se descarga dos veces. ?>
+    <link rel="preload" href="<?= url('/assets/fonts/hubot-sans.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= url('/assets/fonts/mona-sans.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
 </head>

@@ -19,7 +19,9 @@
 }
 
 .section__head {
-  grid-column: 1 / 5;
+  // Cinco columnas: los títulos en Hubot Sans son anchos y una palabra
+  // como "Certificaciones" no debe salirse del riel.
+  grid-column: 1 / 6;
   position: sticky;
   top: calc(var(--nav-height) + var(--space-6));
   align-self: start;
@@ -31,7 +33,10 @@
 }
 
 .section__title {
-  font-size: var(--text-xl);
+  font-size: var(--text-section);
+  hyphens: auto;
+  font-weight: var(--weight-display);
+  line-height: 1.02;
 }
 
 .section__lead {
@@ -41,7 +46,7 @@
 }
 
 .section__body {
-  grid-column: 5 / 13;
+  grid-column: 6 / 13;
   min-width: 0;
 
   @include below($bp-tablet) {

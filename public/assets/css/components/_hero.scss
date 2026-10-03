@@ -4,7 +4,7 @@
 //  La tipografía es la interfaz: el nombre en Mona Sans a gran escala y
 //  ancho expandido, sin fondo, retícula ni decoración. Es el único momento
 //  de movimiento del sitio: al cargar, cada palabra "se asienta" de un ancho
-//  condensado a su ancho final (ver `initHeroName` en main.js).
+//  condensado (75%) a su ancho final (112%) (ver `initHeroName` en main.js).
 //
 //  Excepción consciente a "sólo transform y opacity": animar `font-stretch`
 //  provoca reflow. Se acepta porque ocurre una vez, en un único elemento, y
@@ -22,6 +22,7 @@
 }
 
 .hero__name {
+  font-family: var(--font-display);
   font-size: var(--text-hero);
   font-weight: var(--weight-hero);
   font-stretch: var(--stretch-hero);

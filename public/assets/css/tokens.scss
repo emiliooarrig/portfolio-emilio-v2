@@ -178,7 +178,10 @@ $bp-desktop: 75rem;   // 1200px
 //  Tipografía — una sola familia variable (peso y ancho)
 // ------------------------------------------------------------
 :root {
-  --font-sans: 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  // Cuerpo: Mona Sans. Títulos (nombre del hero, h2, h3, marca del nav):
+  // Hubot Sans, la grotesca hermana, más mecánica y audaz.
+  --font-sans:    'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Hubot Sans', 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
   // Escala ~1.25, base 17px
   --text-xs:   0.8125rem; // 13
@@ -188,6 +191,7 @@ $bp-desktop: 75rem;   // 1200px
   --text-lg:   1.625rem;  // 26
   --text-xl:   2.0625rem; // 33
   --text-2xl:  2.5625rem; // 41
+  --text-section: clamp(2.25rem, 1.5rem + 1.6vw, 2.875rem); // h2 de sección
   --text-hero: clamp(3.25rem, 1.5rem + 8vw, 8.5rem);
 
   --leading-hero:    0.95;
@@ -197,17 +201,19 @@ $bp-desktop: 75rem;   // 1200px
 
   // Mona Sans es variable en peso y en ancho: el ancho es parte del diseño.
   --stretch-body:      100%;
-  --stretch-heading:   108%;
-  --stretch-hero:      118%;
+  --stretch-heading:   105%; // h2 en Hubot Sans
+  --stretch-hero:      112%;
   --stretch-hero-from: 75%;
 
   --weight-regular:  400;
   --weight-medium:   520;
   --weight-semibold: 620;
-  --weight-hero:     680;
+  --weight-display:  750; // h2
+  --weight-title:    650; // h3
+  --weight-hero:     800;
 
-  --tracking-hero:    -0.035em;
-  --tracking-heading: -0.015em;
+  --tracking-hero:    -0.04em;
+  --tracking-heading: -0.02em;
 
   --measure: 66ch; // largo máximo de línea para prosa
 }

@@ -1,4 +1,12 @@
 @font-face {
+  font-family: "Hubot Sans";
+  src: url("../fonts/hubot-sans.woff2") format("woff2-variations"), url("../fonts/hubot-sans.woff2") format("woff2");
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
   font-family: "Mona Sans";
   src: url("../fonts/mona-sans.woff2") format("woff2-variations"), url("../fonts/mona-sans.woff2") format("woff2");
   font-weight: 200 900;
@@ -64,6 +72,7 @@
 
 :root {
   --font-sans: 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Hubot Sans', 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
   --text-base: 1.0625rem;
@@ -71,21 +80,24 @@
   --text-lg: 1.625rem;
   --text-xl: 2.0625rem;
   --text-2xl: 2.5625rem;
+  --text-section: clamp(2.25rem, 1.5rem + 1.6vw, 2.875rem);
   --text-hero: clamp(3.25rem, 1.5rem + 8vw, 8.5rem);
   --leading-hero: 0.95;
   --leading-heading: 1.15;
   --leading-snug: 1.35;
   --leading-body: 1.6;
   --stretch-body: 100%;
-  --stretch-heading: 108%;
-  --stretch-hero: 118%;
+  --stretch-heading: 105%;
+  --stretch-hero: 112%;
   --stretch-hero-from: 75%;
   --weight-regular: 400;
   --weight-medium: 520;
   --weight-semibold: 620;
-  --weight-hero: 680;
-  --tracking-hero: -0.035em;
-  --tracking-heading: -0.015em;
+  --weight-display: 750;
+  --weight-title: 650;
+  --weight-hero: 800;
+  --tracking-hero: -0.04em;
+  --tracking-heading: -0.02em;
   --measure: 66ch;
 }
 
@@ -150,7 +162,8 @@ body.is-locked {
 
 h1, h2, h3, h4 {
   margin: 0;
-  font-weight: var(--weight-semibold);
+  font-family: var(--font-display);
+  font-weight: var(--weight-title);
   font-stretch: var(--stretch-heading);
   letter-spacing: var(--tracking-heading);
   line-height: var(--leading-heading);
@@ -351,7 +364,7 @@ button {
 }
 
 .section__head {
-  grid-column: 1/5;
+  grid-column: 1/6;
   position: sticky;
   top: calc(var(--nav-height) + var(--space-6));
   align-self: start;
@@ -364,7 +377,10 @@ button {
 }
 
 .section__title {
-  font-size: var(--text-xl);
+  font-size: var(--text-section);
+  hyphens: auto;
+  font-weight: var(--weight-display);
+  line-height: 1.02;
 }
 
 .section__lead {
@@ -374,7 +390,7 @@ button {
 }
 
 .section__body {
-  grid-column: 5/13;
+  grid-column: 6/13;
   min-width: 0;
 }
 @media (max-width: 60rem) {
@@ -419,7 +435,8 @@ button {
 }
 
 .site-nav__brand {
-  font-weight: var(--weight-semibold);
+  font-family: var(--font-display);
+  font-weight: var(--weight-display);
   font-stretch: var(--stretch-heading);
   letter-spacing: var(--tracking-heading);
   white-space: nowrap;
@@ -654,6 +671,7 @@ button {
 }
 
 .hero__name {
+  font-family: var(--font-display);
   font-size: var(--text-hero);
   font-weight: var(--weight-hero);
   font-stretch: var(--stretch-hero);

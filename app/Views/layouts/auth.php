@@ -27,6 +27,7 @@ $title = $pageTitle !== '' ? $pageTitle . ' — ' . $profile['full_name'] : (str
     <meta name="theme-color" content="#F5F6F8">
     <script>(function(){var t='light';try{if(localStorage.getItem('theme')==='dark')t='dark'}catch(e){}var d=document.documentElement;d.dataset.theme=t;if(t==='dark')document.querySelector('meta[name="theme-color"]').content='#0E1014';})();</script>
 
+    <link rel="preload" href="<?= url('/assets/fonts/hubot-sans.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= url('/assets/fonts/mona-sans.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
 </head>

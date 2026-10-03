@@ -54,7 +54,7 @@ function initNav() {
  * a su ancho final, una sola vez, al cargar. Es el único momento de
  * movimiento del sitio (ver `_hero.scss`).
  *
- * Se espera a Mona Sans para no animar la fuente de respaldo; si no llega
+ * Se espera a Hubot Sans para no animar la fuente de respaldo; si no llega
  * a tiempo, se muestra el estado final sin animar.
  */
 function initHeroName() {
@@ -74,7 +74,7 @@ function initHeroName() {
 
     const timeout = new Promise((resolve) => setTimeout(resolve, 1200, 'timeout'));
 
-    Promise.race([document.fonts.load('680 1em "Mona Sans"'), timeout])
+    Promise.race([document.fonts.load('800 1em "Hubot Sans"'), timeout])
         .then((result) => {
             name.classList.add(result === 'timeout' ? 'is-set' : 'is-animating');
         })

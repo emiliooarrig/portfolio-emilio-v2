@@ -1,14 +1,25 @@
 // ============================================================
-//  fonts.scss — Mona Sans, autoalojada
+//  fonts.scss — Hubot Sans (títulos) y Mona Sans (cuerpo), autoalojadas
 //
-//  Una sola cara variable cubre todo el sitio: peso (wght 200–900) y
-//  ancho (wdth 75–125). Al declarar `font-stretch` como rango, la propiedad
-//  CSS `font-stretch` mueve el eje de ancho directamente — y degrada bien
+//  Dos caras variables de la misma casa (GitHub, SIL OFL), las dos con
+//  peso (wght 200–900) y ancho (wdth 75–125). Al declarar `font-stretch`
+//  como rango, la propiedad CSS `font-stretch` mueve el eje de ancho directamente — y degrada bien
 //  con la fuente de respaldo, cosa que `font-variation-settings` no hace.
 //
 //  Sin el archivo, la página cae en `system-ui` y sigue legible
 //  (ver `public/assets/fonts/README.md`).
 // ============================================================
+
+@font-face {
+  font-family: 'Hubot Sans';
+  src:
+    url('../fonts/hubot-sans.woff2') format('woff2-variations'),
+    url('../fonts/hubot-sans.woff2') format('woff2');
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+  font-style: normal;
+  font-display: swap;
+}
 
 @font-face {
   font-family: 'Mona Sans';

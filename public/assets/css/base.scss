@@ -43,7 +43,8 @@ body {
 
 h1, h2, h3, h4 {
   margin: 0;
-  font-weight: var(--weight-semibold);
+  font-family: var(--font-display);
+  font-weight: var(--weight-title);
   font-stretch: var(--stretch-heading);
   letter-spacing: var(--tracking-heading);
   line-height: var(--leading-heading);
