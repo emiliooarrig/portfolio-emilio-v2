@@ -98,6 +98,8 @@ $description = $openProject
     <?= partial('alert', ['type' => $flash['type'], 'text' => $flash['text']]) ?>
 <?php endif; ?>
 
-<script type="module" src="<?= asset('js/main.js') ?>"></script>
+<?php // Si el módulo no llega a cargar, se retira `js`: los estados ocultos
+      // (apariciones, nombre del hero) se muestran como sin JavaScript. ?>
+<script type="module" src="<?= asset('js/main.js') ?>" onerror="document.documentElement.classList.remove('js')"></script>
 </body>
 </html>

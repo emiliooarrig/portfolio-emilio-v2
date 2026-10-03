@@ -31,6 +31,22 @@ body {
   margin: 0;
   background: var(--color-paper);
   color: var(--color-ink);
+  transition-property:
+    --color-paper, --color-sheet-hover, --color-ink, --color-ink-soft,
+    --color-ink-faint, --color-rule, --color-rule-strong, --color-accent;
+  transition-duration: var(--duration-surface);
+  transition-timing-function: var(--ease-out);
+
+  // El cambio de tema lo anima su propia View Transition: aquí no.
+  .is-theme-switching & {
+    transition: none;
+  }
+
+  // Mientras se lee "Cómo trabajo", la página entera se vuelve cobalto
+  // (`scroll-reveal.js` alterna el atributo).
+  &[data-surface='cobalt'] {
+    @include on-cobalt;
+  }
   font-size: var(--text-base);
   font-stretch: var(--stretch-body);
   line-height: var(--leading-body);

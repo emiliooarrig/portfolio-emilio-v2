@@ -14,6 +14,15 @@
   scroll-margin-top: var(--nav-height);
 }
 
+// "Cómo trabajo": cobalto a sangre por sí misma, así se ve igual sin JS.
+// Con JS, al entrar en ella la página entera se vuelve cobalto.
+.section--cobalt {
+  @include on-cobalt;
+
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
 .section__grid {
   @include section-grid;
 }

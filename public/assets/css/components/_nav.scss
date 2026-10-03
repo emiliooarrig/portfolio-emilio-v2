@@ -13,6 +13,7 @@
   height: var(--nav-height);
   background: var(--color-paper);
   border-bottom: 1px solid transparent;
+  // El fondo funde solo con la superficie: --color-paper está registrado.
   transition: border-color var(--duration-base) var(--ease-out);
 
   &.is-scrolled {

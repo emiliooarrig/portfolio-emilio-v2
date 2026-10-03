@@ -1,19 +1,117 @@
 // ============================================================
-//  animations.scss — regla global de movimiento reducido
+//  animations.scss — movimiento reutilizable
 //
-//  La línea modern minimal tiene un solo momento de movimiento (el nombre
-//  del hero, en components/_hero.scss); todo lo demás sólo responde a
-//  acciones del usuario. Bajo `prefers-reduced-motion` cualquier transición
-//  o animación que quede se vuelve instantánea.
+//  Intensidad media, siempre con `transform` y `opacity` (la única
+//  excepción documentada es el ancho del nombre del hero). Todo tiene
+//  versión sin movimiento y todo se ve completo sin JS: los estados
+//  ocultos sólo existen bajo `html.js`.
 // ============================================================
 
 @use 'tokens' as *;
 
+:root {
+  --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-fill:   cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-reveal: 600ms;
+  --duration-line:   700ms;
+  --duration-fill:   450ms;
+  --duration-surface: 600ms;
+  --stagger: 60ms;
+}
+
+// ------------------------------------------------------------
+//  Apariciones al hacer scroll (`scroll-reveal.js` pone .is-revealed)
+//
+//  [data-reveal]        fundido + 24px hacia arriba, escalonado con --i
+//  [data-reveal=line]   máscara de línea: el texto sube desde abajo
+//  [data-reveal=draw]   sólo dibuja la línea que une los pasos
+// ------------------------------------------------------------
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal]:not([data-reveal='line'], [data-reveal='draw']) {
+    transition:
+      opacity var(--duration-reveal) var(--ease-reveal),
+      transform var(--duration-reveal) var(--ease-reveal);
+    transition-delay: calc(var(--i, 0) * var(--stagger));
+
+    &:not(.is-revealed) {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+
+  .js [data-reveal='line'] .reveal-line__inner {
+    transition: transform var(--duration-line) var(--ease-reveal);
+  }
+
+  .js [data-reveal='line']:not(.is-revealed) .reveal-line__inner {
+    transform: translateY(100%);
+  }
+}
+
+// La máscara: el contenedor recorta, el interior es el que sube.
+.reveal-line {
+  display: block;
+  overflow: hidden;
+  // Aire para los descendentes que la máscara cortaría.
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.reveal-line__inner {
+  display: block;
+}
+
+// ------------------------------------------------------------
+//  Parallax con scroll-driven animations. Sin soporte, no hay
+//  parallax y no pasa nada. Desplazamiento máximo: 80px.
+// ------------------------------------------------------------
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__art {
+      animation: parallax-art linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 60vh;
+    }
+
+    .hero__name {
+      animation: parallax-name linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 60vh;
+    }
+
+    .project-detail__cover .pattern__art {
+      transform-box: view-box;
+      transform-origin: center;
+      animation: parallax-cover linear both;
+      animation-timeline: view();
+    }
+  }
+}
+
+// ~0.6× la velocidad del scroll durante el primer tramo, y gira un poco.
+@keyframes parallax-art {
+  to { transform: translateY(80px) rotate(6deg); }
+}
+
+@keyframes parallax-name {
+  to { transform: translateY(-40px); opacity: 0.3; }
+}
+
+@keyframes parallax-cover {
+  from { transform: scale(1.12) translateY(-12px); }
+  to   { transform: scale(1.12) translateY(12px); }
+}
+
+// ------------------------------------------------------------
+//  Movimiento reducido: cualquier transición o animación que quede se
+//  vuelve instantánea.
+// ------------------------------------------------------------
 @include reduced-motion {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }

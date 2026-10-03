@@ -160,6 +160,57 @@ $bp-desktop: 75rem;   // 1200px
   --color-cobalt-fill-hover: #3A50E0;                  // 6.2:1 con blanco
 }
 
+/// Los tokens que cambian al pasar a la superficie cobalto se registran
+/// como colores: así `body` puede hacerles transición y todo el texto
+/// funde a la vez que el fondo, en vez de cambiar de golpe.
+@property --color-paper {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #F5F6F8;
+}
+
+@property --color-sheet-hover {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ECEEF2;
+}
+
+@property --color-ink {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0F1115;
+}
+
+@property --color-ink-soft {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #4D5562;
+}
+
+@property --color-ink-faint {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #67707D;
+}
+
+@property --color-rule {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #DFE2E7;
+}
+
+@property --color-rule-strong {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #C3C8D0;
+}
+
+@property --color-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #2342E0;
+}
+
 /// Tokens redefinidos sobre la superficie cobalto: la sección "Cómo
 /// trabajo" siempre, y el <body> entero mientras se lee (data-surface).
 @mixin on-cobalt {

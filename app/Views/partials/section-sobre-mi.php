@@ -17,7 +17,7 @@ use App\Models\Technology;
         <?= partial('section-header', ['title' => 'Sobre mí']) ?>
 
         <div class="section__body about">
-            <div class="about__bio">
+            <div class="about__bio" data-reveal>
                 <?php if (! empty($profile['bio_short'])): ?>
                     <p class="about__lead"><?= e($profile['bio_short']) ?></p>
                 <?php endif; ?>
@@ -25,7 +25,7 @@ use App\Models\Technology;
                 <div class="prose"><?= paragraphs($profile['bio_long']) ?></div>
             </div>
 
-            <div class="about__facts">
+            <div class="about__facts" data-reveal style="--i: 1">
                 <dl class="facts">
                     <?php if ($currentRole): ?>
                         <div>
@@ -59,8 +59,9 @@ use App\Models\Technology;
                     <h3 class="stack__title">Con qué trabajo</h3>
 
                     <div class="stack__groups">
+                        <?php $index = 0; ?>
                         <?php foreach ($stackByCategory as $category => $items): ?>
-                            <div class="stack__group">
+                            <div class="stack__group" data-reveal style="--i: <?= $index++ ?>">
                                 <h4 class="meta"><?= e(Technology::categoryLabel((string) $category)) ?></h4>
                                 <ul class="tech-list stack__items">
                                     <?php foreach ($items as $tech): ?>

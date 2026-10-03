@@ -27,7 +27,7 @@ $invalid = static function (string $field) use ($errors): string {
 
         <div class="section__body contact">
             <?php if (! empty($profile['email']) || ! empty($profile['linkedin_url']) || ! empty($profile['github_url'])): ?>
-                <ul class="contact__direct" aria-label="Vías directas">
+                <ul class="contact__direct" aria-label="Vías directas" data-reveal>
                     <?php if (! empty($profile['email'])): ?>
                         <li><a href="mailto:<?= e($profile['email']) ?>"><?= e($profile['email']) ?></a></li>
                     <?php endif; ?>
@@ -42,7 +42,7 @@ $invalid = static function (string $field) use ($errors): string {
 
             <?php // El resultado del envío no se pinta aquí: sale como alerta
                   // sobre la página, desde el layout. ?>
-            <form class="form contact__form" method="post" action="<?= url('/contacto') ?>" novalidate>
+            <form class="form contact__form" method="post" action="<?= url('/contacto') ?>" novalidate data-reveal style="--i: 1">
                 <div class="form__row">
                     <label class="form__label" for="name">Nombre</label>
                     <input class="form__input"<?= $invalid('name') ?>

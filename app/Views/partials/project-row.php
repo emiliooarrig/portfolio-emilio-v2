@@ -8,14 +8,16 @@
  *
  * @var array<string, mixed> $project
  * @var bool                 $featured  fila ampliada, con métrica principal
+ * @var int                  $index     posición en el índice (escalonado de la aparición)
  */
 
 $featured = $featured ?? false;
+$index    = (int) ($index ?? 0);
 $period   = date_range($project['started_on'] ?? null, $project['ended_on'] ?? null);
 $metric   = $project['lead_metric'] ?? null;
 ?>
 <?php if ($featured): ?>
-    <article class="project-row project-row--featured" data-project-card>
+    <article class="project-row project-row--featured" data-project-card data-reveal style="--i: <?= $index ?>">
         <?php if ($period !== ''): ?>
             <p class="project-row__period meta"><?= e($period) ?></p>
         <?php endif; ?>
@@ -44,7 +46,7 @@ $metric   = $project['lead_metric'] ?? null;
         <?php endif; ?>
     </article>
 <?php else: ?>
-    <article class="project-row" data-project-card>
+    <article class="project-row" data-project-card data-reveal style="--i: <?= $index ?>">
         <h3 class="project-row__title">
             <a class="project-row__link" href="<?= url('/proyectos/' . $project['slug']) ?>" data-project-link><?= e($project['title']) ?></a>
         </h3>

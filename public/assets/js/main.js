@@ -7,6 +7,8 @@ import { initScrollSpy } from './scroll-spy.js';
 import { initProjectModal } from './project-modal.js';
 import { initAlerts } from './alerts.js';
 import { initTheme } from './theme.js';
+import { initScrollReveal } from './scroll-reveal.js';
+import { initMarquee } from './marquee.js';
 
 /**
  * Menú de navegación en móvil.
@@ -82,7 +84,8 @@ function initHeroName() {
 }
 
 /**
- * La regla bajo el nav aparece al despegarse del hero.
+ * La regla bajo el nav aparece al despegarse del hero, y el indicador de
+ * scroll del hero se retira (`html.is-scrolled`).
  *
  * Un único listener de scroll pasivo, agrupado en requestAnimationFrame:
  * nunca se lee ni se escribe layout dentro del propio evento.
@@ -98,7 +101,10 @@ function initScrollChrome() {
 
     const update = () => {
         ticking = false;
-        nav.classList.toggle('is-scrolled', window.scrollY > 8);
+        const scrolled = window.scrollY > 8;
+
+        nav.classList.toggle('is-scrolled', scrolled);
+        document.documentElement.classList.toggle('is-scrolled', scrolled);
     };
 
     window.addEventListener('scroll', () => {
@@ -150,6 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initNav();
     initHeroName();
     initScrollChrome();
+    initScrollReveal();
+    initMarquee();
     initAnchors();
     initScrollSpy();
     initProjectModal();

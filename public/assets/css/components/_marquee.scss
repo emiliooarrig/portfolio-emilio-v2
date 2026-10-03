@@ -1,0 +1,66 @@
+// ============================================================
+//  _marquee.scss — la cinta cobalto que cierra el hero
+//
+//  Las áreas de trabajo en grande, en bucle. El contenido va duplicado
+//  (la copia con aria-hidden) y la pista se desplaza la mitad de su ancho.
+//  Sólo se mueve con JS (`marquee.js` la acelera al hacer scroll); sin JS
+//  o con movimiento reducido queda estática.
+// ============================================================
+
+@use '../tokens' as *;
+
+.marquee {
+  overflow: hidden;
+  background: var(--color-cobalt-fill);
+  color: var(--color-on-cobalt);
+  // Rompe el contenedor del hero: va de lado a lado.
+  margin-top: var(--space-8);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+}
+
+.marquee__group {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-4) var(--space-6) var(--space-4) 0;
+  margin: 0;
+}
+
+.marquee__item {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-display);
+  font-stretch: var(--stretch-heading);
+  letter-spacing: var(--tracking-heading);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.marquee__sep {
+  display: flex;
+  flex: none;
+}
+
+.marquee__sep svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .marquee__track {
+    animation: marquee 38s linear infinite;
+  }
+
+  .js .marquee:hover .marquee__track {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}

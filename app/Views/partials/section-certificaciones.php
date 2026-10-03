@@ -18,13 +18,13 @@
                 <p class="empty-state">Todavía no hay certificaciones publicadas.</p>
             <?php else: ?>
                 <ul class="row-list">
-                    <?php foreach ($certifications as $cert): ?>
+                    <?php foreach ($certifications as $index => $cert): ?>
                         <?php
                         $verifyLabel = 'Verificar ' . $cert['title']
                             . (! empty($cert['credential_id']) ? ', credencial ' . $cert['credential_id'] : '')
                             . ' (se abre en otra pestaña)';
                         ?>
-                        <li class="cert-row">
+                        <li class="cert-row" data-reveal style="--i: <?= $index ?>">
                             <div>
                                 <h3 class="cert-row__title"><?= e($cert['title']) ?></h3>
                                 <p class="cert-row__issuer"><?= e($cert['issuer']) ?></p>

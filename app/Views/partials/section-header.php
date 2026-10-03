@@ -11,9 +11,11 @@
 $lead = $lead ?? null;
 ?>
 <header class="section__head">
-    <h2 class="section__title"><?= e($title) ?></h2>
+    <?php // Aparece por máscara de línea: el span exterior recorta y el
+          // interior sube (animations.scss). Sin JS se ve tal cual. ?>
+    <h2 class="section__title" data-reveal="line"><span class="reveal-line"><span class="reveal-line__inner"><?= e($title) ?></span></span></h2>
 
     <?php if ($lead): ?>
-        <p class="section__lead"><?= e($lead) ?></p>
+        <p class="section__lead" data-reveal style="--i: 1"><?= e($lead) ?></p>
     <?php endif; ?>
 </header>

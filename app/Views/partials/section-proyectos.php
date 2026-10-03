@@ -24,12 +24,13 @@ $others   = array_filter($projects, static fn (array $p): bool => empty($p['is_f
                 <p class="empty-state">Todavía no hay proyectos publicados.</p>
             <?php else: ?>
                 <div class="row-list">
+                    <?php $index = 0; ?>
                     <?php foreach ($featured as $project): ?>
-                        <?= partial('project-row', ['project' => $project, 'featured' => true]) ?>
+                        <?= partial('project-row', ['project' => $project, 'featured' => true, 'index' => $index++]) ?>
                     <?php endforeach; ?>
 
                     <?php foreach ($others as $project): ?>
-                        <?= partial('project-row', ['project' => $project, 'featured' => false]) ?>
+                        <?= partial('project-row', ['project' => $project, 'featured' => false, 'index' => $index++]) ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>

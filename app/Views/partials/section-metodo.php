@@ -14,7 +14,9 @@ $steps = [
     ['label' => 'Dar seguimiento', 'description' => 'Vuelvo a medir después para confirmar que sigue funcionando.'],
 ];
 ?>
-<section class="section" id="como-trabajo">
+<?php // Cobalto a sangre por sí misma; con JS, al entrar la página entera se
+      // vuelve cobalto (scroll-reveal.js alterna data-surface en <body>). ?>
+<section class="section section--cobalt" id="como-trabajo" data-surface-trigger>
     <div class="container section__grid">
         <?= partial('section-header', [
             'title' => 'Cómo trabajo',

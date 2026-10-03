@@ -17,8 +17,9 @@
 .hero {
   display: grid;
   align-content: end;
-  min-block-size: min(calc(100svh - var(--nav-height)), 56rem);
-  padding-block: var(--space-9) var(--space-8);
+  min-block-size: min(calc(100svh - var(--nav-height)), 60rem);
+  // Sin padding inferior: la cinta cobalto cierra el hero.
+  padding-top: var(--space-9);
 }
 
 .hero__inner {
@@ -141,12 +142,78 @@
 }
 
 .status__dot {
+  position: relative;
   flex: none;
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--color-status);
-  box-shadow: 0 0 0 4px var(--color-status-soft);
+
+  // Halo: estático en general; en el hero late suave (ver abajo).
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: var(--color-status);
+    opacity: 0.22;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero .status__dot::after {
+    animation: status-pulse 2.4s var(--ease-out) infinite;
+  }
+}
+
+@keyframes status-pulse {
+  from { transform: scale(1); opacity: 0.35; }
+  to   { transform: scale(1.8); opacity: 0; }
+}
+
+// ------------------------------------------------------------
+//  Indicador de scroll: una línea de 40px que se llena y se vacía.
+//  Se retira al primer scroll (`html.is-scrolled`, main.js).
+// ------------------------------------------------------------
+.scroll-cue {
+  grid-column: 1 / 2;
+  position: relative;
+  width: 1px;
+  height: 40px;
+  margin-top: var(--space-7);
+  overflow: hidden;
+  background: var(--color-rule);
+  transition: opacity var(--duration-base) var(--ease-out);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--color-ink);
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+
+  .is-scrolled & {
+    opacity: 0;
+  }
+
+  @include below($bp-tablet) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-cue::after {
+    animation: scroll-cue 2s var(--ease-in-out) infinite;
+  }
+}
+
+@keyframes scroll-cue {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: top; }
+  51%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
 }
 
 // ------------------------------------------------------------

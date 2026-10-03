@@ -37,8 +37,12 @@ export function initTheme() {
             sync();
         };
 
+        // Sin la API o con movimiento reducido el cambio es instantáneo: la
+        // clase también apaga el fundido de tokens del <body>.
         if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            root.classList.add('is-theme-switching');
             apply();
+            requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('is-theme-switching')));
 
             return;
         }

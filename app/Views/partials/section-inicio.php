@@ -52,5 +52,29 @@ $words    = preg_split('/\s+/u', $fullName) ?: [];
                 </div>
             <?php endif; ?>
         </div>
+
+        <span class="scroll-cue" aria-hidden="true"></span>
+    </div>
+
+    <?php
+    // La cinta: las áreas de trabajo en bucle. El separador es un punto o
+    // un anillo del sistema generativo, nunca un punto medio de texto.
+    $areas = ['Datos', 'Infraestructura', 'Sistemas', 'Redes', 'Seguridad', 'Desarrollo web'];
+    $seps  = [
+        '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="4" fill="currentColor"/></svg>',
+        '<svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+    ];
+    ?>
+    <div class="marquee" data-marquee>
+        <div class="marquee__track">
+            <?php for ($copy = 0; $copy < 2; $copy++): ?>
+                <ul class="marquee__group"<?= $copy ? ' aria-hidden="true"' : ' aria-label="Áreas de trabajo"' ?>>
+                    <?php foreach ($areas as $i => $area): ?>
+                        <li class="marquee__item"><?= e($area) ?></li>
+                        <li class="marquee__sep" aria-hidden="true"><?= $seps[$i % 2] ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endfor; ?>
+        </div>
     </div>
 </section>

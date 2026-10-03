@@ -17,8 +17,8 @@ use App\Models\Experience;
                 <p class="empty-state">Todavía no hay experiencia publicada.</p>
             <?php else: ?>
                 <ol class="timeline">
-                    <?php foreach ($experiences as $exp): ?>
-                        <li class="timeline__item">
+                    <?php foreach ($experiences as $index => $exp): ?>
+                        <li class="timeline__item" data-reveal style="--i: <?= min($index, 3) ?>">
                             <div class="timeline__when">
                                 <?php if (! empty($exp['is_current'])): ?>
                                     <p class="status"><span class="status__dot" aria-hidden="true"></span>Actual</p>
