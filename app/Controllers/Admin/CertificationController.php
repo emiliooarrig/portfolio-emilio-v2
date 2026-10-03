@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Auth;
+use App\Core\Upload;
 use App\Models\Certification;
 
 /**
@@ -48,10 +49,13 @@ class CertificationController extends AdminController
 
     public function store(): void
     {
+        $this->guardUploadSize(self::LIST . '/nueva');
         $this->requireToken(self::LIST . '/nueva');
 
         $model  = new Certification();
         $input  = $this->collect();
+        $files  = $this->files($input['title']);
+        $input  = $this->keepFiles($input, $files);
         $errors = $model->validate($input);
 
         if ($errors !== []) {
@@ -60,7 +64,15 @@ class CertificationController extends AdminController
             return;
         }
 
-        $model->create($input);
+        $saved = $this->storeFiles($input, $files);
+
+        if ($saved['errors'] !== []) {
+            $this->backWithErrors(self::LIST . '/nueva', $saved['errors'], $input);
+
+            return;
+        }
+
+        $model->create($saved['input']);
 
         $this->flash('success', 'Certificación «' . $input['title'] . '» creada.');
         $this->redirect(self::LIST);
@@ -70,17 +82,21 @@ class CertificationController extends AdminController
     {
         $certId = (int) $id;
 
+        $this->guardUploadSize(self::LIST . '/' . $certId . '/editar');
         $this->requireToken(self::LIST . '/' . $certId . '/editar');
 
-        $model = new Certification();
+        $model   = new Certification();
+        $current = $model->find($certId);
 
-        if ($model->find($certId) === null) {
+        if ($current === null) {
             $this->missing(self::LIST, 'Esa certificación');
 
             return;
         }
 
         $input  = $this->collect();
+        $files  = $this->files($input['title']);
+        $input  = $this->keepFiles($input, $files, $current);
         $errors = $model->validate($input);
 
         if ($errors !== []) {
@@ -89,7 +105,16 @@ class CertificationController extends AdminController
             return;
         }
 
-        $model->update($certId, $input);
+        $saved = $this->storeFiles($input, $files);
+
+        if ($saved['errors'] !== []) {
+            $this->backWithErrors(self::LIST . '/' . $certId . '/editar', $saved['errors'], $input);
+
+            return;
+        }
+
+        $model->update($certId, $saved['input']);
+        $this->dropFiles($files, $saved['discarded']);
 
         $this->flash('success', 'Certificación «' . $input['title'] . '» guardada.');
         $this->redirect(self::LIST);
@@ -137,6 +162,10 @@ class CertificationController extends AdminController
 
         $model->delete($certId);
 
+        // El borrado es definitivo: sin fila que la apunte, la insignia sólo
+        // ocuparía espacio en /public.
+        Upload::image()->remove((string) ($cert['badge_image'] ?? ''));
+
         $this->flash('success', 'Certificación «' . $cert['title'] . '» borrada.');
         $this->redirect(self::LIST);
     }
@@ -169,7 +198,26 @@ class CertificationController extends AdminController
             'errors'    => $errors,
             'deleteUrl' => $id > 0 ? self::LIST . '/' . $id . '/eliminar' : '',
             'back'      => self::LIST,
+            // Formatos y peso los decide la regla de subida, no la vista.
+            'badgeRules' => Upload::image()->rules(),
         ], $cert === null ? 'Nueva certificación' : 'Editar certificación');
+    }
+
+    /**
+     * El único archivo del formulario: la insignia. Se guarda con el nombre
+     * de la credencial por delante para que la carpeta se pueda leer.
+     *
+     * @return array<string, array{field: string, upload: Upload, name: string}>
+     */
+    private function files(string $title): array
+    {
+        return [
+            'badge_image' => [
+                'field'  => 'badge_image',
+                'upload' => Upload::image(),
+                'name'   => 'insignia-' . $title,
+            ],
+        ];
     }
 
     /**
@@ -182,7 +230,8 @@ class CertificationController extends AdminController
             'issuer'         => $this->postText('issuer'),
             'credential_id'  => $this->postText('credential_id'),
             'credential_url' => $this->postText('credential_url'),
-            'badge_image'    => $this->postText('badge_image'),
+            // `badge_image` no se teclea: la pone `store()`/`update()` a
+            // partir del archivo que se suba (o de la que ya estaba).
             'description'    => $this->postText('description'),
             'issued_on'      => $this->postText('issued_on'),
             'expires_on'     => $this->postText('expires_on'),

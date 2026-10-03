@@ -7,8 +7,20 @@
  * dedo o trackpad y los controles quedan ocultos.
  *
  * No hay avance automático a propósito: la tarjeta se lee, no se mira pasar.
- * Las flechas sí son circulares: del último grupo se vuelve al primero.
+ *
+ * El giro es de 360°: detrás de la última tarjeta vuelve a venir la primera y
+ * se sigue avanzando hacia el mismo lado. Para lograrlo el riel lleva tres
+ * copias de las tarjetas y el carrusel descansa siempre en la de en medio; al
+ * acercarse a un extremo se reubica una copia entera de golpe. Como la copia a
+ * la que llega es idéntica a la que deja, ese salto no se ve: lo único que se
+ * percibe es que el riel nunca se acaba ni rebota hacia atrás.
  */
+
+/** Copias del riel: la real más una a cada lado para tener pista de sobra. */
+const COPIES = 3;
+
+/** Silencio tras el último evento de scroll para dar el riel por quieto. */
+const IDLE = 140;
 
 function setupCarousel(root) {
     const track = root.querySelector('[data-carousel-track]');
@@ -18,9 +30,10 @@ function setupCarousel(root) {
         return;
     }
 
-    const slides = Array.from(track.children);
+    const originals = Array.from(track.children);
+    const count = originals.length;
 
-    if (slides.length === 0) {
+    if (count === 0) {
         return;
     }
 
@@ -30,8 +43,17 @@ function setupCarousel(root) {
 
     controls.hidden = false;
 
+    /** Los duplicados que dan la vuelta. Vacío mientras no hacen falta. */
+    let clones = [];
+
+    const looping = () => clones.length > 0;
+
     /** Desplazamiento del riel al que corresponde una tarjeta. */
-    const offsetOf = (index) => slides[index].offsetLeft - track.offsetLeft;
+    const offsetOf = (index) => {
+        const slide = track.children[index];
+
+        return slide ? slide.offsetLeft - track.offsetLeft : 0;
+    };
 
     /** Índice de la tarjeta pegada al borde izquierdo del riel. */
     const currentIndex = () => {
@@ -39,7 +61,7 @@ function setupCarousel(root) {
         let closest = 0;
         let min = Infinity;
 
-        slides.forEach((slide, index) => {
+        Array.from(track.children).forEach((slide, index) => {
             const distance = Math.abs(slide.offsetLeft - track.offsetLeft - left);
 
             if (distance < min) {
@@ -49,6 +71,34 @@ function setupCarousel(root) {
         });
 
         return closest;
+    };
+
+    /** Cuántas tarjetas caben a la vista: el salto es de una página, no de una. */
+    const perView = () => {
+        const slideWidth = originals[0].getBoundingClientRect().width;
+
+        return slideWidth > 0 ? Math.max(1, Math.round(track.clientWidth / slideWidth)) : 1;
+    };
+
+    /** Ancho de una copia completa: lo que mide reubicarse una vuelta. */
+    const loopWidth = () => (looping() ? offsetOf(count) - offsetOf(0) : 0);
+
+    /**
+     * Último índice que se puede pegar al borde izquierdo. Se lee del scroll
+     * máximo real y no de una cuenta de tarjetas: así el hueco que deja el
+     * final del riel no descuadra el cálculo.
+     */
+    const lastAnchorable = () => {
+        const max = track.scrollWidth - track.clientWidth;
+        let last = 0;
+
+        Array.from(track.children).forEach((slide, index) => {
+            if (slide.offsetLeft - track.offsetLeft <= max + 1) {
+                last = index;
+            }
+        });
+
+        return last;
     };
 
     /**
@@ -65,19 +115,22 @@ function setupCarousel(root) {
     };
 
     /**
-     * @param {boolean} instant Sin animación: para el salto que cierra la vuelta.
+     * @param {boolean} instant Sin animación: para los saltos entre copias.
      */
     const scrollToIndex = (index, instant = false) => {
-        const target = Math.max(0, Math.min(index, slides.length - 1));
+        const target = Math.max(0, Math.min(index, track.children.length - 1));
 
-        if (!slides[target]) {
+        if (!track.children[target]) {
             return;
         }
 
         const left = offsetOf(target);
 
         // Sin `behavior` manda el CSS, que respeta prefers-reduced-motion.
-        track.scrollTo(instant ? { left, behavior: 'auto' } : { left });
+        // Para el salto hace falta 'instant': 'auto' delega en el CSS, que
+        // aquí es `scroll-behavior: smooth`, y el brinco entre copias se
+        // vería como el retroceso que queremos evitar.
+        track.scrollTo(instant ? { left, behavior: 'instant' } : { left });
 
         if (instant) {
             clearPending();
@@ -92,52 +145,131 @@ function setupCarousel(root) {
         pendingTimer = window.setTimeout(clearPending, 700);
     };
 
-    /** Cuántas tarjetas caben a la vista: el salto es de una página, no de una. */
-    const perView = () => {
-        const slideWidth = slides[0].getBoundingClientRect().width;
+    /** Reubica el riel `copies` copias sin animación y sin mover lo que se ve. */
+    const shiftCopies = (copies) => {
+        const width = loopWidth();
 
-        return slideWidth > 0 ? Math.max(1, Math.round(track.clientWidth / slideWidth)) : 1;
-    };
-
-    /** Último índice que se puede pegar al borde sin dejar hueco al final. */
-    const lastIndex = () => Math.max(0, slides.length - perView());
-
-    /**
-     * Avanza `step` tarjetas dando la vuelta: pasado el final vuelve al
-     * principio y antes del principio salta al final.
-     */
-    const move = (step) => {
-        const from = pending ?? currentIndex();
-        const last = lastIndex();
-        let to = from + step;
-
-        if (to > last) {
-            to = 0;
-        } else if (to < 0) {
-            to = last;
-        }
-
-        if (to === from) {
+        if (copies === 0 || width <= 0) {
             return;
         }
 
-        // La vuelta se da de golpe: animada, el riel desharía todo el
-        // recorrido hacia atrás y se leería como un retroceso, no como un ciclo.
-        const closingTheLoop = step > 0 ? to < from : to > from;
+        track.scrollTo({ left: track.scrollLeft + copies * width, behavior: 'instant' });
+        // Lectura forzada: el salto tiene que quedar aplicado antes de que
+        // salga la animación siguiente, o el navegador la arrancaría desde
+        // la posición vieja y se vería el retroceso que queremos evitar.
+        void track.scrollLeft;
+    };
 
-        scrollToIndex(to, closingTheLoop);
+    /**
+     * Devuelve el índice equivalente a `to` que sí se puede anclar, moviendo
+     * el riel a la copia que haga falta. Es lo que convierte el final del
+     * carrusel en una vuelta y no en un rebote.
+     */
+    const rebase = (to) => {
+        if (!looping()) {
+            return Math.max(0, Math.min(to, lastAnchorable()));
+        }
+
+        const last = lastAnchorable();
+        let target = to;
+        let copies = 0;
+
+        // Los topes son sólo un seguro: una vuelta basta para que cualquier
+        // destino quepa en el riel.
+        while (target > last && copies > -COPIES) {
+            target -= count;
+            copies -= 1;
+        }
+
+        while (target < 0 && copies < COPIES) {
+            target += count;
+            copies += 1;
+        }
+
+        shiftCopies(copies);
+
+        return Math.max(0, Math.min(target, last));
+    };
+
+    /** Deja el riel descansando en la copia de en medio. */
+    const recenter = () => {
+        if (!looping() || pending !== null) {
+            return;
+        }
+
+        const copy = Math.floor(currentIndex() / count);
+
+        if (copy !== 1) {
+            shiftCopies(1 - copy);
+        }
+    };
+
+    /**
+     * Monta o desmonta las copias según quepan o no todas las tarjetas: si el
+     * riel ya las muestra todas no hay vuelta que dar y los duplicados sólo
+     * se verían repetidos en pantalla.
+     */
+    const syncClones = () => {
+        const wanted = count > perView();
+
+        if (wanted === looping()) {
+            return;
+        }
+
+        const real = currentIndex() % count;
+
+        if (wanted) {
+            for (let copy = 1; copy < COPIES; copy += 1) {
+                originals.forEach((slide) => {
+                    const clone = slide.cloneNode(true);
+
+                    // Copia decorativa: ni la lee un lector de pantalla ni
+                    // recibe foco, para no duplicar las tarjetas reales.
+                    clone.setAttribute('aria-hidden', 'true');
+                    clone.setAttribute('inert', '');
+                    clone.dataset.carouselClone = '';
+                    track.appendChild(clone);
+                    clones.push(clone);
+                });
+            }
+
+            // Arranca en la copia de en medio: así la primera tarjeta también
+            // tiene recorrido hacia atrás desde el primer clic.
+            scrollToIndex(count + real, true);
+
+            return;
+        }
+
+        clones.forEach((clone) => clone.remove());
+        clones = [];
+        scrollToIndex(real, true);
+    };
+
+    /**
+     * Avanza `step` tarjetas. Pasado el final sigue hacia el mismo lado
+     * porque la copia siguiente vuelve a empezar por la primera tarjeta.
+     */
+    const move = (step) => {
+        const from = pending ?? currentIndex();
+        const to = rebase(from + step);
+
+        if (to === currentIndex()) {
+            return;
+        }
+
+        scrollToIndex(to);
     };
 
     const sync = () => {
-        const index = currentIndex();
-
         // Llegó a donde iba: la intención ya no hace falta.
         if (pending !== null && Math.abs(track.scrollLeft - offsetOf(pending)) <= 2) {
             clearPending();
         }
 
+        const index = currentIndex() % count;
+
         // Girando, las flechas sólo se apagan si no hay nada que rotar.
-        const canMove = slides.length > perView();
+        const canMove = count > perView();
 
         dots.forEach((dot, dotIndex) => {
             dot.setAttribute('aria-selected', String(dotIndex === index));
@@ -156,7 +288,11 @@ function setupCarousel(root) {
     next?.addEventListener('click', () => move(perView()));
 
     dots.forEach((dot) => {
-        dot.addEventListener('click', () => scrollToIndex(Number(dot.dataset.carouselDot)));
+        dot.addEventListener('click', () => {
+            const copy = looping() ? Math.floor(currentIndex() / count) : 0;
+
+            scrollToIndex(rebase(copy * count + Number(dot.dataset.carouselDot)));
+        });
     });
 
     // El riel es enfocable: con foco, las flechas del teclado avanzan de una,
@@ -170,10 +306,19 @@ function setupCarousel(root) {
         move(event.key === 'ArrowRight' ? 1 : -1);
     });
 
-    // Un solo listener de scroll, agrupado en requestAnimationFrame.
+    // Un solo listener de scroll, agrupado en requestAnimationFrame. Cuando
+    // el riel se queda quieto se vuelve a la copia de en medio, que es lo que
+    // deja pista para seguir deslizando con el dedo hacia cualquier lado.
     let ticking = false;
+    let idleTimer = 0;
 
     track.addEventListener('scroll', () => {
+        window.clearTimeout(idleTimer);
+        idleTimer = window.setTimeout(() => {
+            recenter();
+            sync();
+        }, IDLE);
+
         if (ticking) {
             return;
         }
@@ -185,7 +330,12 @@ function setupCarousel(root) {
         });
     }, { passive: true });
 
-    window.addEventListener('resize', sync, { passive: true });
+    window.addEventListener('resize', () => {
+        syncClones();
+        sync();
+    }, { passive: true });
+
+    syncClones();
     sync();
 }
 

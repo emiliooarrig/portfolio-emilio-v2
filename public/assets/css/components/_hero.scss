@@ -119,28 +119,9 @@
   display: inline-block;
   color: var(--color-text);
 
-  // Entrada palabra por palabra + un barrido ámbar que la cruza una vez.
+  // Entrada palabra por palabra. El ámbar del nombre vive sólo en el pincel
+  // (ver más abajo): el nombre en reposo es texto plano, sin barrido.
   animation: hero-in var(--duration-hero) var(--ease-out) var(--word-delay) both;
-
-  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-    // Sin `no-repeat`: el gradiente tesela y ambos extremos son --color-text,
-    // así el texto nunca queda transparente al terminar el barrido.
-    background-image: linear-gradient(
-      100deg,
-      var(--color-text) 0%,
-      var(--color-text) 42%,
-      var(--color-accent) 50%,
-      var(--color-text) 58%,
-      var(--color-text) 100%
-    );
-    background-size: 220% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation:
-      hero-in var(--duration-hero) var(--ease-out) var(--word-delay) both,
-      sheen 2.2s var(--ease-out) calc(var(--word-delay) + 650ms) 1 forwards;
-  }
 }
 
 // ------------------------------------------------------------

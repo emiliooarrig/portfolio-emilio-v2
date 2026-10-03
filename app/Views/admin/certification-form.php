@@ -6,6 +6,7 @@
  * @var string                $action
  * @var array<string, mixed>  $values
  * @var array<string, string> $errors
+ * @var array<string, string> $badgeRules  formatos y peso de la insignia
  * @var string                $deleteUrl
  * @var string                $back
  * @var string                $token
@@ -16,7 +17,7 @@
     'lead'  => 'Una credencial del grid. El título es un nombre propio: va tal cual lo emite la institución.',
 ]) ?>
 
-<form class="admin-form" method="post" action="<?= url($action) ?>" novalidate>
+<form class="admin-form" method="post" action="<?= url($action) ?>" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="_token" value="<?= e($token) ?>">
 
     <fieldset class="admin-form__group">
@@ -62,10 +63,12 @@
             </div>
 
             <div class="admin-form__wide">
-                <?= partial('admin-field', [
-                    'name' => 'badge_image', 'label' => 'Insignia',
-                    'value' => $values['badge_image'], 'error' => $errors['badge_image'] ?? '',
-                    'hint'  => 'Ruta dentro de /public, por ejemplo /assets/img/badges/gcp.png',
+                <?= partial('admin-file', [
+                    'name'    => 'badge_image', 'label' => 'Insignia',
+                    'current' => $values['badge_image'], 'error' => $errors['badge_image'] ?? '',
+                    'accept'  => $badgeRules['accept'], 'formats' => $badgeRules['formats'],
+                    'limit'   => $badgeRules['limit'],
+                    'preview' => 'image', 'remove' => 'remove_badge_image',
                 ]) ?>
             </div>
 

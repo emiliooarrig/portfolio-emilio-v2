@@ -12,6 +12,9 @@ const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)');
 const INTERACTIVE = 'a, button, [role="button"], [data-project-card], label, summary';
 const TEXT_FIELD = 'input, textarea, select';
 
+/** Sobre estos el anillo se convierte en una etiqueta con una palabra. */
+const LABELLED = '[data-project-card]';
+
 /** Cuánto se acerca el anillo al puntero en cada frame (0-1). */
 const EASING = 0.18;
 
@@ -25,7 +28,11 @@ export function initCursor() {
     const root = document.createElement('div');
     root.className = 'cursor';
     root.setAttribute('aria-hidden', 'true');
-    root.innerHTML = '<span class="cursor__ring"></span><span class="cursor__dot"></span>';
+    // La etiqueta vive dentro del anillo: hereda su posición retrasada sin
+    // que el JS tenga que colocarla aparte.
+    root.innerHTML =
+        '<span class="cursor__ring"><span class="cursor__label">Ampliar</span></span>' +
+        '<span class="cursor__dot"></span>';
     document.body.appendChild(root);
 
     const ring = root.querySelector('.cursor__ring');
@@ -105,9 +112,11 @@ export function initCursor() {
         const target = event.target;
         const overText = target instanceof Element && target.closest(TEXT_FIELD) !== null;
         const overLink = target instanceof Element && target.closest(INTERACTIVE) !== null;
+        const overCard = target instanceof Element && target.closest(LABELLED) !== null;
 
         root.classList.toggle('is-text', overText);
         root.classList.toggle('is-hovering', overLink && !overText);
+        root.classList.toggle('is-label', overCard && !overText);
     }, { passive: true });
 
     document.addEventListener('pointerdown', () => root.classList.add('is-pressed'));

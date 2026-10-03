@@ -64,100 +64,58 @@ class ProfileController extends AdminController
     {
         Auth::requireLogin();
 
-        // Un POST que se pasa de `post_max_size` llega vacío: sin token y sin
-        // campos. Sin este aviso el panel diría que caducó la sesión, cuando
-        // el problema es el archivo.
-        if ($_POST === [] && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
-            $this->flash('error', 'El envío pesa más de lo que admite el servidor. Sube un archivo más ligero.');
-            $this->redirect(self::SHOW . '/editar');
-
-            return;
-        }
-
+        $this->guardUploadSize(self::SHOW . '/editar');
         $this->requireToken(self::SHOW . '/editar');
 
         $model   = new Profile();
         $current = $model->get();
-        $input   = $this->collect();
+        $files   = $this->files();
+        $input   = $this->keepFiles($this->collect(), $files, $current);
         $errors  = $model->validate($input);
 
-        // Cada archivo con su regla: dónde vive, qué formatos admite y con qué
-        // nombre se guarda. La columna conserva lo que ya había mientras nadie
-        // suba nada ni pida quitarlo.
-        $files = [
+        if ($errors !== []) {
+            $this->backWithErrors(self::SHOW . '/editar', $errors, $input);
+
+            return;
+        }
+
+        $saved = $this->storeFiles($input, $files);
+
+        if ($saved['errors'] !== []) {
+            $this->backWithErrors(self::SHOW . '/editar', $saved['errors'], $input);
+
+            return;
+        }
+
+        $model->update($saved['input']);
+        $this->dropFiles($files, $saved['discarded']);
+
+        $this->flash('success', 'Perfil guardado. El sitio ya lo muestra.');
+        $this->redirect(self::SHOW);
+    }
+
+    /**
+     * Los archivos del perfil, cada uno con su regla: dónde vive, qué
+     * formatos admite y con qué nombre se guarda.
+     *
+     * @return array<string, array{field: string, upload: Upload, name: string}>
+     */
+    private function files(): array
+    {
+        $name = $this->postText('full_name');
+
+        return [
             'avatar_path' => [
                 'field'  => 'avatar',
                 'upload' => Upload::image(),
-                'name'   => 'foto-' . $input['full_name'],
+                'name'   => 'foto-' . $name,
             ],
             'cv_path' => [
                 'field'  => 'cv',
                 'upload' => Upload::document(),
-                'name'   => 'cv-' . $input['full_name'],
+                'name'   => 'cv-' . $name,
             ],
         ];
-
-        foreach (array_keys($files) as $column) {
-            $input[$column] = (string) ($current[$column] ?? '');
-        }
-
-        if ($errors !== []) {
-            $this->backWithErrors(self::SHOW . '/editar', $errors, $input);
-
-            return;
-        }
-
-        // Los archivos se guardan sólo cuando el resto del formulario ya está
-        // bien: así no queda nada suelto en /public sin fila que lo apunte.
-        $uploaded = [];
-
-        foreach ($files as $column => $file) {
-            if (! $file['upload']->received($file['field'])) {
-                continue;
-            }
-
-            $path = $file['upload']->store($file['field'], $file['name']);
-
-            if ($path === null) {
-                $errors[$file['field']] = $file['upload']->error();
-
-                continue;
-            }
-
-            $uploaded[$column] = $path;
-        }
-
-        if ($errors !== []) {
-            $this->backWithErrors(self::SHOW . '/editar', $errors, $input);
-
-            return;
-        }
-
-        // Lo que deja de usarse: la ruta anterior de cada columna que cambia,
-        // sea porque llegó un archivo nuevo o porque se pidió quitarlo.
-        $discarded = [];
-
-        foreach ($files as $column => $file) {
-            $remove = $this->postFlag('remove_' . $file['field']) === 1;
-
-            if (! isset($uploaded[$column]) && ! $remove) {
-                continue;
-            }
-
-            $discarded[$column] = $input[$column];
-            $input[$column]     = $uploaded[$column] ?? '';
-        }
-
-        $model->update($input);
-
-        // El borrado va después de guardar: si el UPDATE fallara, el archivo
-        // viejo sigue en su sitio y la fila lo sigue apuntando.
-        foreach ($discarded as $column => $previous) {
-            $files[$column]['upload']->remove($previous);
-        }
-
-        $this->flash('success', 'Perfil guardado. El sitio ya lo muestra.');
-        $this->redirect(self::SHOW);
     }
 
     /**

@@ -590,14 +590,6 @@ html {
     transform: none;
   }
 }
-@keyframes sheen {
-  from {
-    background-position: -140% 0;
-  }
-  to {
-    background-position: 240% 0;
-  }
-}
 @keyframes aurora-drift {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
@@ -1413,16 +1405,6 @@ html {
   display: inline-block;
   color: var(--color-text);
   animation: hero-in var(--duration-hero) var(--ease-out) var(--word-delay) both;
-}
-@supports (-webkit-background-clip: text) or (background-clip: text) {
-  .hero__word {
-    background-image: linear-gradient(100deg, var(--color-text) 0%, var(--color-text) 42%, var(--color-accent) 50%, var(--color-text) 58%, var(--color-text) 100%);
-    background-size: 220% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: hero-in var(--duration-hero) var(--ease-out) var(--word-delay) both, sheen 2.2s var(--ease-out) calc(var(--word-delay) + 650ms) 1 forwards;
-  }
 }
 
 @supports (mask-image: radial-gradient(#000, transparent)) or (-webkit-mask-image: radial-gradient(#000, transparent)) {
@@ -4024,7 +4006,7 @@ a.admin-table__sub:hover {
   width: var(--cursor-dot);
   height: var(--cursor-dot);
   background: var(--color-accent);
-  transition: width var(--duration-fast) var(--ease-out), height var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out);
+  transition: width var(--duration-fast) var(--ease-out), height var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
 }
 
 .cursor__ring {
@@ -4045,6 +4027,41 @@ a.admin-table__sub:hover {
 .cursor.is-hovering .cursor__dot {
   width: calc(var(--cursor-dot) * 0.5);
   height: calc(var(--cursor-dot) * 0.5);
+}
+
+.cursor__label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0.5em 0.9em;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  box-shadow: 0 6px 18px rgba(255, 177, 61, 0.28);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: var(--text-3xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0) scale(0.55);
+  transition: opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-spring);
+}
+
+.cursor.is-label .cursor__ring {
+  width: var(--cursor-ring-grow);
+  height: var(--cursor-ring-grow);
+  border-color: transparent;
+  background: transparent;
+  opacity: 1;
+}
+.cursor.is-label .cursor__dot {
+  opacity: 0;
+}
+.cursor.is-label .cursor__label {
+  opacity: 1;
+  transform: translate3d(-50%, -50%, 0) scale(1);
 }
 
 .cursor.is-pressed .cursor__ring {
@@ -4068,5 +4085,12 @@ a.admin-table__sub:hover {
   .cursor.is-hovering .cursor__dot {
     width: var(--cursor-dot);
     height: var(--cursor-dot);
+  }
+  .cursor__label {
+    transform: translate3d(-50%, -50%, 0);
+    transition: opacity var(--duration-fast) linear;
+  }
+  .cursor.is-label .cursor__label {
+    transform: translate3d(-50%, -50%, 0);
   }
 }

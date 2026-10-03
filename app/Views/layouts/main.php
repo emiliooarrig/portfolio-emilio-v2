@@ -100,7 +100,7 @@ $description = $openProject
                 <?php endif; ?>
             </nav>
 
-            <p class="site-footer__copy meta">© <?= $year ?> · Construido en PHP, sin plantillas</p>
+            <p class="site-footer__copy meta">© <?= $year ?></p>
         </div>
     </div>
 </footer>

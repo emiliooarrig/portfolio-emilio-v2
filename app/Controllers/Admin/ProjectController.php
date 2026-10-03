@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Auth;
+use App\Core\Upload;
 use App\Models\Project;
 use App\Models\Technology;
 
@@ -51,10 +52,13 @@ class ProjectController extends AdminController
 
     public function store(): void
     {
+        $this->guardUploadSize(self::LIST . '/nuevo');
         $this->requireToken(self::LIST . '/nuevo');
 
         $model  = new Project();
         $input  = $this->collect();
+        $files  = $this->files($input['title']);
+        $input  = $this->keepFiles($input, $files);
         $errors = $model->validate($input);
 
         if ($errors !== []) {
@@ -63,8 +67,16 @@ class ProjectController extends AdminController
             return;
         }
 
-        $id = $model->create($input);
-        $this->saveRelations($model, $id, $input);
+        $saved = $this->storeFiles($input, $files);
+
+        if ($saved['errors'] !== []) {
+            $this->backWithErrors(self::LIST . '/nuevo', $saved['errors'], $input);
+
+            return;
+        }
+
+        $id = $model->create($saved['input']);
+        $this->saveRelations($model, $id, $saved['input']);
 
         $this->flash('success', 'Proyecto «' . $input['title'] . '» creado.');
         $this->redirect(self::LIST);
@@ -74,17 +86,21 @@ class ProjectController extends AdminController
     {
         $projectId = (int) $id;
 
+        $this->guardUploadSize(self::LIST . '/' . $projectId . '/editar');
         $this->requireToken(self::LIST . '/' . $projectId . '/editar');
 
-        $model = new Project();
+        $model   = new Project();
+        $current = $model->find($projectId);
 
-        if ($model->find($projectId) === null) {
+        if ($current === null) {
             $this->missing(self::LIST, 'Ese proyecto');
 
             return;
         }
 
         $input  = $this->collect();
+        $files  = $this->files($input['title']);
+        $input  = $this->keepFiles($input, $files, $current);
         $errors = $model->validate($input, $projectId);
 
         if ($errors !== []) {
@@ -93,8 +109,17 @@ class ProjectController extends AdminController
             return;
         }
 
-        $model->update($projectId, $input);
-        $this->saveRelations($model, $projectId, $input);
+        $saved = $this->storeFiles($input, $files);
+
+        if ($saved['errors'] !== []) {
+            $this->backWithErrors(self::LIST . '/' . $projectId . '/editar', $saved['errors'], $input);
+
+            return;
+        }
+
+        $model->update($projectId, $saved['input']);
+        $this->saveRelations($model, $projectId, $saved['input']);
+        $this->dropFiles($files, $saved['discarded']);
 
         $this->flash('success', 'Proyecto «' . $input['title'] . '» guardado.');
         $this->redirect(self::LIST);
@@ -143,6 +168,10 @@ class ProjectController extends AdminController
         }
 
         $model->delete($projectId);
+
+        // El borrado es definitivo: sin fila que la apunte, la portada sólo
+        // ocuparía espacio en /public.
+        Upload::image()->remove((string) ($project['cover_image'] ?? ''));
 
         $this->flash('success', 'Proyecto «' . $project['title'] . '» borrado.');
         $this->redirect(self::LIST);
@@ -193,7 +222,26 @@ class ProjectController extends AdminController
             'pipeline'     => $old['pipeline'] ?? ($id > 0 ? $model->pipelineOf($id) : []),
             'deleteUrl'    => $id > 0 ? self::LIST . '/' . $id . '/eliminar' : '',
             'back'         => self::LIST,
+            // Formatos y peso los decide la regla de subida, no la vista.
+            'coverRules'   => Upload::image()->rules(),
         ], $project === null ? 'Nuevo proyecto' : 'Editar proyecto');
+    }
+
+    /**
+     * El único archivo del formulario: la portada. Se guarda con el nombre
+     * del proyecto por delante para que la carpeta se pueda leer.
+     *
+     * @return array<string, array{field: string, upload: Upload, name: string}>
+     */
+    private function files(string $title): array
+    {
+        return [
+            'cover_image' => [
+                'field'  => 'cover_image',
+                'upload' => Upload::image(),
+                'name'   => 'portada-' . $title,
+            ],
+        ];
     }
 
     /**
@@ -214,7 +262,8 @@ class ProjectController extends AdminController
             'outcome'      => $this->postText('outcome'),
             'role'         => $this->postText('role'),
             'client'       => $this->postText('client'),
-            'cover_image'  => $this->postText('cover_image'),
+            // `cover_image` no se teclea: la pone `store()`/`update()` a
+            // partir del archivo que se suba (o de la que ya estaba).
             'repo_url'     => $this->postText('repo_url'),
             'demo_url'     => $this->postText('demo_url'),
             'bento_size'   => $this->postText('bento_size'),

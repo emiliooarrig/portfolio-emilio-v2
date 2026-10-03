@@ -25,12 +25,6 @@
   to   { opacity: 1; transform: none; }
 }
 
-// Barrido de luz que recorre el título del hero una sola vez.
-@keyframes sheen {
-  from { background-position: -140% 0; }
-  to   { background-position: 240% 0; }
-}
-
 // Respiración de los halos del fondo del hero: lentísima, casi imperceptible.
 @keyframes aurora-drift {
   0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }

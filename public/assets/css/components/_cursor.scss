@@ -72,7 +72,8 @@
   background: var(--color-accent);
   transition: width var(--duration-fast) var(--ease-out),
               height var(--duration-fast) var(--ease-out),
-              background-color var(--duration-fast) var(--ease-out);
+              background-color var(--duration-fast) var(--ease-out),
+              opacity var(--duration-fast) var(--ease-out);
 }
 
 .cursor__ring {
@@ -104,6 +105,53 @@
   }
 }
 
+// --- Sobre una tarjeta de proyecto: el anillo se vuelve etiqueta ---
+//  El anillo no desaparece (perdería su posición retrasada): sólo se apaga
+//  su trazo mientras la píldora crece desde su centro. Así el gesto es uno
+//  solo, y al salir la etiqueta se encoge y el anillo vuelve.
+.cursor__label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0.5em 0.9em;
+  border-radius: var(--radius-md);
+  background: var(--color-accent);
+  box-shadow: 0 6px 18px rgba(255, 177, 61, 0.28);
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: var(--text-3xs);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  // El -50%/-50% centra la píldora en el anillo; la escala hace la entrada.
+  transform: translate3d(-50%, -50%, 0) scale(0.55);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-spring);
+}
+
+.cursor.is-label {
+  // El aro se apaga en color, no en `opacity`: la etiqueta es hija suya.
+  .cursor__ring {
+    width: var(--cursor-ring-grow);
+    height: var(--cursor-ring-grow);
+    border-color: transparent;
+    background: transparent;
+    opacity: 1;
+  }
+
+  .cursor__dot {
+    opacity: 0;
+  }
+
+  .cursor__label {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+}
+
 // --- Botón pulsado: compresión, el mismo gesto que el :active del CTA ---
 .cursor.is-pressed .cursor__ring {
   width: calc(var(--cursor-ring) * 0.8);
@@ -131,5 +179,15 @@
   .cursor.is-hovering .cursor__dot {
     width: var(--cursor-dot);
     height: var(--cursor-dot);
+  }
+
+  // La etiqueta aparece y desaparece con un fundido, sin crecer.
+  .cursor__label {
+    transform: translate3d(-50%, -50%, 0);
+    transition: opacity var(--duration-fast) linear;
+  }
+
+  .cursor.is-label .cursor__label {
+    transform: translate3d(-50%, -50%, 0);
   }
 }

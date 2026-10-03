@@ -14,6 +14,7 @@
  * @var array<int, int>                      $selected      ids marcados
  * @var array<int, array<string, mixed>>     $metrics
  * @var array<int, array<string, mixed>>     $pipeline
+ * @var array<string, string>                $coverRules    formatos y peso de la portada
  * @var string                               $deleteUrl
  * @var string                               $back
  * @var string                               $token
@@ -40,7 +41,7 @@ foreach ($technologies as $technology) {
     'lead'  => 'La tarjeta del grid y el modal de detalle salen de aquí.',
 ]) ?>
 
-<form class="admin-form" method="post" action="<?= url($action) ?>" novalidate>
+<form class="admin-form" method="post" action="<?= url($action) ?>" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="_token" value="<?= e($token) ?>">
 
     <fieldset class="admin-form__group">
@@ -133,10 +134,12 @@ foreach ($technologies as $technology) {
                 'hint'  => 'Vacío = sigue en marcha.',
             ]) ?>
 
-            <?= partial('admin-field', [
-                'name' => 'cover_image', 'label' => 'Imagen de portada',
-                'value' => $values['cover_image'], 'error' => $errors['cover_image'] ?? '',
-                'hint'  => 'Ruta dentro de /public, por ejemplo /assets/img/retail.jpg',
+            <?= partial('admin-file', [
+                'name'    => 'cover_image', 'label' => 'Imagen de portada',
+                'current' => $values['cover_image'], 'error' => $errors['cover_image'] ?? '',
+                'accept'  => $coverRules['accept'], 'formats' => $coverRules['formats'],
+                'limit'   => $coverRules['limit'],
+                'preview' => 'image', 'remove' => 'remove_cover_image',
             ]) ?>
 
             <?= partial('admin-field', [

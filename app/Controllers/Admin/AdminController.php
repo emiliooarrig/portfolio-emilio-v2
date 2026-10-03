@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Core\Request;
+use App\Core\Upload;
 
 /**
  * Base de las pantallas del panel.
@@ -123,6 +124,127 @@ abstract class AdminController extends Controller
             is_array($errors) ? $errors : [],
             is_array($old) ? $old : [],
         ];
+    }
+
+    // --------------------------------------------------------
+    //  Archivos del formulario
+    // --------------------------------------------------------
+    //
+    //  Quien edita no escribe rutas: elige un archivo y el panel decide
+    //  dónde vive. Cada columna de la base se declara con su regla de
+    //  subida y estos tres pasos hacen el resto, iguales en todas las
+    //  secciones: conservar lo que había, guardar lo que llegue y borrar
+    //  lo que dejó de usarse.
+
+    /**
+     * Un POST que se pasa de `post_max_size` llega vacío: sin token y sin
+     * campos. Sin este aviso el panel diría que caducó la sesión, cuando el
+     * problema es el peso del archivo. Va antes del token porque el token
+     * tampoco llegó.
+     */
+    protected function guardUploadSize(string $back): void
+    {
+        if ($_POST !== [] || (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) <= 0) {
+            return;
+        }
+
+        $this->flash('error', 'El envío pesa más de lo que admite el servidor. Sube un archivo más ligero.');
+        $this->redirect($back);
+    }
+
+    /**
+     * Punto de partida: cada columna de archivo arranca con la ruta que ya
+     * tenía la fila. Mientras nadie suba nada ni marque «quitar», el
+     * formulario no cambia el archivo. En un alta no hay fila y quedan
+     * vacías.
+     *
+     * @param  array<string, mixed>                                              $input
+     * @param  array<string, array{field: string, upload: Upload, name: string}> $files   columna de la base => regla
+     * @param  array<string, mixed>|null                                         $current fila que se está editando
+     * @return array<string, mixed>
+     */
+    protected function keepFiles(array $input, array $files, ?array $current = null): array
+    {
+        foreach (array_keys($files) as $column) {
+            $input[$column] = (string) ($current[$column] ?? '');
+        }
+
+        return $input;
+    }
+
+    /**
+     * Guarda los archivos que llegaron y decide qué ruta acaba en cada
+     * columna. Se llama cuando el resto del formulario ya está bien: así no
+     * queda nada suelto en /public sin fila que lo apunte.
+     *
+     * Lo que deja de usarse no se borra aquí, se devuelve: el disco se toca
+     * **después** de guardar, porque si el guardado fallara el archivo viejo
+     * tiene que seguir donde la fila dice que está.
+     *
+     * @param  array<string, mixed>                                              $input
+     * @param  array<string, array{field: string, upload: Upload, name: string}> $files
+     * @return array{input: array<string, mixed>, errors: array<string, string>, discarded: array<string, string>}
+     */
+    protected function storeFiles(array $input, array $files): array
+    {
+        $errors   = [];
+        $uploaded = [];
+
+        foreach ($files as $column => $file) {
+            if (! $file['upload']->received($file['field'])) {
+                continue;
+            }
+
+            $path = $file['upload']->store($file['field'], $file['name']);
+
+            if ($path === null) {
+                $errors[$file['field']] = $file['upload']->error();
+
+                continue;
+            }
+
+            $uploaded[$column] = $path;
+        }
+
+        if ($errors !== []) {
+            // Se aborta el guardado: lo que sí se subió no lo va a apuntar
+            // ninguna fila, así que se retira en vez de quedarse suelto.
+            foreach ($uploaded as $column => $path) {
+                $files[$column]['upload']->remove($path);
+            }
+
+            return ['input' => $input, 'errors' => $errors, 'discarded' => []];
+        }
+
+        $discarded = [];
+
+        foreach ($files as $column => $file) {
+            $remove = $this->postFlag('remove_' . $file['field']) === 1;
+
+            if (! isset($uploaded[$column]) && ! $remove) {
+                continue;
+            }
+
+            $discarded[$column] = (string) $input[$column];
+            $input[$column]     = $uploaded[$column] ?? '';
+        }
+
+        return ['input' => $input, 'errors' => [], 'discarded' => $discarded];
+    }
+
+    /**
+     * Borra del disco los archivos que ya no apunta nadie. Cada regla sólo
+     * puede tocar su propia carpeta, así que una ruta rara en la base no se
+     * lleva por delante nada de fuera.
+     *
+     * @param array<string, array{field: string, upload: Upload, name: string}> $files
+     * @param array<string, string>                                             $discarded
+     */
+    protected function dropFiles(array $files, array $discarded): void
+    {
+        foreach ($discarded as $column => $previous) {
+            $files[$column]['upload']->remove($previous);
+        }
     }
 
     // --------------------------------------------------------
