@@ -1,0 +1,49 @@
+// ============================================================
+//  _pattern.scss — el motivo generativo (partials/pattern.php)
+//
+//  Paleta de cuatro: cobalto, cobalto suave, tinta y blanco. Todo sale
+//  de variables, así que la misma composición cambia con el tema.
+// ============================================================
+
+@use '../tokens' as *;
+
+.pattern {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pattern__bg        { fill: var(--color-cobalt-soft); }
+.pattern__c         { fill: var(--color-cobalt); }
+.pattern__k         { fill: var(--color-ink); }
+.pattern__w         { fill: var(--color-on-cobalt); }
+.pattern__dot       { fill: var(--color-ink); opacity: 0.28; }
+
+.pattern__ring {
+  fill: none;
+  stroke: var(--color-cobalt);
+  stroke-width: 2;
+}
+
+.pattern__stroke-c,
+.pattern__stroke-k {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pattern__stroke-c { stroke: var(--color-cobalt); }
+.pattern__stroke-k { stroke: var(--color-ink); }
+
+// La composición del hero vive sobre el papel: sin fondo propio, y el
+// blanco pasaría inadvertido, así que se vuelve cobalto suave.
+.pattern--hero .pattern__w {
+  fill: var(--color-cobalt-soft);
+}
+
+// Portada del modal y de la 404: proporción 16:10 y esquinas de la hoja.
+.pattern--cover {
+  aspect-ratio: 16 / 10;
+  height: auto;
+  border-radius: var(--radius-md);
+}

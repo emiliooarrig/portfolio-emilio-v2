@@ -32,6 +32,11 @@
   justify-items: start;
 }
 
+.error-page__art {
+  width: min(100%, 28rem);
+  margin-bottom: var(--space-4);
+}
+
 .error-page__title {
   font-size: var(--text-2xl);
 }

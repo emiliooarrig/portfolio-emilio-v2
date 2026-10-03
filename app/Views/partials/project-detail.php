@@ -48,9 +48,15 @@ $newTab = '<span class="visually-hidden"> (se abre en otra pestaña)</span>';
         <?php endif; ?>
     </header>
 
-    <?php if (! empty($project['cover_image'])): ?>
-        <img class="project-detail__cover" src="<?= e(url((string) $project['cover_image'])) ?>" alt="" loading="lazy">
-    <?php endif; ?>
+    <div class="project-detail__cover">
+        <?php if (! empty($project['cover_image'])): ?>
+            <img src="<?= e(url((string) $project['cover_image'])) ?>" alt="" loading="lazy">
+        <?php else: ?>
+            <?php // Sin portada, la vista previa generada del proyecto: la misma
+                  // que acompaña a su fila en el índice. ?>
+            <?= partial('pattern', ['seed' => (string) $project['slug'], 'variant' => 'cover']) ?>
+        <?php endif; ?>
+    </div>
 
     <?php if (! empty($project['metrics'])): ?>
         <dl class="project-detail__metrics">

@@ -329,6 +329,11 @@ button {
   justify-items: start;
 }
 
+.error-page__art {
+  width: min(100%, 28rem);
+  margin-bottom: var(--space-4);
+}
+
 .error-page__title {
   font-size: var(--text-2xl);
 }
@@ -670,7 +675,34 @@ button {
   padding-block: var(--space-9) var(--space-8);
 }
 
+.hero__inner {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--space-6);
+}
+.hero__inner > * {
+  grid-column: 1/-1;
+}
+
+.hero__art {
+  grid-column: 8/13;
+  grid-row: 1/3;
+  align-self: start;
+  justify-self: end;
+  width: 100%;
+  max-inline-size: 26rem;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+@media (max-width: 60rem) {
+  .hero__art {
+    display: none;
+  }
+}
+
 .hero__name {
+  grid-row: 1;
+  position: relative;
   font-family: var(--font-display);
   font-size: var(--text-hero);
   font-weight: var(--weight-hero);
@@ -685,6 +717,9 @@ button {
 }
 
 .hero__role {
+  grid-row: 2;
+  align-self: start;
+  position: relative;
   margin-top: var(--space-4);
   color: var(--color-ink-soft);
   font-size: var(--text-lg);
@@ -798,6 +833,64 @@ button {
     opacity: 1;
   }
 }
+.pattern {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pattern__bg {
+  fill: var(--color-cobalt-soft);
+}
+
+.pattern__c {
+  fill: var(--color-cobalt);
+}
+
+.pattern__k {
+  fill: var(--color-ink);
+}
+
+.pattern__w {
+  fill: var(--color-on-cobalt);
+}
+
+.pattern__dot {
+  fill: var(--color-ink);
+  opacity: 0.28;
+}
+
+.pattern__ring {
+  fill: none;
+  stroke: var(--color-cobalt);
+  stroke-width: 2;
+}
+
+.pattern__stroke-c,
+.pattern__stroke-k {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pattern__stroke-c {
+  stroke: var(--color-cobalt);
+}
+
+.pattern__stroke-k {
+  stroke: var(--color-ink);
+}
+
+.pattern--hero .pattern__w {
+  fill: var(--color-cobalt-soft);
+}
+
+.pattern--cover {
+  aspect-ratio: 16/10;
+  height: auto;
+  border-radius: var(--radius-md);
+}
+
 .project-row {
   position: relative;
   isolation: isolate;
@@ -1550,10 +1643,13 @@ button {
 }
 
 .project-detail__cover {
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+.project-detail__cover img {
   aspect-ratio: 16/10;
   width: 100%;
   object-fit: cover;
-  border-radius: var(--radius-md);
 }
 
 .project-detail__metrics {

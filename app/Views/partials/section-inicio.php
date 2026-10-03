@@ -15,6 +15,11 @@ $words    = preg_split('/\s+/u', $fullName) ?: [];
 ?>
 <section class="hero" id="inicio">
     <div class="container hero__inner">
+        <?php // La firma visual: misma composición siempre para el mismo nombre. ?>
+        <div class="hero__art" data-parallax>
+            <?= partial('pattern', ['seed' => $fullName, 'variant' => 'hero']) ?>
+        </div>
+
         <h1 class="hero__name" aria-label="<?= e($fullName) ?>" data-hero-name>
             <?php foreach ($words as $index => $word): ?>
                 <span class="hero__word" style="--word-index: <?= $index ?>" aria-hidden="true"><?= e($word) ?></span>
