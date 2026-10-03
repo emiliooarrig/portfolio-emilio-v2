@@ -29,13 +29,13 @@ $invalid = static function (string $field) use ($errors): string {
             <?php if (! empty($profile['email']) || ! empty($profile['linkedin_url']) || ! empty($profile['github_url'])): ?>
                 <ul class="contact__direct" aria-label="Vías directas" data-reveal>
                     <?php if (! empty($profile['email'])): ?>
-                        <li><a href="mailto:<?= e($profile['email']) ?>"><?= e($profile['email']) ?></a></li>
+                        <li><a href="mailto:<?= e($profile['email']) ?>" data-cursor="Escribir"><?= e($profile['email']) ?></a></li>
                     <?php endif; ?>
                     <?php if (! empty($profile['linkedin_url'])): ?>
-                        <li><a href="<?= e($profile['linkedin_url']) ?>" target="_blank" rel="noopener">LinkedIn<span class="visually-hidden"> (se abre en otra pestaña)</span></a></li>
+                        <li><a href="<?= e($profile['linkedin_url']) ?>" target="_blank" rel="noopener" data-cursor="Abrir">LinkedIn<span class="visually-hidden"> (se abre en otra pestaña)</span></a></li>
                     <?php endif; ?>
                     <?php if (! empty($profile['github_url'])): ?>
-                        <li><a href="<?= e($profile['github_url']) ?>" target="_blank" rel="noopener">GitHub<span class="visually-hidden"> (se abre en otra pestaña)</span></a></li>
+                        <li><a href="<?= e($profile['github_url']) ?>" target="_blank" rel="noopener" data-cursor="Abrir">GitHub<span class="visually-hidden"> (se abre en otra pestaña)</span></a></li>
                     <?php endif; ?>
                 </ul>
             <?php endif; ?>
@@ -89,7 +89,7 @@ $invalid = static function (string $field) use ($errors): string {
                     <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
                 </div>
 
-                <button class="cta cta--primary form__submit" type="submit">Enviar mensaje</button>
+                <button class="cta cta--primary form__submit" type="submit"><?= roll_text('Enviar mensaje') ?></button>
             </form>
         </div>
     </div>

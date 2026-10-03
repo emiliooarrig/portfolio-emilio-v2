@@ -32,8 +32,8 @@ $words    = preg_split('/\s+/u', $fullName) ?: [];
             <p class="hero__headline"><?= e($profile['headline']) ?></p>
 
             <div class="hero__actions">
-                <a class="cta cta--primary cta--lg" href="#proyectos">Ver proyectos</a>
-                <a class="cta cta--secondary cta--lg" href="#contacto">Contacto</a>
+                <a class="cta cta--primary cta--lg" href="#proyectos"><?= roll_text('Ver proyectos') ?></a>
+                <a class="cta cta--secondary cta--lg" href="#contacto"><?= roll_text('Contacto') ?></a>
             </div>
 
             <?php if (! empty($profile['available_for_work']) || ! empty($profile['location']) || ! empty($profile['cv_path'])): ?>
@@ -47,7 +47,7 @@ $words    = preg_split('/\s+/u', $fullName) ?: [];
                     <?php endif; ?>
 
                     <?php if (! empty($profile['cv_path'])): ?>
-                        <a class="cta cta--ghost" href="<?= e($profile['cv_path']) ?>" target="_blank" rel="noopener">Descargar CV<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
+                        <a class="cta cta--ghost" href="<?= e($profile['cv_path']) ?>" target="_blank" rel="noopener" data-cursor="Descargar">Descargar CV<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>

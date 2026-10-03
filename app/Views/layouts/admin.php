@@ -62,7 +62,7 @@ $title = $pageTitle !== '' ? $pageTitle . ' · Panel' : 'Panel';
     <?= partial('alert', ['type' => $flash['type'], 'text' => $flash['text']]) ?>
 <?php endif; ?>
 
-<?php // Molde de la pregunta de borrado: `alerts.js` lo clona cada vez que hay
+<?php // Molde de la pregunta de borrado: `alerts-confirm.js` lo clona cada vez que hay
       // que confirmar algo, así el diálogo se dibuja una sola vez y en PHP. ?>
 <?= partial('alert', [
     'type'     => 'warning',
@@ -77,9 +77,10 @@ $title = $pageTitle !== '' ? $pageTitle . ' · Panel' : 'Panel';
       // con su botón, y borrar sigue teniendo su pantalla de confirmación.
       // Esto sólo asciende la alerta a modal y convierte el borrado en pregunta. ?>
 <script type="module">
-    import { initAlerts } from '<?= asset('js/alerts.js') ?>';
+    import { initAlerts, initConfirm } from '<?= asset('js/alerts-confirm.js') ?>';
 
     initAlerts();
+    initConfirm();
 </script>
 
 </body>

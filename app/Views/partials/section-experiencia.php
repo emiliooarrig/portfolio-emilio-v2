@@ -35,7 +35,7 @@ use App\Models\Experience;
 
                                 <p class="timeline__company">
                                     <?php if (! empty($exp['company_url'])): ?>
-                                        <a href="<?= e($exp['company_url']) ?>" target="_blank" rel="noopener"><?= e($exp['company']) ?><span class="visually-hidden"> (se abre en otra pestaña)</span></a><?php else: ?><?= e($exp['company']) ?><?php endif; ?><?php if (! empty($exp['location'])): ?>, <?= e($exp['location']) ?><?php endif; ?>
+                                        <a href="<?= e($exp['company_url']) ?>" target="_blank" rel="noopener" data-cursor="Abrir"><?= e($exp['company']) ?><span class="visually-hidden"> (se abre en otra pestaña)</span></a><?php else: ?><?= e($exp['company']) ?><?php endif; ?><?php if (! empty($exp['location'])): ?>, <?= e($exp['location']) ?><?php endif; ?>
                                 </p>
 
                                 <p class="timeline__type meta"><?= e(Experience::employmentLabel((string) $exp['employment_type'])) ?></p>

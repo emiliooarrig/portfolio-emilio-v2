@@ -236,3 +236,50 @@ if (! function_exists('excerpt')) {
         return rtrim(mb_substr($text, 0, $limit), " \t\n\r\0\x0B.,;:") . '…';
     }
 }
+
+if (! function_exists('roll_text')) {
+    /**
+     * Texto con efecto rodillo: al hover el original sube y sale y una copia
+     * ocupa su lugar (`.roll` en _cta.scss). Cada palabra es su propia
+     * máscara, así un título que salta de línea sigue funcionando.
+     *
+     * Escalonado de 20ms por letra si el texto tiene menos de 40 caracteres;
+     * si es más largo, por palabra. Para el lector de pantalla queda el texto
+     * entero una sola vez: las letras sueltas y la copia van ocultas.
+     */
+    function roll_text(string $text): string
+    {
+        $text    = trim($text);
+        $byChar  = mb_strlen($text) < 40;
+        $words   = preg_split('/\s+/u', $text) ?: [];
+        $index   = 0;
+        $out     = [];
+
+        foreach ($words as $w => $word) {
+            $layer = static function () use ($word, $byChar, &$index, $w): string {
+                if (! $byChar) {
+                    return '<span style="--c: ' . $w . '">' . e($word) . '</span>';
+                }
+
+                $html = '';
+
+                foreach (mb_str_split($word) as $char) {
+                    $html .= '<span style="--c: ' . $index++ . '">' . e($char) . '</span>';
+                }
+
+                return $html;
+            };
+
+            $start = $index;
+            $a     = $layer();
+            $index = $start;
+            $b     = $layer();
+            $index++; // el espacio entre palabras también cuenta
+
+            $out[] = '<span class="roll__w"><span class="roll__a">' . $a . '</span><span class="roll__b">' . $b . '</span></span>';
+        }
+
+        return '<span class="visually-hidden">' . e($text) . '</span>'
+            . '<span class="roll" aria-hidden="true">' . implode(' ', $out) . '</span>';
+    }
+}

@@ -7,6 +7,8 @@
 @use '../tokens' as *;
 
 .cert-row {
+  position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 6.5rem 9rem auto;
   align-items: baseline;
@@ -16,6 +18,33 @@
   @include below($bp-mobile) {
     grid-template-columns: minmax(0, 1fr);
     row-gap: var(--space-1);
+  }
+}
+
+// Hover: la fila se rellena de cobalto suave y "Verificar" se desliza.
+.cert-row::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(var(--space-4) * -1);
+  z-index: -1;
+  background: var(--color-cobalt-soft);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.cert-row:hover,
+.cert-row:focus-within {
+  &::before {
+    opacity: 1;
+  }
+
+  // Sobre el cobalto suave, --color-ink-faint baja de 4.5:1 en claro.
+  .meta {
+    color: var(--color-ink-soft);
+  }
+
+  .cert-row__verify {
+    transform: translateX(4px);
   }
 }
 
@@ -34,6 +63,9 @@
   @include link-underline;
 
   justify-self: end;
+  transition:
+    background-size var(--duration-slow) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
   white-space: nowrap;
 
   @include below($bp-mobile) {

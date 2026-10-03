@@ -1,6 +1,7 @@
 /**
- * main.js — arranque del front-end de la landing.
- * Módulos ES nativos, sin dependencias.
+ * main.js — arranque del front-end de la landing (módulos ES, sin
+ * dependencias). Aquí viven las piezas pequeñas: menú móvil, nombre del
+ * hero, estado del nav al hacer scroll y anclas.
  */
 
 import { initScrollSpy } from './scroll-spy.js';
@@ -9,10 +10,10 @@ import { initAlerts } from './alerts.js';
 import { initTheme } from './theme.js';
 import { initScrollReveal } from './scroll-reveal.js';
 import { initMarquee } from './marquee.js';
+import { initCursor } from './cursor.js';
 
-/**
- * Menú de navegación en móvil.
- */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)');
+
 function initNav() {
     const toggle = document.querySelector('[data-nav-toggle]');
     const menu = document.getElementById('nav-menu');
@@ -26,38 +27,18 @@ function initNav() {
         menu.classList.toggle('is-open', open);
     };
 
-    toggle.addEventListener('click', () => {
-        setOpen(toggle.getAttribute('aria-expanded') !== 'true');
-    });
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
 
-    // Al saltar a una sección el panel se cierra solo.
-    menu.addEventListener('click', (event) => {
-        if (event.target.closest('a')) {
-            setOpen(false);
-        }
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            setOpen(false);
-        }
-    });
-
-    // Al volver a escritorio el menú deja de ser un panel.
-    window.matchMedia('(min-width: 60rem)').addEventListener('change', (event) => {
-        if (event.matches) {
-            setOpen(false);
-        }
-    });
+    // Al saltar a una sección, con Escape o al volver a escritorio, se cierra.
+    menu.addEventListener('click', (event) => event.target.closest('a') && setOpen(false));
+    document.addEventListener('keydown', (event) => event.key === 'Escape' && setOpen(false));
+    matchMedia('(min-width: 60rem)').addEventListener('change', (event) => event.matches && setOpen(false));
 }
 
 /**
- * El nombre del hero se asienta: cada palabra pasa de un ancho condensado
- * a su ancho final, una sola vez, al cargar. Es el único momento de
- * movimiento del sitio (ver `_hero.scss`).
- *
- * Se espera a Hubot Sans para no animar la fuente de respaldo; si no llega
- * a tiempo, se muestra el estado final sin animar.
+ * El nombre se asienta de un ancho condensado a su ancho final, una vez,
+ * al cargar (`_hero.scss`). Se espera a Hubot Sans para no animar la
+ * fuente de respaldo; si no llega en 1,2 s, se muestra el estado final.
  */
 function initHeroName() {
     const name = document.querySelector('[data-hero-name]');
@@ -66,9 +47,7 @@ function initHeroName() {
         return;
     }
 
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (reduce || !document.fonts) {
+    if (REDUCED.matches || !document.fonts) {
         name.classList.add('is-set');
 
         return;
@@ -77,77 +56,45 @@ function initHeroName() {
     const timeout = new Promise((resolve) => setTimeout(resolve, 1200, 'timeout'));
 
     Promise.race([document.fonts.load('800 1em "Hubot Sans"'), timeout])
-        .then((result) => {
-            name.classList.add(result === 'timeout' ? 'is-set' : 'is-animating');
-        })
+        .then((result) => name.classList.add(result === 'timeout' ? 'is-set' : 'is-animating'))
         .catch(() => name.classList.add('is-set'));
 }
 
-/**
- * La regla bajo el nav aparece al despegarse del hero, y el indicador de
- * scroll del hero se retira (`html.is-scrolled`).
- *
- * Un único listener de scroll pasivo, agrupado en requestAnimationFrame:
- * nunca se lee ni se escribe layout dentro del propio evento.
- */
+/** Regla bajo el nav e indicador de scroll (`html.is-scrolled`), en rAF. */
 function initScrollChrome() {
     const nav = document.querySelector('[data-nav]');
-
-    if (!nav) {
-        return;
-    }
-
     let ticking = false;
 
     const update = () => {
-        ticking = false;
-        const scrolled = window.scrollY > 8;
+        const scrolled = scrollY > 8;
 
-        nav.classList.toggle('is-scrolled', scrolled);
+        ticking = false;
+        nav?.classList.toggle('is-scrolled', scrolled);
         document.documentElement.classList.toggle('is-scrolled', scrolled);
     };
 
-    window.addEventListener('scroll', () => {
-        if (ticking) {
-            return;
+    addEventListener('scroll', () => {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
         }
-
-        ticking = true;
-        requestAnimationFrame(update);
     }, { passive: true });
 
     update();
 }
 
-/**
- * Enlaces internos: scroll suave con respaldo en JS y sin ensuciar el
- * historial con un hash por cada clic.
- */
+/** Anclas internas: scroll suave sin ensuciar el historial. */
 function initAnchors() {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-
     document.addEventListener('click', (event) => {
         const link = event.target.closest('a[href^="#"], a[data-anchor]');
+        const hash = link && !link.hasAttribute('data-modal-scroll') ? (link.getAttribute('href') || '').replace(/^.*(?=#)/, '') : '';
+        const target = hash.length > 1 ? document.querySelector(hash) : null;
 
-        if (!link || link.hasAttribute('data-modal-scroll')) {
-            return;
+        if (target) {
+            event.preventDefault();
+            target.scrollIntoView({ behavior: REDUCED.matches ? 'auto' : 'smooth', block: 'start' });
+            history.replaceState(history.state, '', hash);
         }
-
-        const hash = (link.getAttribute('href') || '').replace(/^.*(?=#)/, '');
-
-        if (!hash || hash === '#') {
-            return;
-        }
-
-        const target = document.querySelector(hash);
-
-        if (!target) {
-            return;
-        }
-
-        event.preventDefault();
-        target.scrollIntoView({ behavior: reduced.matches ? 'auto' : 'smooth', block: 'start' });
-        history.replaceState(history.state, '', hash);
     });
 }
 
@@ -158,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollChrome();
     initScrollReveal();
     initMarquee();
+    initCursor();
     initAnchors();
     initScrollSpy();
     initProjectModal();

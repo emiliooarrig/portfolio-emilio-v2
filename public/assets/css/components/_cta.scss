@@ -1,18 +1,60 @@
 // ============================================================
-//  _cta.scss — botones
+//  _cta.scss — botones y texto rodillo
 //
 //  El primario es cobalto: el color de marca es también el de la acción.
+//  Al hover el texto rueda (roll_text en PHP); el primario se oscurece y
+//  el secundario se rellena de tinta desde abajo.
 // ============================================================
 
 @use '../tokens' as *;
 
+// ------------------------------------------------------------
+//  Rodillo: cada palabra es su propia máscara; el original sube y sale y
+//  la copia ocupa su lugar, con 20ms de escalonado por letra (--c).
+// ------------------------------------------------------------
+.roll__w {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+  // Aire para acentos y descendentes que la máscara cortaría.
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
+.roll__a,
+.roll__b {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+
+  > span {
+    display: inline-block;
+    transition: transform var(--duration-fill) var(--ease-fill);
+    transition-delay: calc(var(--c, 0) * 20ms);
+  }
+}
+
+.roll__b > span {
+  transform: translateY(115%);
+}
+
+@mixin roll-active {
+  .roll__a > span { transform: translateY(-115%); }
+  .roll__b > span { transform: none; }
+}
+
+// ------------------------------------------------------------
+//  Botones
+// ------------------------------------------------------------
 .cta {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   min-block-size: 44px;
   padding-inline: var(--space-5);
+  overflow: hidden;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   // Un <button> sin `background` sale con el gris del sistema; un <a> con
@@ -28,7 +70,12 @@
   transition:
     background-color var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
-    text-decoration-color var(--duration-fast) var(--ease-out);
+    color var(--duration-fill) var(--ease-fill);
+
+  &:hover,
+  &:focus-visible {
+    @include roll-active;
+  }
 
   &:active {
     transform: translateY(1px);
@@ -54,12 +101,30 @@
     }
   }
 
+  // Secundario: la tinta sube desde abajo y el texto se invierte.
   &--secondary {
     border-color: var(--color-rule-strong);
     color: var(--color-ink);
 
-    &:hover {
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: var(--color-ink);
+      transform: scaleY(0);
+      transform-origin: center bottom;
+      transition: transform var(--duration-fill) var(--ease-fill);
+    }
+
+    &:hover,
+    &:focus-visible {
       border-color: var(--color-ink);
+      color: var(--color-paper);
+
+      &::before {
+        transform: scaleY(1);
+      }
     }
   }
 
@@ -69,6 +134,8 @@
     min-block-size: auto;
     padding-inline: 0;
     border: none;
+    border-radius: 0;
+    overflow: visible;
   }
 
   // Peligro: sólo el botón que confirma un borrado en el panel.
@@ -77,7 +144,6 @@
     color: var(--color-on-cobalt);
 
     &:hover {
-      background: var(--color-danger);
       opacity: 0.9;
     }
   }

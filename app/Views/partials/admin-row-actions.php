@@ -8,7 +8,7 @@
  * de pantalla y lo que sale en el `title` al pasar por encima.
  *
  * Borrar apunta a su pantalla de confirmación, que sigue siendo la salida
- * cuando no hay JavaScript. Con JavaScript, `alerts.js` intercepta el clic y
+ * cuando no hay JavaScript. Con JavaScript, `alerts-confirm.js` intercepta el clic y
  * pregunta con la alerta del sitio, sin salir del listado — de ahí los
  * `data-confirm-*`, que son lo que esa alerta lee.
  *

@@ -39,10 +39,10 @@ $newTab = '<span class="visually-hidden"> (se abre en otra pestaña)</span>';
         <?php if (! empty($project['repo_url']) || ! empty($project['demo_url'])): ?>
             <div class="project-detail__links">
                 <?php if (! empty($project['repo_url'])): ?>
-                    <a class="cta cta--secondary cta--sm" href="<?= e($project['repo_url']) ?>" target="_blank" rel="noopener">Repositorio<?= $newTab ?></a>
+                    <a class="cta cta--secondary cta--sm" href="<?= e($project['repo_url']) ?>" target="_blank" rel="noopener" data-cursor="Abrir"><?= roll_text('Repositorio') ?><?= $newTab ?></a>
                 <?php endif; ?>
                 <?php if (! empty($project['demo_url'])): ?>
-                    <a class="cta cta--secondary cta--sm" href="<?= e($project['demo_url']) ?>" target="_blank" rel="noopener">Demo<?= $newTab ?></a>
+                    <a class="cta cta--secondary cta--sm" href="<?= e($project['demo_url']) ?>" target="_blank" rel="noopener" data-cursor="Abrir"><?= roll_text('Demo') ?><?= $newTab ?></a>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
@@ -106,6 +106,6 @@ $newTab = '<span class="visually-hidden"> (se abre en otra pestaña)</span>';
     <?php // Cierra el modal y lleva el scroll al formulario de contacto. ?>
     <footer class="project-detail__foot">
         <p>¿Quieres saber más de este proyecto?</p>
-        <a class="cta cta--primary cta--sm" href="<?= url('/') ?>#contacto" data-modal-scroll="#contacto">Escríbeme</a>
+        <a class="cta cta--primary cta--sm" href="<?= url('/') ?>#contacto" data-modal-scroll="#contacto"><?= roll_text('Escríbeme') ?></a>
     </footer>
 </article>

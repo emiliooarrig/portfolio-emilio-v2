@@ -73,4 +73,13 @@
 .stack__items {
   color: var(--color-ink);
   font-size: var(--text-sm);
+
+  // Lista de lectura: sólo cambia a cobalto, sin más efectos.
+  li {
+    transition: color var(--duration-fast) var(--ease-out);
+
+    &:hover {
+      color: var(--color-cobalt);
+    }
+  }
 }

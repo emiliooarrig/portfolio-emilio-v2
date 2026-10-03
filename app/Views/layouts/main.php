@@ -76,13 +76,13 @@ $description = $openProject
 
             <nav class="site-footer__links" aria-label="Enlaces de contacto">
                 <?php if (! empty($profile['email'])): ?>
-                    <a class="site-footer__link meta" href="mailto:<?= e($profile['email']) ?>"><?= e($profile['email']) ?></a>
+                    <a class="site-footer__link meta" href="mailto:<?= e($profile['email']) ?>" data-cursor="Escribir"><?= e($profile['email']) ?></a>
                 <?php endif; ?>
                 <?php if (! empty($profile['github_url'])): ?>
-                    <a class="site-footer__link meta" href="<?= e($profile['github_url']) ?>" target="_blank" rel="noopener">GitHub<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
+                    <a class="site-footer__link meta" href="<?= e($profile['github_url']) ?>" target="_blank" rel="noopener" data-cursor="Abrir">GitHub<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
                 <?php endif; ?>
                 <?php if (! empty($profile['linkedin_url'])): ?>
-                    <a class="site-footer__link meta" href="<?= e($profile['linkedin_url']) ?>" target="_blank" rel="noopener">LinkedIn<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
+                    <a class="site-footer__link meta" href="<?= e($profile['linkedin_url']) ?>" target="_blank" rel="noopener" data-cursor="Abrir">LinkedIn<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
                 <?php endif; ?>
                 <span class="meta"><?= $year ?></span>
             </nav>

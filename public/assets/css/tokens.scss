@@ -52,15 +52,25 @@ $bp-desktop: 75rem;   // 1200px
   outline-offset: 3px;
 }
 
+/// Subrayado que se dibuja: una línea tenue siempre visible (para que el
+/// enlace se distinga del texto) y, encima, una de tinta que crece de
+/// izquierda a derecha al entrar y se retira hacia la derecha al salir.
+/// Gradientes de 1px con background-size, sin text-decoration.
 @mixin link-underline {
-  text-decoration-line: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-  text-decoration-color: var(--color-rule-strong);
-  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+  text-decoration: none;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(var(--color-rule-strong), var(--color-rule-strong));
+  background-repeat: no-repeat;
+  background-position: right bottom, left bottom;
+  background-size: 0 1px, 100% 1px;
+  padding-bottom: 2px;
+  transition: background-size var(--duration-slow) var(--ease-out);
 
-  &:hover {
-    text-decoration-color: currentColor;
+  &:hover,
+  &:focus-visible {
+    background-position: left bottom, left bottom;
+    background-size: 100% 1px, 100% 1px;
   }
 }
 

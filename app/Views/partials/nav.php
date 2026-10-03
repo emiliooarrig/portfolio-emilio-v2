@@ -29,7 +29,7 @@ $items = [
             <ul class="site-nav__list">
                 <?php foreach ($items as $hash => $label): ?>
                     <li>
-                        <a class="site-nav__link" href="<?= e($anchorPrefix . $hash) ?>" data-spy-link><?= e($label) ?></a>
+                        <a class="site-nav__link" href="<?= e($anchorPrefix . $hash) ?>" data-spy-link><?= roll_text($label) ?></a>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -47,7 +47,7 @@ $items = [
             </button>
 
             <?php // También participa del scroll-spy: cierra la lista de secciones. ?>
-            <a class="cta cta--secondary cta--sm site-nav__cta" href="<?= e($anchorPrefix) ?>#contacto" data-spy-link>Contacto</a>
+            <a class="cta cta--secondary cta--sm site-nav__cta" href="<?= e($anchorPrefix) ?>#contacto" data-spy-link><?= roll_text('Contacto') ?></a>
         </nav>
     </div>
 </header>

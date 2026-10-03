@@ -44,13 +44,13 @@ use App\Models\Technology;
                     <?php if (! empty($profile['email'])): ?>
                         <div>
                             <dt class="meta">Correo</dt>
-                            <dd><a href="mailto:<?= e($profile['email']) ?>"><?= e($profile['email']) ?></a></dd>
+                            <dd><a href="mailto:<?= e($profile['email']) ?>" data-cursor="Escribir"><?= e($profile['email']) ?></a></dd>
                         </div>
                     <?php endif; ?>
                 </dl>
 
                 <?php if (! empty($profile['cv_path'])): ?>
-                    <a class="cta cta--secondary cta--sm" href="<?= e($profile['cv_path']) ?>" target="_blank" rel="noopener">Descargar CV<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
+                    <a class="cta cta--secondary cta--sm" href="<?= e($profile['cv_path']) ?>" target="_blank" rel="noopener" data-cursor="Descargar"><?= roll_text('Descargar CV') ?><span class="visually-hidden"> (se abre en otra pestaña)</span></a>
                 <?php endif; ?>
             </div>
 

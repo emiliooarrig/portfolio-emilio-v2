@@ -2,11 +2,31 @@
 //  _projects.scss — índice de proyectos
 //
 //  Filas, no tarjetas. Los destacados van primero y ampliados, con su
-//  métrica principal en verde señal: es la prueba de que funcionó. El resto
+//  métrica principal en cobalto: es la prueba de que funcionó. El resto
 //  cabe en una línea. Toda la fila abre el modal de detalle.
+//
+//  Hover (cursor.js marca la fila con .is-hovered y data-dir): un relleno
+//  cobalto crece desde el borde por el que entró el puntero y se retira
+//  hacia el borde por el que sale; el texto pasa a blanco y el título rueda.
+//  Con teclado, el foco visible hace lo mismo; sin JS, el :hover.
 // ============================================================
 
 @use '../tokens' as *;
+
+@mixin row-active {
+  @include on-cobalt;
+
+  &::before {
+    transform: scaleY(1);
+  }
+
+  .roll__a > span { transform: translateY(-115%); }
+  .roll__b > span { transform: none; }
+
+  .project-row__metric-value {
+    color: var(--color-ink);
+  }
+}
 
 .project-row {
   position: relative;
@@ -17,35 +37,40 @@
   align-items: baseline;
   column-gap: var(--space-5);
   padding-block: var(--space-5);
+  // Explícito: al redefinir --color-ink en la fila, el color heredado del
+  // <body> no cambiaría por sí solo.
+  color: var(--color-ink);
 
-  // Fondo de hover: desborda el texto a los lados para que respire sin
+  // El relleno desborda el texto a los lados para que respire sin
   // desplazar nada. Va detrás del contenido gracias al `isolation`.
   &::before {
     content: '';
     position: absolute;
     inset: 0 calc(var(--space-4) * -1);
     z-index: -1;
-    border-radius: var(--radius-sm);
-    background: var(--color-sheet-hover);
-    opacity: 0;
-    transition: opacity var(--duration-fast) var(--ease-out);
+    background: var(--color-cobalt-fill);
+    transform: scaleY(0);
+    transform-origin: center bottom;
+    transition: transform var(--duration-fill) var(--ease-fill);
   }
 
-  &:hover::before,
-  &:focus-within::before {
-    opacity: 1;
+  &[data-dir='top']::before {
+    transform-origin: center top;
   }
 
-  &:hover .project-row__title,
-  &:focus-within .project-row__title {
-    text-decoration-color: currentColor;
+  // El texto cruza a blanco al ritmo del relleno.
+  > *,
+  .project-row__metric-value {
+    transition: color var(--duration-fill) var(--ease-fill);
   }
 
-  // Sobre el fondo de hover, --color-ink-faint baja de 4.5:1 en el tema
-  // claro: los metadatos suben un tono mientras la fila está activa.
-  &:hover .meta,
-  &:focus-within .meta {
-    color: var(--color-ink-soft);
+  &.is-hovered,
+  &:has(.project-row__link:focus-visible) {
+    @include row-active;
+  }
+
+  @at-root html:not(.js) &:hover {
+    @include row-active;
   }
 
   @include below($bp-mobile) {
@@ -61,12 +86,7 @@
 .project-row__title {
   grid-area: title;
   font-size: var(--text-md);
-  font-weight: var(--weight-medium);
-  text-decoration-line: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: transparent;
-  text-underline-offset: 0.2em;
-  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+  font-weight: var(--weight-title);
 }
 
 // El enlace real es el título; su ::after se estira sobre toda la fila.
@@ -79,7 +99,8 @@
     inset: 0;
   }
 
-  // El anillo de foco rodea la fila completa, no sólo el título.
+  // El anillo de foco rodea la fila completa, no sólo el título (y sobre
+  // el relleno cobalto es blanco: --color-accent cambia con on-cobalt).
   &:focus-visible {
     outline: none;
 

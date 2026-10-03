@@ -1,9 +1,7 @@
 /**
- * theme.js — botón claro/oscuro.
- *
- * El tema inicial lo pone el script del <head> (sin destello). Aquí sólo
- * se cambia y se recuerda; con View Transitions el tema nuevo se revela en
- * un círculo que crece desde el botón.
+ * theme.js — botón claro/oscuro. El tema inicial lo pone el <head> (sin
+ * destello); aquí se cambia, se recuerda y, con View Transitions, se
+ * revela en un círculo que crece desde el botón.
  */
 
 const COLORS = { light: '#F5F6F8', dark: '#0E1014' };

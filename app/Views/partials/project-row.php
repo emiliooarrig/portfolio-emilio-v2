@@ -6,6 +6,10 @@
  * sin JS y es compartible; su ::after se estira sobre la fila completa.
  * Con JS, `project-modal.js` intercepta el clic y abre el detalle encima.
  *
+ * Hover (cursor.js): la fila se rellena de cobalto desde el borde por el que
+ * entra el puntero, el título rueda (roll_text) y una vista previa generada
+ * del proyecto sigue al cursor (`data-preview` = su slug).
+ *
  * @var array<string, mixed> $project
  * @var bool                 $featured  fila ampliada, con métrica principal
  * @var int                  $index     posición en el índice (escalonado de la aparición)
@@ -17,13 +21,13 @@ $period   = date_range($project['started_on'] ?? null, $project['ended_on'] ?? n
 $metric   = $project['lead_metric'] ?? null;
 ?>
 <?php if ($featured): ?>
-    <article class="project-row project-row--featured" data-project-card data-reveal style="--i: <?= $index ?>">
+    <article class="project-row project-row--featured" data-project-card data-reveal style="--i: <?= $index ?>" data-cursor="Ver" data-preview="<?= e($project['slug']) ?>">
         <?php if ($period !== ''): ?>
             <p class="project-row__period meta"><?= e($period) ?></p>
         <?php endif; ?>
 
         <h3 class="project-row__title">
-            <a class="project-row__link" href="<?= url('/proyectos/' . $project['slug']) ?>" data-project-link><?= e($project['title']) ?></a>
+            <a class="project-row__link" href="<?= url('/proyectos/' . $project['slug']) ?>" data-project-link><?= roll_text((string) $project['title']) ?></a>
         </h3>
 
         <?php if (! empty($project['subtitle'])): ?>
@@ -46,9 +50,9 @@ $metric   = $project['lead_metric'] ?? null;
         <?php endif; ?>
     </article>
 <?php else: ?>
-    <article class="project-row" data-project-card data-reveal style="--i: <?= $index ?>">
+    <article class="project-row" data-project-card data-reveal style="--i: <?= $index ?>" data-cursor="Ver" data-preview="<?= e($project['slug']) ?>">
         <h3 class="project-row__title">
-            <a class="project-row__link" href="<?= url('/proyectos/' . $project['slug']) ?>" data-project-link><?= e($project['title']) ?></a>
+            <a class="project-row__link" href="<?= url('/proyectos/' . $project['slug']) ?>" data-project-link><?= roll_text((string) $project['title']) ?></a>
         </h3>
 
         <?php if (! empty($project['subtitle'])): ?>

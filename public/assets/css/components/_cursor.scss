@@ -1,0 +1,164 @@
+// ============================================================
+//  _cursor.scss — cursor contextual y vista previa flotante
+//
+//  Sólo existe con puntero fino y JS (`cursor.js` añade
+//  html.has-custom-cursor y construye el elemento). Los tamaños se animan
+//  con `transform: scale()`: la forma mide 92px y se escala a 12px
+//  (reposo), 44px (aro sobre enlaces) o 92px (con texto).
+// ============================================================
+
+@use '../tokens' as *;
+
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none !important;
+}
+
+// En campos de texto vuelve el cursor del sistema (y el propio se oculta).
+// Los diálogos modales van en la capa superior, por encima del cursor
+// propio: ahí también manda el del sistema.
+.has-custom-cursor :is(input, textarea, select, [contenteditable]),
+.has-custom-cursor dialog[open],
+.has-custom-cursor dialog[open] * {
+  cursor: auto !important;
+}
+
+.has-custom-cursor dialog[open] :is(a, button) {
+  cursor: pointer !important;
+}
+
+.cursor {
+  --cursor-fill: var(--color-cobalt);
+  --cursor-label-bg: var(--color-cobalt-fill);
+  --cursor-label-fg: var(--color-on-cobalt);
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-out);
+
+  &.is-off {
+    opacity: 0;
+  }
+
+  // Sobre cobalto (la sección, la página entera o una fila rellena) se
+  // invierte: blanco con texto cobalto.
+  &.is-inverted,
+  [data-surface='cobalt'] & {
+    --cursor-fill: var(--color-on-cobalt);
+    --cursor-label-bg: var(--color-on-cobalt);
+    --cursor-label-fg: var(--color-cobalt-fill);
+  }
+}
+
+.cursor__press {
+  transition: transform var(--duration-fast) var(--ease-out);
+
+  .is-pressed & {
+    transform: scale(0.85);
+  }
+}
+
+.cursor__shape {
+  position: absolute;
+  top: -46px;
+  left: -46px;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border: 0 solid var(--cursor-fill);
+  border-radius: 50%;
+  background: var(--cursor-fill);
+  transform: scale(0.1304); // 12px
+  transition:
+    transform 320ms var(--ease-reveal),
+    background-color var(--duration-base) var(--ease-out),
+    border-width var(--duration-base) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out);
+}
+
+.cursor__label {
+  color: var(--cursor-label-fg);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 0;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+// Sobre enlaces y botones: aro de 1.5px a 44px (el borde se compensa con
+// la escala: 3.14px × 0.478 ≈ 1.5px).
+.cursor[data-state='link'] .cursor__shape {
+  border-width: 3.14px;
+  background: transparent;
+  transform: scale(0.4783);
+}
+
+.cursor[data-state='label'] .cursor__shape {
+  background: var(--cursor-label-bg);
+  transform: scale(1);
+}
+
+.cursor[data-state='label'] .cursor__label {
+  opacity: 1;
+}
+
+.cursor[data-state='hidden'] .cursor__shape {
+  opacity: 0;
+  transform: scale(0);
+}
+
+// Sin lerp ni transiciones largas de tamaño.
+@include reduced-motion {
+  .cursor__shape {
+    transition-duration: 0.01ms;
+  }
+}
+
+// ------------------------------------------------------------
+//  Vista previa flotante de proyectos: una sola capa fija que sigue al
+//  cursor; los patrones están pintados dentro y sólo se alternan.
+// ------------------------------------------------------------
+.project-preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 45;
+  display: none;
+  width: 320px;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: var(--shadow-float);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+
+  &.is-visible {
+    opacity: 1;
+  }
+}
+
+.has-custom-cursor .project-preview {
+  display: block;
+
+  @include below($bp-tablet) {
+    display: none;
+  }
+}
+
+.project-preview__item {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+
+  &.is-active {
+    opacity: 1;
+  }
+}

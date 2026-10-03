@@ -50,24 +50,43 @@
 }
 
 .site-nav__link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-block-size: 44px;
   color: var(--color-ink-soft);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
-  text-decoration-line: underline;
-  text-decoration-thickness: 1px;
-  text-decoration-color: transparent;
-  text-underline-offset: 6px;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    text-decoration-color var(--duration-fast) var(--ease-out);
+  transition: color var(--duration-fast) var(--ease-out);
+
+  // Subrayado del enlace activo: se dibuja de izquierda a derecha.
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 8px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--duration-slow) var(--ease-reveal);
+  }
 
   &:hover,
+  &:focus-visible,
   &.is-active {
     color: var(--color-ink);
-    text-decoration-color: currentColor;
+  }
+
+  &:hover,
+  &:focus-visible {
+    .roll__a > span { transform: translateY(-115%); }
+    .roll__b > span { transform: none; }
+  }
+
+  &.is-active::after {
+    transform: scaleX(1);
   }
 }
 

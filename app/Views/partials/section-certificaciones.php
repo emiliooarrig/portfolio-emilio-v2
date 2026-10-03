@@ -39,7 +39,7 @@
                             </p>
 
                             <?php if (! empty($cert['credential_url'])): ?>
-                                <a class="cert-row__verify" href="<?= e($cert['credential_url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($verifyLabel) ?>">Verificar</a>
+                                <a class="cert-row__verify" href="<?= e($cert['credential_url']) ?>" target="_blank" rel="noopener" aria-label="<?= e($verifyLabel) ?>" data-cursor="Abrir">Verificar</a>
                             <?php else: ?>
                                 <span></span>
                             <?php endif; ?>
