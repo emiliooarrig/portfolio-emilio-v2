@@ -3,7 +3,7 @@
  * Secuencia numerada: los pasos de "Cómo trabajo" y el flujo de un proyecto.
  *
  * Es la única numeración del sitio, porque sólo aquí el orden es real. El
- * último paso lleva el punto verde: el resultado.
+ * último paso lleva un punto: el resultado.
  *
  * @var array<int, array{label: string, description?: string|null}> $steps
  * @var string $variant  section (cinco columnas en escritorio) | compact (siempre vertical)

@@ -30,6 +30,11 @@
   > * {
     grid-column: 1 / -1;
   }
+
+  // Doce columnas con sus huecos no caben en un teléfono.
+  @include below($bp-tablet) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 // La composición generativa, a la derecha del nombre. En móvil no cabe.
@@ -130,7 +135,7 @@
 }
 
 // ------------------------------------------------------------
-//  Estado operativo: el punto verde no parpadea.
+//  Estado operativo: el punto verde (--color-status). En el hero late suave.
 //  (También lo usa Experiencia para el puesto actual.)
 // ------------------------------------------------------------
 .status {

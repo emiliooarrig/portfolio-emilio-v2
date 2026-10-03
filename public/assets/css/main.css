@@ -909,6 +909,11 @@ button {
 .hero__inner > * {
   grid-column: 1/-1;
 }
+@media (max-width: 60rem) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 .hero__art {
   grid-column: 8/13;

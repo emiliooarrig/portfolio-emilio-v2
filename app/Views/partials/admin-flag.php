@@ -3,7 +3,7 @@
  * Píldora de estado para las tablas: una bandera de la base, legible.
  *
  * Se lee de un vistazo por color, pero nunca sólo por color — el texto dice
- * lo mismo, que es lo que ve quien no distingue el ámbar del azul.
+ * lo mismo, que es lo que ve quien no distingue un color de otro.
  *
  * @var bool   $on
  * @var string $yes
