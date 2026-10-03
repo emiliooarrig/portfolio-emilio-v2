@@ -6,7 +6,6 @@ use App\Core\Controller;
 use App\Models\Certification;
 use App\Models\Experience;
 use App\Models\Project;
-use App\Models\Service;
 use App\Models\Technology;
 
 /**
@@ -31,14 +30,10 @@ class HomeController extends Controller
         $this->render('home/index', [
             'landing'         => true,
             'projects'        => $projects->published(),
-            'projectCount'    => $projects->countPublished(),
-            'services'        => (new Service())->published(),
             'stackByCategory' => (new Technology())->groupedByCategory(),
             'experiences'     => $experiences->published(),
             'currentRole'     => $experiences->current(),
-            'careerStart'     => $experiences->careerStartYear(),
             'certifications'  => $certifications->published(),
-            'issuers'         => $certifications->issuers(),
             'openProject'     => $openProject,
             'contactErrors'   => $_SESSION['contact_errors'] ?? [],
             'contactOld'      => $_SESSION['contact_old'] ?? [],

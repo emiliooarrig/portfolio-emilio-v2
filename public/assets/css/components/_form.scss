@@ -1,31 +1,9 @@
 // ============================================================
-//  _form.scss — sección Contacto
-//  Los inputs van hundidos: reciben contenido, no lo emiten.
+//  _form.scss — campos de formulario
+//  Los comparten Contacto, el login y el panel.
 // ============================================================
 
 @use '../tokens' as *;
-
-.bento--contact {
-  .bento-cell--form   { @include bento-place(1, 8); }
-  .bento-cell--direct { @include bento-place(8, 13); }
-
-  @include below($bp-tablet) {
-    .bento-cell--form,
-    .bento-cell--direct { grid-column: 1 / 5; }
-  }
-}
-
-.bento-cell--form {
-  padding: var(--space-6);
-
-  @include below($bp-mobile) {
-    padding: var(--space-5);
-  }
-}
-
-.bento-cell--direct {
-  gap: var(--space-2);
-}
 
 .form {
   display: flex;
@@ -40,74 +18,56 @@
 }
 
 .form__label {
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: color var(--duration-fast) var(--ease-out);
-}
-
-.form__row:focus-within .form__label {
-  color: var(--color-accent);
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
 }
 
 .form__optional {
-  color: var(--color-text-faint);
-  text-transform: none;
-  letter-spacing: 0;
+  color: var(--color-ink-faint);
+  font-weight: var(--weight-regular);
 }
 
 .form__input {
   width: 100%;
-  min-height: 2.75rem;
-  padding: var(--space-3) var(--space-4);
-  background: var(--color-surface-sunk);
-  border: 1px solid var(--border-subtle);
+  min-block-size: 44px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-field);
+  border: 1px solid var(--color-rule-strong);
   border-radius: var(--radius-sm);
-  color: var(--color-text);
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: var(--text-base);
+  transition: border-color var(--duration-fast) var(--ease-out);
 
   &::placeholder {
-    color: var(--color-text-faint);
-  }
-
-  &:hover {
-    border-color: var(--border-strong);
+    color: var(--color-ink-faint);
   }
 
   &:focus {
     outline: none;
-    border-color: var(--color-structural);
-    background: var(--color-bg);
-    box-shadow: 0 0 0 3px var(--color-structural-dim);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    @include focus-ring;
+
+    border-color: var(--color-ink);
   }
 
   &--area {
     min-height: 9rem;
-    padding-block: var(--space-3);
     resize: vertical;
     line-height: var(--leading-body);
   }
 
-  // Desplegable: mismo campo hundido, con su flecha dibujada a mano — la del
-  // sistema llega en el color del sistema y se ve pegada sobre el fondo.
+  // Desplegable con flecha dibujada a mano: la del sistema llega en el
+  // color del sistema.
   &--select {
-    min-height: 2.75rem;
     padding-right: var(--space-7);
     appearance: none;
     background-image:
-      linear-gradient(45deg, transparent 50%, var(--color-text-dim) 50%),
-      linear-gradient(135deg, var(--color-text-dim) 50%, transparent 50%);
+      linear-gradient(45deg, transparent 50%, var(--color-ink-soft) 50%),
+      linear-gradient(135deg, var(--color-ink-soft) 50%, transparent 50%);
     background-position:
       calc(100% - 1.15rem) calc(50% + 1px),
       calc(100% - 0.85rem) calc(50% + 1px);
@@ -115,68 +75,26 @@
     background-repeat: no-repeat;
 
     option {
-      background: var(--color-surface);
-      color: var(--color-text);
+      background: var(--color-sheet);
+      color: var(--color-ink);
     }
   }
 
-  &.is-invalid {
-    border-color: rgba(255, 107, 91, 0.55);
+  &.is-invalid,
+  &[aria-invalid='true'] {
+    border-color: var(--color-danger);
   }
-}
-
-// ------------------------------------------------------------
-//  Íconos de campo
-// ------------------------------------------------------------
-//  Van dentro de la caja, del lado por donde se empieza a escribir, y no
-//  reciben puntero: son una señal de qué se espera en el campo, no un botón.
-.form__field {
-  position: relative;
-  display: flex;
-}
-
-.form__icon {
-  position: absolute;
-  top: 50%;
-  left: var(--space-4);
-  display: flex;
-  color: var(--color-text-faint);
-  pointer-events: none;
-  transform: translateY(-50%);
-  transition: color var(--duration-fast) var(--ease-out);
-
-  // El área de texto crece: su ícono se ancla a la primera línea, no al
-  // centro de una caja que cambia de alto.
-  &--area {
-    top: calc(var(--space-3) + 0.2rem);
-    transform: none;
-  }
-}
-
-// El ícono sigue a la etiqueta: los dos se encienden con el campo enfocado.
-.form__row:focus-within .form__icon {
-  color: var(--color-accent);
-}
-
-.form__field.is-invalid .form__icon {
-  color: var(--color-danger);
-}
-
-// Hueco para el ícono: su ancho más el aire que ya tenía el campo.
-.form__input--iconed {
-  padding-left: calc(var(--space-4) + 18px + var(--space-3));
 }
 
 .form__error {
   color: var(--color-danger);
-  font-size: var(--text-2xs);
+  font-size: var(--text-sm);
 }
 
-// Ayuda bajo el campo: la usa el panel, donde un campo puede necesitar una
-// línea de contexto ("vacío = sigue en marcha") que no cabe en la etiqueta.
+// Ayuda bajo el campo (la usa el panel).
 .form__hint {
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   line-height: var(--leading-snug);
 }
 
@@ -192,13 +110,25 @@
   overflow: hidden;
 }
 
-.contact__note {
-  margin-top: auto;
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--border-subtle);
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+// ------------------------------------------------------------
+//  Contacto
+// ------------------------------------------------------------
+.contact {
+  display: grid;
+  gap: var(--space-7);
 }
 
-// Los mensajes que devuelve el backend ya no son una tira dentro del
-// formulario: salen como alerta sobre la página (`_alert.scss`).
+.contact__direct {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-6);
+  row-gap: var(--space-2);
+
+  a {
+    @include link-underline;
+  }
+}
+
+.contact__form {
+  max-inline-size: 36rem;
+}

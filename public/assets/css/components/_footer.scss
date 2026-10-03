@@ -1,0 +1,39 @@
+// ============================================================
+//  _footer.scss — una sola fila de cierre
+// ============================================================
+
+@use '../tokens' as *;
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  padding-block: var(--space-6);
+  border-top: 1px solid var(--color-rule);
+}
+
+.site-footer__identity {
+  font-size: var(--text-sm);
+}
+
+.site-footer__name {
+  font-weight: var(--weight-medium);
+}
+
+.site-footer__role {
+  color: var(--color-ink-soft);
+}
+
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-5);
+  row-gap: var(--space-2);
+}
+
+.site-footer__link {
+  @include link-underline;
+}

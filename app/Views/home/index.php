@@ -1,18 +1,18 @@
 <?php
 /**
  * Única vista del sitio: las secciones se apilan en el orden del scroll.
- * Inicio → Sobre mí → Proyectos → Servicios → Certificaciones → Experiencia → Contacto.
+ * Inicio → Proyectos → Cómo trabajo → Experiencia → Sobre mí → Certificaciones → Contacto.
+ *
+ * La prueba (proyectos) va primero porque es lo que un reclutador busca
+ * antes que nada; "Sobre mí" baja porque sólo interesa una vez que el
+ * trabajo convenció.
  *
  * @var array<string, mixed> $profile
  * @var array<int, array<string, mixed>> $projects
- * @var array<int, array<string, mixed>> $services
  * @var array<string, array<int, array<string, mixed>>> $stackByCategory
  * @var array<int, array<string, mixed>> $experiences
  * @var array<int, array<string, mixed>> $certifications
- * @var array<int, string> $issuers
  * @var array<string, mixed>|null $currentRole
- * @var int|null $careerStart
- * @var int $projectCount
  * @var array<string, string> $contactErrors
  * @var array<string, string> $contactOld
  * @var array{type: string, text: string}|null $flash  lo pinta el layout, como alerta
@@ -20,30 +20,19 @@
 ?>
 <?= partial('section-inicio', ['profile' => $profile]) ?>
 
+<?= partial('section-proyectos', ['projects' => $projects]) ?>
+
+<?= partial('section-metodo') ?>
+
+<?= partial('section-experiencia', ['experiences' => $experiences]) ?>
+
 <?= partial('section-sobre-mi', [
     'profile'         => $profile,
     'currentRole'     => $currentRole,
-    'careerStart'     => $careerStart,
     'stackByCategory' => $stackByCategory,
 ]) ?>
 
-<?= partial('section-proyectos', [
-    'projects'     => $projects,
-    'projectCount' => $projectCount,
-]) ?>
-
-<?= partial('section-servicios', ['services' => $services]) ?>
-
-<?= partial('section-certificaciones', [
-    'certifications' => $certifications,
-    'issuers'        => $issuers,
-]) ?>
-
-<?= partial('section-experiencia', [
-    'experiences' => $experiences,
-    'careerStart' => $careerStart,
-    'profile'     => $profile,
-]) ?>
+<?= partial('section-certificaciones', ['certifications' => $certifications]) ?>
 
 <?= partial('section-contacto', [
     'profile' => $profile,

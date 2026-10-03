@@ -1,6 +1,6 @@
 // ============================================================
-//  layout.scss — contenedor, secciones ancladas y retícula de 12 columnas
-//  Todo el sitio es un scroll continuo: las secciones son destinos de ancla.
+//  layout.scss — página, contenedor y página de error
+//  El patrón de sección (riel + contenido) vive en components/_section.
 // ============================================================
 
 @use 'tokens' as *;
@@ -18,144 +18,24 @@
 
 .container {
   width: 100%;
-  max-width: var(--container-max);
+  max-inline-size: var(--container-max);
   margin-inline: auto;
-  padding-inline: var(--space-5);
-
-  @include below($bp-mobile) {
-    padding-inline: var(--space-4);
-  }
-}
-
-// ------------------------------------------------------------
-//  Secciones ancladas — ritmo espacial desigual, a propósito
-// ------------------------------------------------------------
-.section {
-  position: relative;
-  padding-block: var(--space-9);
-  // Refuerza el frenado del ancla en navegadores que ignoran scroll-padding.
-  scroll-margin-top: calc(var(--nav-height) + var(--space-4));
-
-  // Costura entre secciones: una línea que sólo se nota si la buscas.
-  & + .section::before {
-    content: '';
-    position: absolute;
-    inset: 0 auto auto 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--border-subtle) 18%,
-      var(--border-subtle) 82%,
-      transparent
-    );
-  }
-
-  &--hero {
-    padding-block: var(--space-8) var(--space-9);
-    overflow: hidden;
-  }
-
-  &--error {
-    padding-block: var(--space-9);
-    text-align: center;
-  }
-
-  @include below($bp-mobile) {
-    padding-block: var(--space-7);
-  }
-}
-
-.section__foot {
-  margin-top: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--border-subtle);
-}
-
-// ------------------------------------------------------------
-//  Encabezado de sección
-// ------------------------------------------------------------
-.section-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-5);
-  margin-bottom: var(--space-6);
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.section-header__main {
-  max-width: 46rem;
-}
-
-.section-header__title {
-  font-size: var(--text-xl);
-  margin-bottom: var(--space-3);
-}
-
-.section-header__lead {
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-}
-
-.section-header__meta {
-  flex-shrink: 0;
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
-}
-
-@include below($bp-tablet) {
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .section-header__title {
-    font-size: var(--text-lg);
-  }
-}
-
-// ------------------------------------------------------------
-//  Retícula base de 12 columnas — todas las secciones la comparten
-// ------------------------------------------------------------
-.bento {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: var(--bento-gap);
-
-  @include below($bp-tablet) {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  @include below($bp-mobile) {
-    grid-template-columns: 1fr;
-  }
+  padding-inline: var(--gutter);
 }
 
 // ------------------------------------------------------------
 //  Página de error
 // ------------------------------------------------------------
-.error-code {
-  color: var(--color-structural);
-  font-size: var(--text-lg);
-  letter-spacing: var(--tracking-wide);
+.error-page {
+  display: grid;
+  gap: var(--space-5);
+  justify-items: start;
 }
 
-.error-title {
-  margin: var(--space-3) 0;
-  font-size: var(--text-xl);
+.error-page__title {
+  font-size: var(--text-2xl);
 }
 
-.error-text {
-  margin-bottom: var(--space-6);
-  color: var(--color-text-muted);
-}
-
-.error-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  justify-content: center;
+.error-page__text {
+  color: var(--color-ink-soft);
 }

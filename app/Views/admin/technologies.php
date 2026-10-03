@@ -1,6 +1,6 @@
 <?php
 /**
- * Stack — los chips de «Sobre mí» y los tags de cada proyecto.
+ * Stack — lo que se lista en «Sobre mí» y las tecnologías de cada proyecto.
  *
  * @var array<int, array<string, mixed>> $technologies
  */
@@ -14,7 +14,7 @@ $unused = count(array_filter(
 ?>
 <?= partial('admin-head', [
     'title' => 'Stack',
-    'lead'  => 'Los chips agrupados por categoría en «Sobre mí» y los tags de cada proyecto.',
+    'lead'  => 'El stack agrupado por categoría en «Sobre mí» y las tecnologías de cada proyecto.',
     'meta'   => plural(count($technologies), 'tecnología', 'tecnologías')
         . ($unused > 0 ? ' · ' . $unused . ' sin proyecto' : ''),
     'action' => ['label' => 'Nueva tecnología', 'href' => '/admin/tecnologias/nueva'],
@@ -49,7 +49,7 @@ $unused = count(array_filter(
 
                         <td class="meta admin-table__narrow"><?= (int) $tech['id'] ?></td>
 
-                        <?php // Cero no es un error, pero sí un dato: ese chip no lo respalda ningún proyecto. ?>
+                        <?php // Cero no es un error, pero sí un dato: esa tecnología no la respalda ningún proyecto. ?>
                         <td class="meta<?= (int) $tech['project_count'] === 0 ? ' admin-table__none' : '' ?>">
                             <?= (int) $tech['project_count'] ?>
                         </td>

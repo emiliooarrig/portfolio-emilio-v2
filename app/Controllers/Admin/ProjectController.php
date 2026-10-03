@@ -8,7 +8,7 @@ use App\Models\Project;
 use App\Models\Technology;
 
 /**
- * Proyectos: el grid bento y el modal de detalle.
+ * Proyectos: el índice de la landing y el modal de detalle.
  *
  * Es la sección con más piezas colgando — stack, métricas y pasos de flujo —
  * y todas se guardan en el mismo envío que el proyecto: un formulario, un
@@ -203,7 +203,6 @@ class ProjectController extends AdminController
             'cover_image'  => $project['cover_image']  ?? '',
             'repo_url'     => $project['repo_url']     ?? '',
             'demo_url'     => $project['demo_url']     ?? '',
-            'bento_size'   => $project['bento_size']   ?? 'md',
             'started_on'   => $project['started_on']   ?? '',
             'ended_on'     => $project['ended_on']     ?? '',
             'is_featured'  => (int) ($project['is_featured'] ?? 0),
@@ -266,7 +265,6 @@ class ProjectController extends AdminController
             // partir del archivo que se suba (o de la que ya estaba).
             'repo_url'     => $this->postText('repo_url'),
             'demo_url'     => $this->postText('demo_url'),
-            'bento_size'   => $this->postText('bento_size'),
             'started_on'   => $this->postText('started_on'),
             'ended_on'     => $this->postText('ended_on'),
             'is_featured'  => $this->postFlag('is_featured'),

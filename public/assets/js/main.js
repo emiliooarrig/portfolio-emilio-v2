@@ -3,15 +3,8 @@
  * Módulos ES nativos, sin dependencias.
  */
 
-import { initScrollReveal } from './scroll-reveal.js';
 import { initScrollSpy } from './scroll-spy.js';
-import { initCountUp } from './count-up.js';
 import { initProjectModal } from './project-modal.js';
-import { initPipeline } from './pipeline.js';
-import { initCardGlow } from './card-glow.js';
-import { initServicesCarousel } from './services-carousel.js';
-import { initCursor } from './cursor.js';
-import { initHeroBrush } from './hero-brush.js';
 import { initAlerts } from './alerts.js';
 
 /**
@@ -56,17 +49,47 @@ function initNav() {
 }
 
 /**
- * Estado del nav, barra de progreso y botón "volver arriba".
+ * El nombre del hero se asienta: cada palabra pasa de un ancho condensado
+ * a su ancho final, una sola vez, al cargar. Es el único momento de
+ * movimiento del sitio (ver `_hero.scss`).
+ *
+ * Se espera a Mona Sans para no animar la fuente de respaldo; si no llega
+ * a tiempo, se muestra el estado final sin animar.
+ */
+function initHeroName() {
+    const name = document.querySelector('[data-hero-name]');
+
+    if (!name) {
+        return;
+    }
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce || !document.fonts) {
+        name.classList.add('is-set');
+
+        return;
+    }
+
+    const timeout = new Promise((resolve) => setTimeout(resolve, 1200, 'timeout'));
+
+    Promise.race([document.fonts.load('680 1em "Mona Sans"'), timeout])
+        .then((result) => {
+            name.classList.add(result === 'timeout' ? 'is-set' : 'is-animating');
+        })
+        .catch(() => name.classList.add('is-set'));
+}
+
+/**
+ * La regla bajo el nav aparece al despegarse del hero.
  *
  * Un único listener de scroll pasivo, agrupado en requestAnimationFrame:
  * nunca se lee ni se escribe layout dentro del propio evento.
  */
 function initScrollChrome() {
     const nav = document.querySelector('[data-nav]');
-    const progress = document.querySelector('[data-scroll-progress]');
-    const toTop = document.querySelector('[data-to-top]');
 
-    if (!nav && !progress && !toTop) {
+    if (!nav) {
         return;
     }
 
@@ -74,27 +97,18 @@ function initScrollChrome() {
 
     const update = () => {
         ticking = false;
-
-        const scrolled = window.scrollY;
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        const ratio = max > 0 ? Math.min(scrolled / max, 1) : 0;
-
-        nav?.classList.toggle('is-scrolled', scrolled > 24);
-        progress?.style.setProperty('--scroll-progress', ratio.toFixed(4));
-        toTop?.classList.toggle('is-visible', scrolled > window.innerHeight * 0.8);
+        nav.classList.toggle('is-scrolled', window.scrollY > 8);
     };
 
-    const onScroll = () => {
+    window.addEventListener('scroll', () => {
         if (ticking) {
             return;
         }
 
         ticking = true;
         requestAnimationFrame(update);
-    };
+    }, { passive: true });
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
     update();
 }
 
@@ -132,16 +146,10 @@ function initAnchors() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initNav();
+    initHeroName();
     initScrollChrome();
     initAnchors();
-    initScrollReveal();
     initScrollSpy();
-    initCountUp();
     initProjectModal();
-    initPipeline();
-    initCardGlow();
-    initServicesCarousel();
-    initCursor();
-    initHeroBrush();
     initAlerts();
 });

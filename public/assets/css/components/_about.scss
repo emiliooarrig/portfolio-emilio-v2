@@ -1,91 +1,76 @@
 // ============================================================
-//  _about.scss — sección Sobre mí (bio, ficha técnica, stack)
+//  _about.scss — Sobre mí
+//  Prosa a la izquierda, ficha sin caja a la derecha y, debajo, el stack
+//  agrupado por categoría en texto plano.
 // ============================================================
 
 @use '../tokens' as *;
 
-.bento--about {
-  .bento-cell--bio   { @include bento-place(1, 8, 1, 3); }
-  .bento-cell--facts { @include bento-place(8, 13, 1, 3); }
-  .bento-cell--label { @include bento-place(1, 13); }
-  .stack-group       { @include bento-span(4, 2); }
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem);
+  column-gap: var(--space-7);
+  row-gap: var(--space-7);
 
-  @include below($bp-tablet) {
-    .bento-cell--bio,
-    .bento-cell--facts,
-    .bento-cell--label { grid-column: 1 / 5; grid-row: auto; }
+  @include below($bp-desktop) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-// ------------------------------------------------------------
-//  Bio
-// ------------------------------------------------------------
-.bento-cell--bio {
+.about__bio {
+  display: grid;
   gap: var(--space-4);
-  padding: var(--space-6);
-
-  @include below($bp-mobile) {
-    padding: var(--space-5);
-  }
 }
 
 .about__lead {
-  color: var(--color-text);
-  font-family: var(--font-display);
   font-size: var(--text-md);
-  font-weight: 500;
   line-height: var(--leading-snug);
 }
 
-// ------------------------------------------------------------
-//  Ficha técnica
-// ------------------------------------------------------------
-.bento-cell--facts {
-  gap: var(--space-2);
+.about__facts {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: var(--space-5);
 }
 
-.bento-cell__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  margin-top: auto;
-  padding-top: var(--space-5);
-}
+.facts {
+  display: grid;
+  gap: var(--space-4);
 
-// ------------------------------------------------------------
-//  Etiqueta de sub-bloque dentro de un bento
-// ------------------------------------------------------------
-.bento-cell--label {
-  padding: 0;
-  background: none;
-  border: none;
-  box-shadow: none;
-  margin-top: var(--space-4);
-
-  .eyebrow {
-    margin-bottom: 0;
+  dd {
+    color: var(--color-ink);
   }
 }
 
 // ------------------------------------------------------------
-//  Stack agrupado por categoría — una celda bento por categoría
+//  Stack
 // ------------------------------------------------------------
-.stack-group {
-  @include bento-surface;
-
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  padding: var(--cell-padding);
+.stack {
+  grid-column: 1 / -1;
 }
 
-.stack-group__title {
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-3);
-  border-bottom: 1px solid var(--border-subtle);
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+.stack__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  font-stretch: var(--stretch-body);
+  letter-spacing: 0;
+}
+
+.stack__groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: var(--space-6);
+  margin-top: var(--space-5);
+}
+
+.stack__group {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+}
+
+.stack__items {
+  color: var(--color-ink);
+  font-size: var(--text-sm);
 }

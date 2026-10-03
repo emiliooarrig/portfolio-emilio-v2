@@ -1,0 +1,43 @@
+// ============================================================
+//  _certs.scss — Certificaciones
+//  Filas como las de proyectos: título y emisor, emisión, vencimiento y
+//  el enlace a verificar, alineado a la derecha.
+// ============================================================
+
+@use '../tokens' as *;
+
+.cert-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 6.5rem 9rem auto;
+  align-items: baseline;
+  column-gap: var(--space-5);
+  padding-block: var(--space-5);
+
+  @include below($bp-mobile) {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-1);
+  }
+}
+
+.cert-row__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  font-stretch: var(--stretch-body);
+  letter-spacing: 0;
+}
+
+.cert-row__issuer {
+  color: var(--color-ink-soft);
+}
+
+.cert-row__verify {
+  @include link-underline;
+
+  justify-self: end;
+  white-space: nowrap;
+
+  @include below($bp-mobile) {
+    justify-self: start;
+    margin-top: var(--space-2);
+  }
+}

@@ -31,7 +31,7 @@
 <section class="admin-panel">
     <div class="admin-panel__head">
         <h2 class="admin-panel__title">Últimos mensajes</h2>
-        <a class="link-arrow" href="<?= url('/admin/mensajes') ?>">Ver todos <span aria-hidden="true">→</span></a>
+        <a class="link-arrow" href="<?= url('/admin/mensajes') ?>">Ver todos</a>
     </div>
 
     <?php if ($recent === []): ?>

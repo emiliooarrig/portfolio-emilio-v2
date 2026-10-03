@@ -1,13 +1,13 @@
 <?php
 /**
- * Servicios — las tarjetas del carrusel.
+ * Servicios — fuera de la landing; se conservan la tabla y el CRUD.
  *
  * @var array<int, array<string, mixed>> $services
  */
 ?>
 <?= partial('admin-head', [
     'title' => 'Servicios',
-    'lead'  => 'Las tarjetas del carrusel. Este texto lo lee un cliente, no un colega: sin jerga.',
+    'lead'  => 'Hoy no se muestran en la landing: la sección salió del portafolio. La tabla y el CRUD se conservan por si vuelven.',
     'meta'   => plural(count($services), 'servicio', 'servicios'),
     'action' => ['label' => 'Nuevo servicio', 'href' => '/admin/servicios/nuevo'],
 ]) ?>

@@ -1,247 +1,91 @@
 // ============================================================
-//  _cta.scss — botones y bloque de llamada a la acción
-//  Ámbar = acción principal (dato con valor)
-//  Azul  = acción secundaria (estructura)
+//  _cta.scss — botones
+//
+//  Tinta sobre papel. El verde señal no se usa en botones: significa
+//  "funciona", no "haz clic".
 // ============================================================
 
 @use '../tokens' as *;
 
 .cta {
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 2.75rem;            // 44px — área táctil mínima
-  padding: var(--space-3) var(--space-5);
+  min-block-size: 44px;
+  padding-inline: var(--space-5);
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  // Sin fondo por defecto: las variantes deciden. Hace falta decirlo porque
-  // un <button> sin `background` se pinta con el gris del sistema, mientras
-  // que un <a> con las mismas clases sale transparente — y el CTA vive en
-  // los dos elementos.
+  // Un <button> sin `background` sale con el gris del sistema; un <a> con
+  // las mismas clases, transparente. El CTA vive en los dos.
   background: none;
-  overflow: hidden;
-  // Stacking context propio: el relleno deslizante puede ir detrás del texto
-  // sin caer por debajo del fondo del botón.
-  isolation: isolate;
-  font-family: var(--font-body);
-  font-size: var(--text-2xs);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1.2;
   text-align: center;
+  text-decoration: none;
   transition:
     background-color var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-base) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
-
-  // Relleno que se desliza de izquierda a derecha al hover.
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--duration-base) var(--ease-out);
-    z-index: -1;
-  }
-
-  &:hover::before {
-    transform: scaleX(1);
-  }
+    text-decoration-color var(--duration-fast) var(--ease-out);
 
   &:active {
-    transform: scale(0.97);
+    transform: translateY(1px);
   }
 
   &--sm {
-    min-height: 2.25rem;
-    padding: var(--space-2) var(--space-4);
+    min-block-size: 36px;
+    padding-inline: var(--space-4);
   }
 
-  // Escala del hero: los únicos CTA que compiten con un título gigante.
   &--lg {
-    min-height: 3.25rem;
-    padding: var(--space-4) var(--space-7);
-    font-size: var(--text-xs);
+    min-block-size: 52px;
+    padding-inline: var(--space-6);
+    font-size: var(--text-base);
   }
 
-  // Icono que se desplaza junto al texto.
-  .cta__icon {
-    display: inline-flex;
-    transition: transform var(--duration-base) var(--ease-out);
-  }
-
-  &:hover .cta__icon {
-    transform: translateX(3px);
-  }
-
-  // Primario: alto contraste, uno por sección.
   &--primary {
-    background: var(--color-accent);
-    color: #0A0E15;
-
-    &::before {
-      background: var(--color-accent-hover);
-    }
+    background: var(--color-ink);
+    color: var(--color-paper);
 
     &:hover {
-      color: #0A0E15;
-      box-shadow: 0 8px 24px rgba(255, 177, 61, 0.22);
+      background: var(--color-ink-hover);
     }
   }
 
-  // Secundario: contorno estructural.
   &--secondary {
-    border-color: var(--border-structural);
-    color: var(--color-structural);
-
-    &::before {
-      background: var(--color-structural-dim);
-    }
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink);
 
     &:hover {
-      border-color: var(--color-structural);
-      color: var(--color-structural);
+      border-color: var(--color-ink);
     }
   }
 
-  // Peligro: sólo el botón que confirma un borrado en el panel. Es el único
-  // sitio del proyecto donde el rojo de aviso se usa como acción, y por eso
-  // va en contorno hasta que el puntero está encima: se ve, pero no compite
-  // con el ámbar de la acción principal.
-  &--danger {
-    border-color: rgba(255, 107, 91, 0.45);
-    color: var(--color-alert);
-
-    &::before {
-      background: var(--color-alert);
-    }
-
-    &:hover {
-      border-color: var(--color-alert);
-      color: var(--color-bg);
-    }
-  }
-
-  // Ghost: acciones terciarias.
   &--ghost {
-    border-color: var(--border-subtle);
-    color: var(--color-text-muted);
+    @include link-underline;
 
-    &::before {
-      background: var(--color-surface-alt);
-    }
+    min-block-size: auto;
+    padding-inline: 0;
+    border: none;
+  }
+
+  // Peligro: sólo el botón que confirma un borrado en el panel.
+  &--danger {
+    background: var(--color-danger);
+    color: var(--color-sheet); // blanco en el tema claro
 
     &:hover {
-      border-color: var(--border-strong);
-      color: var(--color-text);
+      background: var(--color-danger);
+      opacity: 0.9;
     }
   }
 }
 
-@include reduced-motion {
-  .cta,
-  .cta::before,
-  .cta .cta__icon {
-    transition-property: background-color, border-color, color;
-  }
-
-  .cta::before { display: none; }
-  .cta:active  { transform: none; }
-  .cta:hover .cta__icon { transform: none; }
-}
-
-// ------------------------------------------------------------
-//  Bloque CTA
-// ------------------------------------------------------------
-.cta-block {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
-
-  &__title {
-    font-size: var(--text-md);
-    font-weight: 500;
-  }
-
-  &__text {
-    max-width: 42rem;
-    margin-top: var(--space-2);
-    color: var(--color-text-muted);
-    font-size: var(--text-2xs);
-  }
-
-  &__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    flex-shrink: 0;
-  }
-
-  // Variante dentro del flujo de una sección.
-  &--inline {
-    position: relative;
-    margin-top: var(--space-6);
-    padding: var(--space-6);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background:
-      linear-gradient(120deg, var(--color-accent-dim), transparent 42%),
-      var(--color-surface);
-
-    // Riel izquierdo. Va en ::after porque ::before es la capa de luz
-    // del hover compartido, igual que en las tarjetas.
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0 auto 0 0;
-      z-index: 2;
-      width: 2px;
-      background: linear-gradient(180deg, var(--color-accent), var(--color-structural));
-      pointer-events: none;
-    }
-  }
-
-  // Variante panel suelto.
-  &--panel {
-    padding: var(--space-6);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-  }
-
-  // Variante de cierre en el footer: sin caja, más aire.
-  &--footer {
-    padding-block: var(--space-7);
-
-    .cta-block__title {
-      font-size: var(--text-lg);
-    }
-  }
-
-  // Variante compacta, dentro del modal de proyecto.
-  &--modal {
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--border-subtle);
-
-    .cta-block__title {
-      font-size: var(--text-sm);
-    }
-  }
-
-  @include below($bp-tablet) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-5);
-
-    &--inline,
-    &--panel {
-      padding: var(--space-5);
-    }
+@media (prefers-color-scheme: dark) {
+  .cta--danger {
+    color: var(--color-paper);
   }
 }

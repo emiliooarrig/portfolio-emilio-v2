@@ -1,39 +1,22 @@
 // ============================================================
-//  fonts.scss — carga de las familias propias
+//  fonts.scss — Mona Sans, autoalojada
 //
-//  Sekuya y Stack Sans Headline no están en Google Fonts, así que se
-//  sirven desde el propio dominio: los archivos van en
-//  `public/assets/fonts/` (ver el README de esa carpeta con los nombres
-//  exactos que se esperan aquí). Sin archivos, cada familia cae en el
-//  respaldo del sistema declarado en `tokens.scss` y la página sigue
-//  legible — pero pierde su identidad tipográfica.
+//  Una sola cara variable cubre todo el sitio: peso (wght 200–900) y
+//  ancho (wdth 75–125). Al declarar `font-stretch` como rango, la propiedad
+//  CSS `font-stretch` mueve el eje de ancho directamente — y degrada bien
+//  con la fuente de respaldo, cosa que `font-variation-settings` no hace.
 //
-//  Se declaran los dos formatos habituales: el navegador toma woff2 y
-//  recurre al segundo sólo si el primero no está.
-//
-//  Una sola cara por familia cubriendo 400–700: son archivos de un peso
-//  y declarar el rango completo evita que el navegador falsifique la
-//  negrita deformando la letra. Si algún día hay un corte bold real, se
-//  añade su propia cara con `font-weight: 700`.
+//  Sin el archivo, la página cae en `system-ui` y sigue legible
+//  (ver `public/assets/fonts/README.md`).
 // ============================================================
 
 @font-face {
-  font-family: 'Sekuya';
+  font-family: 'Mona Sans';
   src:
-    url('../fonts/sekuya.woff2') format('woff2'),
-    url('../fonts/sekuya.ttf') format('truetype');
-  font-weight: 400 700;
-  font-style: normal;
-  // El nombre del hero se pinta antes con el respaldo que en blanco.
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Stack Sans Headline';
-  src:
-    url('../fonts/stack-sans-headline.woff2') format('woff2'),
-    url('../fonts/stack-sans-headline.ttf') format('truetype');
-  font-weight: 400 700;
+    url('../fonts/mona-sans.woff2') format('woff2-variations'),
+    url('../fonts/mona-sans.woff2') format('woff2');
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
   font-style: normal;
   font-display: swap;
 }

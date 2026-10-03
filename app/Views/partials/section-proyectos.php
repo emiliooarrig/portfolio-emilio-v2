@@ -1,36 +1,38 @@
 <?php
 /**
- * Sección Proyectos destacados — grid bento; cada tarjeta abre el modal.
+ * Sección Proyectos — índice en filas; cada fila abre el modal de detalle.
+ *
+ * Primero los destacados (ampliados, con su métrica principal) y después
+ * el resto en una línea. Cada grupo conserva el orden por fechas que ya
+ * devuelve `Project::published()`.
  *
  * @var array<int, array<string, mixed>> $projects
- * @var int $projectCount
  */
+
+$featured = array_filter($projects, static fn (array $p): bool => ! empty($p['is_featured']));
+$others   = array_filter($projects, static fn (array $p): bool => empty($p['is_featured']));
 ?>
 <section class="section" id="proyectos">
-    <div class="container">
+    <div class="container section__grid">
         <?= partial('section-header', [
-            'eyebrow' => 'Trabajo real',
-            'title'   => 'Proyectos destacados',
-            'lead'    => 'Casos que ya resolví: qué estaba fallando, qué hice y en qué mejoró. Toca cualquier tarjeta para leer la historia completa.',
-            'meta'    => $projectCount . ' publicados',
+            'title' => 'Proyectos',
+            'lead'  => 'Qué estaba pasando, qué hice y qué cambió después. Abre cualquiera para ver el caso completo.',
         ]) ?>
 
-        <?php if ($projects === []): ?>
-            <p class="empty-state">Todavía no hay proyectos publicados.</p>
-        <?php else: ?>
-            <div class="bento bento--projects reveal--stagger">
-                <?php foreach ($projects as $project): ?>
-                    <?= partial('bento-card', ['project' => $project]) ?>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+        <div class="section__body">
+            <?php if ($projects === []): ?>
+                <p class="empty-state">Todavía no hay proyectos publicados.</p>
+            <?php else: ?>
+                <div class="row-list">
+                    <?php foreach ($featured as $project): ?>
+                        <?= partial('project-row', ['project' => $project, 'featured' => true]) ?>
+                    <?php endforeach; ?>
 
-        <?= partial('cta-block', [
-            'title'     => '¿Lo tuyo se parece a alguno de estos?',
-            'text'      => 'Cuéntame qué necesitas y te digo con franqueza si puedo ayudarte, antes de proponerte nada.',
-            'primary'   => ['label' => 'Contáctame', 'href' => '#contacto', 'icon' => '→'],
-            'secondary' => ['label' => 'Ver servicios', 'href' => '#servicios'],
-            'variant'   => 'inline',
-        ]) ?>
+                    <?php foreach ($others as $project): ?>
+                        <?= partial('project-row', ['project' => $project, 'featured' => false]) ?>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </section>

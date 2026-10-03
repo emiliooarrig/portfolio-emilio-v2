@@ -1,49 +1,51 @@
 <?php
 /**
- * Sección Inicio — hero a pantalla completa.
+ * Sección Inicio — el nombre como interfaz.
  *
- * Deliberadamente fuera del bento: es lo único del sitio que no vive en una
- * celda. Sólo nombre, profesión y las dos llamadas a la acción; todo lo demás
- * (puesto actual, métricas, stack) vive en su sección correspondiente.
+ * El nombre, la profesión y la promesa; al lado, el estado (disponible,
+ * ubicación, CV) y debajo las dos acciones. El nombre es el único momento
+ * de movimiento del sitio: cada palabra se asienta al cargar (main.js).
  *
  * @var array<string, mixed> $profile
  */
 
-// El nombre entra palabra por palabra: cada una lleva su índice de retardo.
+// Una palabra por línea; cada una lleva su índice de retardo.
 $fullName = trim((string) $profile['full_name']);
 $words    = preg_split('/\s+/u', $fullName) ?: [];
 ?>
 <section class="hero" id="inicio">
-
-    <div class="hero__canvas" aria-hidden="true">
-        <span class="hero__grid"></span>
-        <span class="hero__aurora hero__aurora--blue"></span>
-        <span class="hero__aurora hero__aurora--amber"></span>
-    </div>
-
-    <div class="hero__inner">
-        <?php // `data-text` duplica la palabra en un ::after: es la capa ámbar que
-              // el pincel descubre bajo el puntero. El aria-label deja el nombre
-              // en una sola pieza para el lector de pantalla, sin la repetición. ?>
-        <h1 class="hero__name" aria-label="<?= e($fullName) ?>" data-hero-brush>
+    <div class="container hero__inner">
+        <h1 class="hero__name" aria-label="<?= e($fullName) ?>" data-hero-name>
             <?php foreach ($words as $index => $word): ?>
-                <span class="hero__word" style="--word-index: <?= $index ?>" data-text="<?= e($word) ?>"><?= e($word) ?></span>
+                <span class="hero__word" style="--word-index: <?= $index ?>" aria-hidden="true"><?= e($word) ?></span>
             <?php endforeach; ?>
         </h1>
 
-        <p class="hero__role meta" style="--word-index: <?= count($words) ?>">
-            <?= e($profile['role_title']) ?>
-        </p>
+        <p class="hero__role"><?= e($profile['role_title']) ?></p>
 
-        <div class="hero__actions" style="--word-index: <?= count($words) + 1 ?>">
-            <a class="cta cta--primary cta--lg" href="#servicios">
-                Ver en qué te ayudo
-                <span class="cta__icon" aria-hidden="true">→</span>
-            </a>
-            <a class="cta cta--secondary cta--lg" href="#contacto">Contáctame</a>
+        <div class="hero__grid">
+            <p class="hero__headline"><?= e($profile['headline']) ?></p>
+
+            <div class="hero__actions">
+                <a class="cta cta--primary cta--lg" href="#proyectos">Ver proyectos</a>
+                <a class="cta cta--secondary cta--lg" href="#contacto">Contacto</a>
+            </div>
+
+            <?php if (! empty($profile['available_for_work']) || ! empty($profile['location']) || ! empty($profile['cv_path'])): ?>
+                <div class="hero__status">
+                    <?php if (! empty($profile['available_for_work'])): ?>
+                        <p class="status"><span class="status__dot" aria-hidden="true"></span>Disponible para nuevas oportunidades</p>
+                    <?php endif; ?>
+
+                    <?php if (! empty($profile['location'])): ?>
+                        <p class="meta"><?= e($profile['location']) ?></p>
+                    <?php endif; ?>
+
+                    <?php if (! empty($profile['cv_path'])): ?>
+                        <a class="cta cta--ghost" href="<?= e($profile['cv_path']) ?>" target="_blank" rel="noopener">Descargar CV<span class="visually-hidden"> (se abre en otra pestaña)</span></a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
-
-    <?php // Riel del ancho completo: cierra el hero y anuncia la narrativa de color. ?>
-    <span class="hero__rail" aria-hidden="true"></span>
 </section>

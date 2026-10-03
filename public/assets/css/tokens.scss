@@ -1,14 +1,14 @@
 // ============================================================
 //  tokens.scss — fuente de verdad del sistema visual
-//  Narrativa: azul estructural = dato crudo · ámbar = dato refinado
-//  Línea de diseño única: Bento Grid (sin vidrio ni blur decorativo)
+//  Línea: modern minimal. Papel y tinta; un solo color con
+//  significado (la señal verde: "esto funciona").
 // ============================================================
 
 // ------------------------------------------------------------
 //  Breakpoints (SCSS: sólo existen en tiempo de compilación)
 // ------------------------------------------------------------
-$bp-mobile:  40rem;   // 640px — bento a 1 columna
-$bp-tablet:  60rem;   // 960px — bento a 4 columnas
+$bp-mobile:  40rem;   // 640px
+$bp-tablet:  60rem;   // 960px — el riel lateral se apila
 $bp-desktop: 75rem;   // 1200px
 
 @mixin below($breakpoint) {
@@ -23,8 +23,8 @@ $bp-desktop: 75rem;   // 1200px
   }
 }
 
-// Sólo donde hay puntero fino (ratón/trackpad): el cursor propio no aplica
-// en táctil, y el hover ahí es un falso positivo.
+// Sólo donde hay puntero fino (ratón/trackpad): en táctil el hover es un
+// falso positivo.
 @mixin fine-pointer {
   @media (hover: hover) and (pointer: fine) {
     @content;
@@ -32,236 +32,183 @@ $bp-desktop: 75rem;   // 1200px
 }
 
 // ------------------------------------------------------------
-//  Capa Bento — única fuente de verdad de la retícula
-//
-//  En vez de repetir superficie y anchos en cada componente, todo
-//  el sitio los toma de aquí. Es lo más cerca de un "framework" que
-//  admite el proyecto: escrito a mano, sin dependencias.
+//  Mixins de composición
 // ------------------------------------------------------------
 
-/// Superficie compartida por toda celda del bento.
-@mixin bento-surface {
-  background: var(--color-surface);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-rest);
-}
-
-/// Iluminación progresiva de una celda interactiva.
-///
-/// La luz nace en `--glow-x` / `--glow-y` — el punto por el que entró el
-/// puntero, que fija `card-glow.js` — y crece por la celda en una sola
-/// rampa junto al borde y la sombra.
-///
-/// Se basta a sí mismo: crea su contexto de apilamiento y mete la luz en
-/// `z-index: -1`, así queda sobre el fondo de la celda y debajo de todo su
-/// contenido sin que éste tenga que declarar nada. Ojo: quien lo incluya
-/// recorta con `overflow: hidden` y no puede usar `::before` para otra cosa.
-@mixin glow-hover {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-
-  transition:
-    transform var(--duration-base) var(--ease-out),
-    background-color var(--duration-glow) var(--ease-out),
-    border-color var(--duration-glow) var(--ease-out),
-    box-shadow var(--duration-glow) var(--ease-out);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: radial-gradient(
-      130% 130% at var(--glow-x, 50%) var(--glow-y, 100%),
-      var(--glow-accent) 0%,
-      var(--glow-structural) 42%,
-      transparent 72%
-    );
-    opacity: 0;
-    transform: scale(0.7);
-    transform-origin: var(--glow-x, 50%) var(--glow-y, 100%);
-    pointer-events: none;
-    transition:
-      opacity var(--duration-glow) var(--ease-out),
-      transform var(--duration-glow) var(--ease-out);
-  }
-
-  &:hover::before,
-  &:focus-within::before {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  &:hover,
-  &:focus-within {
-    border-color: var(--border-accent);
-    box-shadow: var(--shadow-glow);
-  }
-
-  // La luz sigue existiendo, pero entra en fade: sin crecer ni desplazarse.
-  @include reduced-motion {
-    &::before {
-      transform: none;
-      transition: opacity var(--duration-base) linear;
-    }
-
-    &:hover::before,
-    &:focus-within::before {
-      transform: none;
-    }
-  }
-}
-
-/// Ancho de una celda: 12 columnas → 4 en tablet → 1 en móvil.
-/// @param {Number} $desktop  columnas ocupadas sobre la retícula de 12
-/// @param {Number} $tablet   columnas ocupadas sobre la retícula de 4
-@mixin bento-span($desktop, $tablet: 4) {
-  grid-column: span $desktop;
+/// Riel + contenido: título a la izquierda (sticky), contenido a la derecha.
+@mixin section-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--space-6);
+  row-gap: var(--space-6);
 
   @include below($bp-tablet) {
-    grid-column: span $tablet;
-  }
-
-  @include below($bp-mobile) {
-    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/// Colocación explícita (cuando la jerarquía necesita filas concretas).
-/// Las líneas son 1..13 en escritorio y 1..5 en tablet.
-@mixin bento-place($col-start, $col-end, $row-start: auto, $row-end: auto) {
-  // Interpolado: fuera de calc(), Sass leería la barra como división.
-  grid-column: #{$col-start} / #{$col-end};
+@mixin focus-ring {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 3px;
+}
 
-  @if $row-start != auto {
-    grid-row: #{$row-start} / #{$row-end};
-  }
+@mixin link-underline {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: var(--color-rule-strong);
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
 
-  @include below($bp-mobile) {
-    grid-column: 1 / -1;
-    grid-row: auto;
+  &:hover {
+    text-decoration-color: currentColor;
   }
+}
+
+/// Superficie para el panel /admin y el login.
+@mixin panel-surface {
+  background: var(--color-sheet);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-lg);
 }
 
 // ------------------------------------------------------------
-//  Custom properties
+//  Color — tema claro por defecto, oscuro automático
 // ------------------------------------------------------------
 :root {
-  // --- Base: más separación entre fondo y superficie ---------
-  --color-bg:           #0A0E15; // fondo principal, casi negro con matiz azul
-  --color-surface:      #1A2433; // celdas bento — salto perceptible vs. el fondo
-  --color-surface-alt:  #24334A; // celdas elevadas / hover
-  --color-surface-sunk: #10161F; // inputs: reciben contenido, no lo emiten
+  color-scheme: light dark;
 
-  // --- Estructura ("dato crudo") ----------------------------
-  --color-grid-line:      #34455C;
-  --color-structural:     #6EA8FF;
-  --color-structural-dim: rgba(110, 168, 255, 0.14);
+  // --- Papel ---------------------------------------------------
+  --color-paper:       #F7F8F9; // fondo de la página
+  --color-sheet:       #FFFFFF; // modal, alertas, superficies del panel
+  --color-sheet-hover: #F0F2F4; // fila en hover
+  --color-field:       #FFFFFF; // inputs
 
-  // --- Refinado ("dato con valor" — CTAs, highlights) -------
-  --color-accent:       #FFB13D;
-  --color-accent-hover: #FFC469;
-  --color-accent-dim:   rgba(255, 177, 61, 0.14);
+  // --- Tinta ---------------------------------------------------
+  --color-ink:       #14171C; // texto principal y botón primario
+  --color-ink-hover: #2A2F37;
+  --color-ink-soft:  #545B66; // texto secundario (6.4:1 sobre paper)
+  --color-ink-faint: #6B727D; // metadatos (4.6:1 sobre paper)
 
-  // --- Contraste de apoyo (uso puntual) ---------------------
-  --color-alert:     #FF6B5B;
-  --color-alert-dim: rgba(255, 107, 91, 0.12);
+  // --- Reglas (líneas) -----------------------------------------
+  --color-rule:        #E3E6EA;
+  --color-rule-strong: #C9CED5;
 
-  // --- Texto: cuatro niveles --------------------------------
-  --color-text:       #F5F7FA; // primario
-  --color-text-muted: #A9B7C9; // secundario
-  --color-text-dim:   #7E8FA6; // metadatos (AA sobre surface)
-  --color-text-faint: #5C6B80; // decorativo / deshabilitado
+  // --- Señal: "funciona" ---------------------------------------
+  // Único color con significado: disponibilidad, resultados, foco.
+  --color-signal:      #13795B; // 5.0:1 sobre paper
+  --color-signal-soft: #E3F2EC;
 
-  // --- Bordes: se ven cuando los buscas, no antes -----------
-  --border-subtle:     rgba(245, 247, 250, 0.08);
-  --border-strong:     rgba(245, 247, 250, 0.16);
-  --border-structural: rgba(110, 168, 255, 0.32);
-  --border-accent:     rgba(255, 177, 61, 0.38);
+  // --- Semánticos (sólo alertas y formularios) -----------------
+  --color-success:      var(--color-signal);
+  --color-danger:       #B42318;
+  --color-danger-soft:  #FDECEA;
+  --color-warning:      #8A5A00;
+  --color-warning-soft: #FDF3DC;
 
-  // --- Sombras (elevación al hover de celdas bento) ---------
-  --shadow-rest:  0 1px 2px rgba(0, 0, 0, 0.35);
-  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.45);
-  --shadow-modal: 0 32px 80px rgba(0, 0, 0, 0.6);
+  // --- Elevación: sólo capas sobre la página -------------------
+  --shadow-overlay: 0 24px 64px rgba(20, 23, 28, 0.16);
+  --backdrop:       rgba(20, 23, 28, 0.42);
+}
 
-  // --- Iluminación progresiva (hover de tarjetas de proyecto) -
-  // La luz nace ámbar (dato refinado) y se disuelve en azul.
-  --glow-accent:     rgba(255, 177, 61, 0.22);
-  --glow-structural: rgba(110, 168, 255, 0.16);
-  --shadow-glow:     0 12px 32px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--border-accent), 0 0 28px rgba(255, 177, 61, 0.14);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper:       #111315;
+    --color-sheet:       #181B1E;
+    --color-sheet-hover: #1F2327;
+    --color-field:       #15181B;
 
-  // --- Semánticos -------------------------------------------
-  --color-success: #4FD1A0;
-  --color-danger:  var(--color-alert);
+    --color-ink:       #ECEEF0;
+    --color-ink-hover: #FFFFFF;
+    --color-ink-soft:  #A4ABB5;
+    --color-ink-faint: #868E99;
 
-  // --- Tipografía -------------------------------------------
-  //  Dos familias, cargadas en `fonts.scss`. No hay una tercera para
-  //  metadatos: el proyecto no usa monoespaciadas, así que fechas, tags y
-  //  métricas van en la familia del cuerpo y se distinguen por tamaño,
-  //  interletraje y números tabulares (utilidad `.meta` en `base.scss`).
-  --font-display: 'Sekuya', 'Segoe UI', system-ui, sans-serif;
-  --font-body:    'Stack Sans Headline', 'Segoe UI', system-ui, sans-serif;
+    --color-rule:        #262A2F;
+    --color-rule-strong: #3A4047;
 
-  // Escala (rem, base 16px)
-  --text-3xs: 0.6875rem; // etiquetas muy pequeñas (badges, plazos)
-  --text-2xs: 0.8125rem;
-  --text-xs:  0.9375rem;
-  --text-sm:  1rem;
-  --text-md:  1.25rem;
-  --text-lg:  1.75rem;
-  --text-xl:  2.5rem;
-  --text-2xl: 3.5rem;
+    --color-signal:      #4CC79A;
+    --color-signal-soft: #15322A;
 
-  --leading-tight: 1.1;
-  --leading-snug:  1.35;
-  --leading-body:  1.6;
+    --color-danger:       #FF8A7A;
+    --color-danger-soft:  #3A1E1B;
+    --color-warning:      #E8B44C;
+    --color-warning-soft: #33280F;
 
-  --tracking-tight: -0.02em;
-  --tracking-wide:  0.08em;
+    --shadow-overlay: 0 24px 64px rgba(0, 0, 0, 0.55);
+    --backdrop:       rgba(0, 0, 0, 0.6);
+  }
+}
 
-  // --- Espaciado: base 4px ----------------------------------
-  --space-1: 0.25rem;  //  4
-  --space-2: 0.5rem;   //  8
-  --space-3: 0.75rem;  // 12
-  --space-4: 1rem;     // 16
-  --space-5: 1.5rem;   // 24
-  --space-6: 2rem;     // 32
-  --space-7: 3rem;     // 48
-  --space-8: 4rem;     // 64
-  --space-9: 6rem;     // 96
+// ------------------------------------------------------------
+//  Tipografía — una sola familia variable (peso y ancho)
+// ------------------------------------------------------------
+:root {
+  --font-sans: 'Mona Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  // Densidad de celda bento (decisión: workbench, no folleto)
-  --cell-padding: var(--space-5);
-  --bento-gap:    var(--space-3);
+  // Escala ~1.25, base 17px
+  --text-xs:   0.8125rem; // 13
+  --text-sm:   0.9375rem; // 15
+  --text-base: 1.0625rem; // 17
+  --text-md:   1.3125rem; // 21
+  --text-lg:   1.625rem;  // 26
+  --text-xl:   2.0625rem; // 33
+  --text-2xl:  2.5625rem; // 41
+  --text-hero: clamp(3.25rem, 1.5rem + 8vw, 8.5rem);
 
-  // --- Radios (concéntricos: exterior = interior + padding) --
-  --radius-sm: 6px;   // chips, inputs
-  --radius-md: 10px;  // botones
-  --radius-lg: 16px;  // celdas bento
-  --radius-xl: 22px;  // contenedores mayores
+  --leading-hero:    0.95;
+  --leading-heading: 1.15;
+  --leading-snug:    1.35;
+  --leading-body:    1.6;
 
-  // --- Layout -----------------------------------------------
-  --container-max: 76rem;
-  --nav-height:    4.5rem;
+  // Mona Sans es variable en peso y en ancho: el ancho es parte del diseño.
+  --stretch-body:      100%;
+  --stretch-heading:   108%;
+  --stretch-hero:      118%;
+  --stretch-hero-from: 75%;
 
-  // --- Cursor propio ----------------------------------------
-  --cursor-dot:       10px;
-  --cursor-ring:      2.25rem;
-  --cursor-ring-grow: 3.5rem;  // sobre elementos interactivos
+  --weight-regular:  400;
+  --weight-medium:   520;
+  --weight-semibold: 620;
+  --weight-hero:     680;
 
-  // --- Movimiento -------------------------------------------
+  --tracking-hero:    -0.035em;
+  --tracking-heading: -0.015em;
+
+  --measure: 66ch; // largo máximo de línea para prosa
+}
+
+// ------------------------------------------------------------
+//  Espacio, forma y movimiento
+// ------------------------------------------------------------
+:root {
+  // Espaciado: base 4px + un paso más para secciones
+  --space-1: 0.25rem;  //   4
+  --space-2: 0.5rem;   //   8
+  --space-3: 0.75rem;  //  12
+  --space-4: 1rem;     //  16
+  --space-5: 1.5rem;   //  24
+  --space-6: 2rem;     //  32
+  --space-7: 3rem;     //  48
+  --space-8: 4rem;     //  64
+  --space-9: 6rem;     //  96
+  --space-10: 8rem;    // 128
+
+  --section-gap: clamp(var(--space-8), 10vw, var(--space-10));
+  --gutter:      clamp(1.25rem, 4vw, 3rem);
+
+  // Radios: discretos y por jerarquía
+  --radius-sm: 6px;  // inputs
+  --radius-md: 8px;  // botones
+  --radius-lg: 12px; // modal, alertas, superficies del panel
+
+  // Layout
+  --container-max: 72rem;
+  --nav-height:    4rem;
+
+  // Movimiento
   --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
-
   --duration-fast: 150ms;
-  --duration-base: 220ms;
+  --duration-base: 200ms;
   --duration-slow: 320ms;
-  --duration-glow: 520ms; // iluminación progresiva: se percibe como rampa
-  --duration-hero: 700ms;
-
-  // Escalonado del scroll-reveal entre celdas de una misma sección
-  --stagger-step: 70ms;
+  --duration-hero: 900ms;
 }

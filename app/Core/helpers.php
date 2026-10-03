@@ -69,7 +69,7 @@ if (! function_exists('asset')) {
 if (! function_exists('partial')) {
     /**
      * Incluye una vista parcial pasándole datos. Uso dentro de las vistas:
-     * <?= partial('cta-block', ['title' => '…']) ?>
+     * <?= partial('section-header', ['title' => '…']) ?>
      *
      * @param array<string, mixed> $data
      */
@@ -123,17 +123,22 @@ if (! function_exists('month_year')) {
 
 if (! function_exists('date_range')) {
     /**
-     * Rango legible para el timeline de experiencia.
+     * Periodo legible: "mar 2025 – hoy". Lo que sigue abierto termina "hoy";
+     * sin ninguna fecha no hay nada que decir.
      */
     function date_range(?string $start, ?string $end): string
     {
-        return month_year($start, '—') . ' — ' . month_year($end, 'Actual');
+        if (empty($start)) {
+            return empty($end) ? '' : month_year($end);
+        }
+
+        return month_year($start) . ' – ' . month_year($end, 'hoy');
     }
 }
 
 if (! function_exists('duration_label')) {
     /**
-     * Duración aproximada entre dos fechas: "1 a 8 m".
+     * Duración aproximada entre dos fechas: "1 año y 8 meses".
      */
     function duration_label(?string $start, ?string $end): string
     {
@@ -151,13 +156,13 @@ if (! function_exists('duration_label')) {
 
         $parts = [];
         if ($years > 0) {
-            $parts[] = $years . ' a';
+            $parts[] = plural($years, 'año', 'años');
         }
         if ($remaining > 0) {
-            $parts[] = $remaining . ' m';
+            $parts[] = plural($remaining, 'mes', 'meses');
         }
 
-        return implode(' ', $parts);
+        return implode(' y ', $parts);
     }
 }
 

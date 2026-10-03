@@ -1,7 +1,7 @@
 // ============================================================
 //  _auth.scss — pantalla de acceso al panel
 //
-//  Sólo el login: una celda bento centrada sobre el fondo de blueprint. El
+//  Sólo el login: una superficie centrada sobre el papel. El
 //  panel ya con sesión vive en _admin.scss, que sí tiene barra lateral.
 //  El formulario reutiliza `.form*` de _form.scss: los campos del acceso y
 //  los del contacto son los mismos, y deben seguir siéndolo.
@@ -17,7 +17,7 @@
 }
 
 .auth__card {
-  @include bento-surface;
+  @include panel-surface;
 
   width: min(26rem, 100%);
   padding: var(--space-7) var(--space-6);
@@ -39,15 +39,15 @@
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
-  background: var(--color-bg);
-  color: var(--color-structural);
+  background: var(--color-paper);
+  color: var(--color-ink-soft);
 }
 
 .auth__brand-name {
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   letter-spacing: 0.04em;
 }
 
@@ -60,12 +60,12 @@
 
 .auth__lead {
   margin: var(--space-3) 0 var(--space-6);
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
   line-height: var(--leading-body);
 
   strong {
-    color: var(--color-text);
+    color: var(--color-ink);
     font-weight: 500;
   }
 }
@@ -89,19 +89,19 @@
 .auth__note {
   margin-top: var(--space-6);
   padding-top: var(--space-5);
-  border-top: 1px solid var(--border-subtle);
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  border-top: 1px solid var(--color-rule);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   line-height: var(--leading-snug);
 }
 
 .auth__back {
   display: inline-block;
   margin-top: var(--space-5);
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
 
   &:hover {
-    color: var(--color-accent);
+    color: var(--color-ink);
   }
 }

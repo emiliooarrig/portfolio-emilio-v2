@@ -37,8 +37,8 @@ INSERT INTO `profile`
 VALUES
 (1,
  'Emilio Guzmán',
- 'Ingeniero de TI · Ingeniería de Datos',
- 'Construyo software y pongo orden en la información para que tu negocio deje de perder tiempo.',
+ 'Ingeniero de TI',
+ 'Sistemas, datos e infraestructura que funcionan, y que el resto del equipo puede entender.',
  'Ingeniero de TI. Hago dos cosas: construyo el software que un negocio necesita para trabajar mejor, y pongo en orden la información que ya tiene para que sirva de algo.',
  'Trabajo en la parte que casi nadie ve: el camino que recorre un dato desde que se genera hasta que alguien toma una decisión con él. En la práctica eso significa sistemas que funcionan sin que nadie los esté empujando, y números en los que todos confían porque salen del mismo lugar.\n\nVengo del lado de la infraestructura, así que me importa tanto que el sistema no se caiga como que el reporte final se entienda. Si algo se rompe un domingo, lo levanto; si un número no cuadra, sé dónde buscarlo. Prefiero explicarte en tus palabras qué voy a hacer antes de escribir una sola línea de código.',
  'emilioag2703@gmail.com',
@@ -59,19 +59,19 @@ INSERT INTO `technologies` (`id`, `name`, `slug`, `category`, `is_featured`) VAL
 (1,  'Python',        'python',        'lenguaje',      1),
 (2,  'SQL',           'sql',           'lenguaje',      1),
 (3,  'PHP',           'php',           'lenguaje',      0),
-(4,  'PostgreSQL',    'postgresql',    'base_datos',    1),
-(5,  'MySQL',         'mysql',         'base_datos',    1),
-(6,  'BigQuery',      'bigquery',      'base_datos',    1),
-(7,  'Apache Airflow','airflow',       'orquestacion',  1),
-(8,  'dbt',           'dbt',           'orquestacion',  1),
-(9,  'Apache Spark',  'spark',         'orquestacion',  0),
-(10, 'Kafka',         'kafka',         'orquestacion',  0),
+(4,  'PostgreSQL',    'postgresql',    'datos',         1),
+(5,  'MySQL',         'mysql',         'datos',         1),
+(6,  'BigQuery',      'bigquery',      'datos',         1),
+(7,  'Apache Airflow','airflow',       'datos',         1),
+(8,  'dbt',           'dbt',           'datos',         1),
+(9,  'Apache Spark',  'spark',         'datos',         0),
+(10, 'Kafka',         'kafka',         'datos',         0),
 (11, 'Google Cloud',  'gcp',           'cloud',         1),
 (12, 'AWS',           'aws',           'cloud',         0),
 (13, 'Docker',        'docker',        'herramienta',   1),
 (14, 'Terraform',     'terraform',     'herramienta',   0),
-(15, 'Power BI',      'power-bi',      'bi',            1),
-(16, 'Looker Studio', 'looker-studio', 'bi',            0),
+(15, 'Power BI',      'power-bi',      'datos',         1),
+(16, 'Looker Studio', 'looker-studio', 'datos',         0),
 (17, 'Git',           'git',           'herramienta',   0),
 (18, 'Pandas',        'pandas',        'herramienta',   0);
 
@@ -89,7 +89,7 @@ INSERT INTO `home_metrics` (`label`, `value`, `unit`, `caption`) VALUES
 -- ------------------------------------------------------------
 INSERT INTO `projects`
 (`id`, `slug`, `title`, `subtitle`, `summary`, `context`, `solution`, `outcome`, `role`, `client`,
- `cover_image`, `repo_url`, `demo_url`, `bento_size`, `is_featured`, `is_published`, `has_pipeline`,
+ `cover_image`, `repo_url`, `demo_url`, `is_featured`, `is_published`, `has_pipeline`,
  `started_on`, `ended_on`)
 VALUES
 (1, 'plataforma-datos-retail', 'La venta de 120 tiendas en un solo lugar',
@@ -100,7 +100,7 @@ VALUES
  'El reporte diario pasó de tardar 10 horas a estar listo en 15 minutos, y las tres áreas que discutían cifras distintas hoy leen la misma.',
  'Data Engineer (líder técnico)', 'Cadena retail nacional',
  NULL, 'https://github.com/emilioguzman/retail-data-platform', NULL,
- 'xl', 1, 1, 1, '2024-02-01', '2024-11-30'),
+ 1, 1, 1, '2024-02-01', '2024-11-30'),
 
 (2, 'pipeline-streaming-iot', 'Avisar antes de que se pare la máquina',
  '4,500 sensores de planta vigilados al mismo tiempo',
@@ -110,7 +110,7 @@ VALUES
  'Las alertas se adelantaron un promedio de 40 minutos a la falla; dos paros de línea evitados en el primer trimestre.',
  'Data Engineer', 'Manufactura industrial',
  NULL, NULL, NULL,
- 'lg', 1, 1, 1, '2023-05-01', '2023-12-15'),
+ 1, 1, 1, '2023-05-01', '2023-12-15'),
 
 (3, 'observabilidad-datos', 'Detectar el error antes que el cliente',
  'Un vigilante que no se distrae',
@@ -120,7 +120,7 @@ VALUES
  'Enterarse de un problema pasó de tardar 2 días a tardar 20 minutos.',
  'Data Engineer', 'Proyecto interno',
  NULL, 'https://github.com/emilioguzman/data-observability', NULL,
- 'md', 1, 1, 0, '2024-03-01', NULL),
+ 1, 1, 0, '2024-03-01', NULL),
 
 (4, 'migracion-onprem-cloud', 'Mudanza a la nube sin cerrar un solo día',
  '11 años de información movidos sin parar la operación',
@@ -130,7 +130,7 @@ VALUES
  'Cuatro horas de corte un domingo, ni un registro perdido y 38% menos de costo cada mes.',
  'Ingeniero de TI', 'Sector financiero',
  NULL, NULL, NULL,
- 'lg', 0, 1, 0, '2022-08-01', '2023-03-31'),
+ 0, 1, 0, '2022-08-01', '2023-03-31'),
 
 (5, 'capa-semantica-bi', 'Un solo significado para cada número',
  'Un solo lugar donde vive la definición de "cliente activo"',
@@ -140,7 +140,7 @@ VALUES
  'Las juntas de resultados dejaron de empezar con una discusión sobre de dónde salió el número.',
  'Analytics Engineer', 'Retail y servicios',
  NULL, NULL, NULL,
- 'md', 0, 1, 0, '2023-01-10', '2023-06-30');
+ 0, 1, 0, '2023-01-10', '2023-06-30');
 
 -- ------------------------------------------------------------
 --  project_technologies

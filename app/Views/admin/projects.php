@@ -1,6 +1,6 @@
 <?php
 /**
- * Proyectos — lo que alimenta el grid bento y el modal de detalle.
+ * Proyectos — lo que alimenta el índice de la landing y el modal de detalle.
  *
  * @var array<int, array<string, mixed>> $projects
  */
@@ -25,7 +25,6 @@
                     <th scope="col" class="admin-table__narrow">ID</th>
                     <th scope="col">Proyecto</th>
                     <th scope="col">Stack</th>
-                    <th scope="col">Bento</th>
                     <th scope="col">Periodo</th>
                     <th scope="col">Detalle</th>
                     <th scope="col">Destacado</th>
@@ -58,8 +57,6 @@
                                 </span>
                             <?php endif; ?>
                         </td>
-
-                        <td class="meta"><?= e(strtoupper((string) $project['bento_size'])) ?></td>
 
                         <td class="meta"><?= e(date_range($project['started_on'], $project['ended_on'])) ?></td>
 

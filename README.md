@@ -1,6 +1,6 @@
 # Portafolio · Emilio Guzmán
 
-Landing personal de perfil profesional (Ingeniería de TI · Ingeniería de Datos) en **una sola página**: scroll continuo con secciones ancladas, PHP vanilla con MVC propio, SCSS a mano y MySQL.
+Portafolio personal de un ingeniero de TI, pensado para que cualquier reclutador entienda en segundos quién es, qué ha hecho y cómo trabaja. **Una sola página**: scroll continuo con secciones ancladas, PHP vanilla con MVC propio, SCSS a mano y MySQL.
 
 ## Requisitos
 
@@ -88,9 +88,11 @@ El *document root* debe apuntar a `public/`. El `.htaccess` incluido redirige to
 ```
 
 Todo el contenido vive en `home/index.php`, que sólo apila los partials de sección
-en el orden del scroll: `section-inicio` → `section-sobre-mi` → `section-proyectos`
-→ `section-servicios` → `section-certificaciones` → `section-experiencia` →
-`section-contacto`.
+en el orden del scroll: `section-inicio` → `section-proyectos` → `section-metodo`
+(Cómo trabajo) → `section-experiencia` → `section-sobre-mi` →
+`section-certificaciones` → `section-contacto`. La prueba (proyectos) va primero;
+"Sobre mí" baja porque sólo interesa una vez que el trabajo convenció. Servicios
+salió de la landing, pero su tabla, su modelo y su CRUD del panel se conservan.
 
 ## Rutas
 
@@ -208,14 +210,9 @@ sin cookies propias ni "recordarme". El login **no** acepta correo: se entra con
 
 | Módulo | Responsabilidad |
 |---|---|
-| `main.js` | menú móvil, anclas, barra de progreso, botón "volver arriba" y arranque del resto |
-| `scroll-reveal.js` | entrada de las celdas al cruzar el viewport, con escalonado (`IntersectionObserver`) |
-| `scroll-spy.js` | resalta en el nav la sección visible |
-| `count-up.js` | contadores de las métricas (0 → valor real) |
-| `project-modal.js` | fetch del detalle, apertura/cierre, trampa de foco e `history.pushState` |
-| `pipeline.js` | pausa la animación del riel fuera de pantalla |
-| `cursor.js` | cursor propio (punto + anillo). Sólo con puntero fino; en táctil no se construye |
-| `hero-brush.js` | el ámbar del nombre persigue al puntero como una pincelada |
+| `main.js` | menú móvil, anclas, regla del nav al hacer scroll, el asentamiento del nombre del hero y arranque del resto |
+| `scroll-spy.js` | resalta en el nav la sección visible (`IntersectionObserver`) |
+| `project-modal.js` | fetch del detalle, apertura/cierre con View Transitions (fundido sin la API), trampa de foco e `history.pushState` |
 | `alerts.js` | comportamiento de las alertas: modal, Escape, clic fuera y cierre automático |
 
 ### Alertas
@@ -253,14 +250,14 @@ Todo el contenido visible sale de la base de datos `emiguzman`; no hay texto de 
 | Tabla | Alimenta |
 |---|---|
 | `profile` | nombre, rol, headline, bio, contacto, CV, redes (fila única, `id = 1`) |
-| `projects` + `project_technologies` + `project_metrics` + `project_pipeline_steps` | grid bento, detalle, resultados y diagrama de flujo |
-| `certifications` | grid de credenciales: emisor, título, fechas de emisión y vencimiento, ID y enlace de verificación (sin etiqueta de estado) |
+| `projects` + `project_technologies` + `project_metrics` + `project_pipeline_steps` | índice de proyectos (con la primera métrica de los destacados), detalle, resultados y pasos del flujo |
+| `certifications` | filas de credenciales: título, emisor, emisión, vencimiento y enlace de verificación (el ID va en su `aria-label`) |
 | `experiences` + `experience_highlights` | timeline de trayectoria |
-| `technologies` | chips de stack agrupados por categoría en "Sobre mí" |
+| `technologies` | stack en texto plano agrupado por categoría en "Sobre mí" (el orden de las categorías es el del ENUM: Datos y Sistemas primero) |
 | `contact_messages` | bandeja del formulario |
 | `admin_users` | acceso al panel de administración |
 
-Campos de control pensados para el panel: `is_published`, `is_featured`, `bento_size` (`sm`/`md`/`lg`/`xl` = ancho de la celda en el grid de 12 columnas) y `has_pipeline`.
+Campos de control pensados para el panel: `is_published`, `is_featured` (los destacados van primero, ampliados y con su primera métrica en grande) y `has_pipeline`. `bento_size` se retiró en la migración `2026-10-02-narrativa-generalista.sql`.
 
 ### Cómo se ordena
 
@@ -297,21 +294,20 @@ fila sin ambigüedad. No se escribe desde ningún formulario: lo asigna el
 
 ## Sistema visual
 
-Las decisiones de diseño están documentadas en `CLAUDE.md` y viven en `public/assets/css/tokens.scss`:
+Línea **modern minimal**. Las decisiones viven en `CLAUDE.md` y en `public/assets/css/tokens.scss`:
 
-- **Línea única:** Bento Grid. No hay un segundo lenguaje visual: nada de vidrio ni `backdrop-filter` decorativo.
-- **Una sola fuente de verdad para el bento:** los mixins `bento-surface`, `bento-span($desktop, $tablet)` y `bento-place($c1, $c2, $r1, $r2)` en `tokens.scss`. Los componentes los invocan; ninguno redeclara fondo, borde, radio ni ancho. Sin frameworks de terceros (lo prohíbe `CLAUDE.md`).
-- **Hero:** la única excepción al bento — a sangre completa, `100svh - nav`, con el nombre, la profesión y los CTA. Nada más.
-- **Cursor propio:** punto + anillo con retardo, en `_cursor.scss` y `cursor.js`. Se activa sólo con puntero fino y JS; en táctil, sin JS o sobre campos de texto manda el cursor del sistema.
-- **Narrativa de color:** azul estructural (`#6EA8FF`) = dato crudo · ámbar (`#FFB13D`) = dato refinado. El ámbar sólo aparece en CTAs primarios, métricas y el final del pipeline.
-- **Profundidad:** bordes de baja opacidad, cambio de superficie (`#1A2433` → `#24334A`) y elevación al hover, siempre con movimiento además de sombra.
-- **Espaciado:** base 4px, escala `--space-1..9`. Densidad de celda: 24px.
-- **Tipografía:** Sekuya (display) · Stack Sans Headline (cuerpo y también datos, fechas, stack). Dos familias, ninguna monoespaciada, autoalojadas en `public/assets/fonts/` — el `<head>` no carga tipografía externa. Los archivos no están en el repo: ver `public/assets/fonts/README.md`. Lo utilitario se marca con la clase `.meta` (números tabulares e interletraje neutro), no con un cambio de familia.
-- **Animación:** clases reutilizables en `animations.scss` (`.reveal`, `.reveal--stagger`, `.count-up`, `.bento-card--hoverable`, `.hero-in`). Sólo `transform` y `opacity`. Todo tiene versión reducida bajo `prefers-reduced-motion`, y el estado oculto del scroll-reveal depende de `html.js`: sin JS no se oculta nada.
+- **Concepto:** "Que funcione, y que se entienda." La inclinación hacia datos y hacia el cuidado de usuarios no se dice en el copy: se expresa con la jerarquía de proyectos (`is_featured`), la métrica visible, la sección "Cómo trabajo", el orden del stack y el color de señal.
+- **La tipografía es la interfaz:** una sola familia variable, **Mona Sans** (pesos 200–900, ancho 75–125 %), autoalojada en `public/assets/fonts/mona-sans.woff2`. El ancho (`font-stretch`) es parte del diseño: cuerpo 100 %, títulos 108 %, nombre del hero 118 %. Sin iconos decorativos ni ilustraciones. Lo utilitario usa `.meta` (tamaño, tono y números tabulares; nunca mayúsculas).
+- **Espacio antes que cajas:** no hay tarjetas. Cada sección usa un riel izquierdo con el título (sticky en escritorio) y una columna ancha con el contenido (`_section.scss`). Una línea de 1 px sólo separa filas de una lista.
+- **Papel y tinta:** tema claro por defecto y oscuro automático con `prefers-color-scheme`. Tokens `--color-paper`, `--color-sheet`, `--color-ink*`, `--color-rule*`. Contraste AA en ambos temas.
+- **Un solo color con significado:** `--color-signal` (verde de "estado operativo"). Sólo aparece en el punto de disponibilidad, las métricas, el último paso del método, el bloque "Resultado", el anillo de foco y las alertas de éxito. Nunca en botones (el primario es tinta).
+- **Un solo momento de movimiento:** al cargar, cada palabra del nombre se "asienta" de `font-stretch: 75%` a `118%`. Es una excepción consciente a "sólo `transform` y `opacity`": ocurre una vez, en un único elemento y con cada palabra en su propia línea. Se espera a la fuente; sin ella o con movimiento reducido se muestra el estado final. Lo demás sólo responde a acciones del usuario (hover de filas, View Transitions del modal). Nada se anima al hacer scroll.
+- **Sin JS** toda la landing se ve y navega, y el nombre aparece en su estado final.
 
 ## Pendiente
 
-- **Archivos de las fuentes:** dejar `sekuya.woff2` y `stack-sans-headline.woff2` en `public/assets/fonts/` (nombres exactos en el README de esa carpeta). Hasta entonces el sitio se ve con `Segoe UI` y los dos `<link rel="preload">` del layout dan 404.
+- Elegir qué proyectos se marcan como destacados: son la palanca principal de la jerarquía de la landing.
+- Decidir si la tabla y el CRUD de servicios se eliminan definitivamente.
 - Panel de administración: falta el alta de cuentas desde dentro (hoy sólo existe el usuario semilla) y subir las portadas de proyecto (`projects.cover_image`) en vez de escribir su ruta a mano — la foto del perfil y el CV ya se suben.
 - Sustituir los datos de ejemplo de `database/seeds.sql` por la información real.
 - Imágenes de portada de proyectos (`projects.cover_image`) en `public/assets/img/`. El CV y la foto ya se suben desde el panel.

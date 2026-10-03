@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Core\Model;
 
 /**
- * Proyectos destacados: grid bento y vista de detalle.
+ * Proyectos: índice de la landing y vista de detalle.
  */
 class Project extends Model
 {
@@ -23,13 +23,14 @@ class Project extends Model
                                   id DESC';
 
     /**
-     * Proyectos publicados con su stack ya hidratado.
+     * Proyectos publicados con su stack ya hidratado y, en los destacados,
+     * su métrica principal.
      *
      * @return array<int, array<string, mixed>>
      */
     public function published(?int $limit = null): array
     {
-        $sql = 'SELECT id, slug, title, subtitle, summary, cover_image, bento_size,
+        $sql = 'SELECT id, slug, title, subtitle, summary, cover_image,
                        is_featured, started_on, ended_on
                   FROM projects
                  WHERE is_published = 1
@@ -42,7 +43,7 @@ class Project extends Model
             $params[] = $limit;
         }
 
-        return $this->withTechnologies($this->all($sql, $params));
+        return $this->withLeadMetric($this->withTechnologies($this->all($sql, $params)));
     }
 
     /**
@@ -92,6 +93,50 @@ class Project extends Model
 
         foreach ($projects as &$project) {
             $project['technologies'] = $tech[(int) $project['id']] ?? [];
+        }
+
+        return $projects;
+    }
+
+    /**
+     * Primera métrica (la de menor id) de cada proyecto destacado, en una
+     * sola consulta. Es la que la fila ampliada muestra en grande.
+     *
+     * @param  array<int, array<string, mixed>> $projects
+     * @return array<int, array<string, mixed>>
+     */
+    private function withLeadMetric(array $projects): array
+    {
+        $ids = [];
+
+        foreach ($projects as $project) {
+            if (! empty($project['is_featured'])) {
+                $ids[] = (int) $project['id'];
+            }
+        }
+
+        $metrics = [];
+
+        if ($ids !== []) {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+            $rows = $this->all(
+                "SELECT m.project_id, m.label, m.value, m.unit
+                   FROM project_metrics m
+                   JOIN (SELECT project_id, MIN(id) AS id
+                           FROM project_metrics
+                          WHERE project_id IN ($placeholders)
+                       GROUP BY project_id) first ON first.id = m.id",
+                $ids
+            );
+
+            foreach ($rows as $row) {
+                $metrics[(int) $row['project_id']] = $row;
+            }
+        }
+
+        foreach ($projects as &$project) {
+            $project['lead_metric'] = $metrics[(int) $project['id']] ?? null;
         }
 
         return $projects;
@@ -172,7 +217,7 @@ class Project extends Model
     public function adminList(): array
     {
         $rows = $this->all(
-            'SELECT p.id, p.slug, p.title, p.subtitle, p.bento_size, p.is_featured,
+            'SELECT p.id, p.slug, p.title, p.subtitle, p.is_featured,
                     p.is_published, p.has_pipeline, p.started_on,
                     p.ended_on, p.updated_at,
                     (SELECT COUNT(*) FROM project_metrics m WHERE m.project_id = p.id)        AS metric_count,
@@ -188,10 +233,7 @@ class Project extends Model
     //  Panel: escritura
     // --------------------------------------------------------
 
-    /** Tamaños de celda en el bento de 12 columnas. */
-    public const SIZES = ['sm' => 'Pequeña', 'md' => 'Media', 'lg' => 'Grande', 'xl' => 'Destacada'];
-
-    /** Etapas del riel de flujo: crudo → transformado → refinado. */
+    /** Etapas de cada paso del flujo (columna `stage`; el detalle sólo muestra el orden). */
     public const STAGES = ['raw' => 'Dato crudo', 'transform' => 'Transformación', 'refined' => 'Dato refinado'];
 
     /**
@@ -240,17 +282,13 @@ class Project extends Model
         $summary = trim((string) ($input['summary'] ?? ''));
 
         if ($summary === '') {
-            $errors['summary'] = 'Escribe el resumen que se lee en la tarjeta.';
+            $errors['summary'] = 'Escribe el resumen: es lo que se lee al compartir el enlace del proyecto.';
         } elseif (mb_strlen($summary) > 400) {
-            $errors['summary'] = 'Máximo 400 caracteres — es el texto de la tarjeta, no el del detalle.';
+            $errors['summary'] = 'Máximo 400 caracteres: es la descripción al compartir, no el detalle.';
         }
 
         if (mb_strlen(trim((string) ($input['subtitle'] ?? ''))) > 200) {
             $errors['subtitle'] = 'Máximo 200 caracteres.';
-        }
-
-        if (! array_key_exists((string) ($input['bento_size'] ?? ''), self::SIZES)) {
-            $errors['bento_size'] = 'Elige un tamaño de celda.';
         }
 
         foreach (['repo_url' => 'repositorio', 'demo_url' => 'demo'] as $field => $label) {
@@ -302,9 +340,9 @@ class Project extends Model
         return $this->db()->execute(
             'INSERT INTO projects
                 (`slug`, `title`, `subtitle`, `summary`, `context`, `solution`, `outcome`,
-                 `role`, `client`, `cover_image`, `repo_url`, `demo_url`, `bento_size`,
+                 `role`, `client`, `cover_image`, `repo_url`, `demo_url`,
                  `is_featured`, `is_published`, `has_pipeline`, `started_on`, `ended_on`)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             $this->columns($input)
         );
     }
@@ -321,7 +359,7 @@ class Project extends Model
             'UPDATE projects SET
                 `slug` = ?, `title` = ?, `subtitle` = ?, `summary` = ?, `context` = ?,
                 `solution` = ?, `outcome` = ?, `role` = ?, `client` = ?, `cover_image` = ?,
-                `repo_url` = ?, `demo_url` = ?, `bento_size` = ?, `is_featured` = ?,
+                `repo_url` = ?, `demo_url` = ?, `is_featured` = ?,
                 `is_published` = ?, `has_pipeline` = ?, `started_on` = ?, `ended_on` = ?
               WHERE id = ?',
             $params
@@ -447,7 +485,6 @@ class Project extends Model
             $this->fit((string) ($input['cover_image'] ?? ''), 255),
             $this->fit((string) ($input['repo_url'] ?? ''), 255),
             $this->fit((string) ($input['demo_url'] ?? ''), 255),
-            (string) ($input['bento_size'] ?? 'md'),
             (int) ($input['is_featured'] ?? 0),
             (int) ($input['is_published'] ?? 0),
             (int) ($input['has_pipeline'] ?? 0),

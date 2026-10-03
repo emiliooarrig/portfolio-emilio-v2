@@ -1,46 +1,47 @@
 # Fuentes del proyecto
 
-El sitio usa dos familias y **ninguna monoespaciada**:
+El sitio usa **una sola familia**, variable y autoalojada:
 
-| Rol                                            | Familia               | Token CSS        |
-| ---------------------------------------------- | --------------------- | ---------------- |
-| Display (nombre del hero, H1–H4, nav, logo)    | `Sekuya`              | `--font-display` |
-| Cuerpo, y también fechas / tags / métricas     | `Stack Sans Headline` | `--font-body`    |
+| Archivo           | Familia     | Ejes                          | Token CSS     |
+| ----------------- | ----------- | ----------------------------- | ------------- |
+| `mona-sans.woff2` | `Mona Sans` | `wght` 200–900 · `wdth` 75–125 | `--font-sans` |
 
-Ninguna de las dos está en Google Fonts, así que se sirven desde aquí. Los
-`@font-face` viven en `public/assets/css/fonts.scss` y esperan estos archivos
-en esta carpeta:
+Mona Sans es de GitHub, con licencia SIL Open Font License. Se sirve desde aquí
+(no se usa Google Fonts ni ningún CDN). El `@font-face` vive en
+`public/assets/css/fonts.scss` y los tres layouts la precargan con
+`<link rel="preload">`.
+
+## De dónde sale
+
+Release oficial: <https://github.com/github/mona-sans/releases> (se tomó la
+v2.0.27). Del zip `mona-sans-webfonts-*.zip` se copia el archivo **variable de
+estilo normal** con ancho y peso, y se renombra:
 
 ```
-sekuya.woff2                 ← preferido
-sekuya.ttf                   ← respaldo, si no tienes el woff2
-stack-sans-headline.woff2    ← preferido
-stack-sans-headline.ttf      ← respaldo
+fonts/webfonts/variable/MonaSansVF[wdth,opsz,wght].woff2  →  mona-sans.woff2
 ```
 
-Los nombres tienen que ser exactamente esos (minúsculas, con guiones) o el
-navegador no los encontrará.
+El nombre tiene que ser exactamente `mona-sans.woff2`.
 
-## Mientras los archivos no estén
+## Cómo se usa el ancho
 
-La página **no se rompe**: cada familia cae en el respaldo declarado en
-`tokens.scss` (`Segoe UI` → `system-ui` → `sans-serif`), así que se lee bien
-pero pierde su identidad tipográfica. En la consola verás dos 404 de los
-`<link rel="preload">` del layout hasta que los archivos existan.
+Con `font-stretch: 75% 125%` declarado como rango en el `@font-face`, la
+propiedad CSS `font-stretch` mueve el eje `wdth` directamente. Se usa
+`font-stretch` y no `font-variation-settings` porque degrada bien con la
+fuente de respaldo. Cuerpo 100 %, títulos 108 %, nombre del hero 118 % (y su
+animación de entrada parte de 75 %).
 
-## Si tienes `.ttf` u `.otf` y quieres el `.woff2`
-
-`woff2` pesa alrededor de un 30 % menos y es lo que conviene servir. Con
-Python y `fonttools` instalado:
+Para comprobar los ejes del archivo:
 
 ```bash
 pip install fonttools brotli
-fonttools ttLib.woff2 compress sekuya.ttf
+fonttools ttx -t fvar public/assets/fonts/mona-sans.woff2
 ```
 
-## Si algún día tienes más de un peso
+## Si el archivo no está
 
-`fonts.scss` declara **una sola cara por familia** cubriendo el rango
-400–700, para que el navegador no falsifique la negrita deformando la letra.
-Si consigues un corte bold real, añade su propia `@font-face` con
-`font-weight: 700` y baja la existente a `400`.
+La página **no se rompe**: cae en `system-ui` (y después `-apple-system`,
+`Segoe UI`, `Roboto`, `sans-serif`) y sigue legible. El nombre del hero no se
+anima con la fuente de respaldo: `main.js` espera a Mona Sans y, si no llega
+en 1,2 s, muestra el estado final directamente. El `preload` del layout dará un
+404 hasta que el archivo exista.

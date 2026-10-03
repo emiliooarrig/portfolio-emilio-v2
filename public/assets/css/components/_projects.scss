@@ -1,0 +1,196 @@
+// ============================================================
+//  _projects.scss — índice de proyectos
+//
+//  Filas, no tarjetas. Los destacados van primero y ampliados, con su
+//  métrica principal en verde señal: es la prueba de que funcionó. El resto
+//  cabe en una línea. Toda la fila abre el modal de detalle.
+// ============================================================
+
+@use '../tokens' as *;
+
+.project-row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-areas: 'title subtitle year';
+  align-items: baseline;
+  column-gap: var(--space-5);
+  padding-block: var(--space-5);
+
+  // Fondo de hover: desborda el texto a los lados para que respire sin
+  // desplazar nada. Va detrás del contenido gracias al `isolation`.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 calc(var(--space-4) * -1);
+    z-index: -1;
+    border-radius: var(--radius-sm);
+    background: var(--color-sheet-hover);
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  &:hover::before,
+  &:focus-within::before {
+    opacity: 1;
+  }
+
+  &:hover .project-row__title,
+  &:focus-within .project-row__title {
+    text-decoration-color: currentColor;
+  }
+
+  // Sobre el fondo de hover, --color-ink-faint baja de 4.5:1 en el tema
+  // claro: los metadatos suben un tono mientras la fila está activa.
+  &:hover .meta,
+  &:focus-within .meta {
+    color: var(--color-ink-soft);
+  }
+
+  @include below($bp-mobile) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'year'
+      'title'
+      'subtitle';
+    row-gap: var(--space-1);
+  }
+}
+
+.project-row__title {
+  grid-area: title;
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+// El enlace real es el título; su ::after se estira sobre toda la fila.
+.project-row__link {
+  text-decoration: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  // El anillo de foco rodea la fila completa, no sólo el título.
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      @include focus-ring;
+
+      border-radius: var(--radius-sm);
+    }
+  }
+}
+
+.project-row__subtitle {
+  grid-area: subtitle;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-ink-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @include below($bp-mobile) {
+    white-space: normal;
+  }
+}
+
+.project-row__year {
+  grid-area: year;
+  justify-self: end;
+  white-space: nowrap;
+
+  @include below($bp-mobile) {
+    justify-self: start;
+  }
+}
+
+// ------------------------------------------------------------
+//  Fila destacada
+// ------------------------------------------------------------
+.project-row--featured {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'period  metric'
+    'title   metric'
+    'subtitle metric'
+    'tech    metric';
+  align-items: start;
+  row-gap: var(--space-2);
+  padding-block: var(--space-6);
+
+  .project-row__title {
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+  }
+
+  .project-row__subtitle {
+    font-size: var(--text-base);
+    white-space: normal;
+  }
+
+  @include below($bp-mobile) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'period'
+      'title'
+      'subtitle'
+      'tech'
+      'metric';
+  }
+}
+
+.project-row__period {
+  grid-area: period;
+}
+
+.project-row__tech {
+  grid-area: tech;
+  margin-top: var(--space-2);
+}
+
+// ------------------------------------------------------------
+//  Métrica principal
+// ------------------------------------------------------------
+.project-row__metric {
+  grid-area: metric;
+  display: grid;
+  justify-items: end;
+  align-self: center;
+  gap: var(--space-1);
+  text-align: right;
+
+  @include below($bp-mobile) {
+    justify-items: start;
+    margin-top: var(--space-4);
+    text-align: left;
+  }
+}
+
+.project-row__metric-value {
+  color: var(--color-signal);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  font-stretch: var(--stretch-heading);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.project-row__metric-unit {
+  font-size: var(--text-md);
+}
+
+.project-row__metric-label {
+  max-inline-size: 12ch;
+  line-height: var(--leading-snug);
+}

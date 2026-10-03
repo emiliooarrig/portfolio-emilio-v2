@@ -20,14 +20,6 @@
 <div class="auth__card">
 
     <div class="auth__brand">
-        <span class="auth__mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-                <path d="M14 17.5h7M17.5 14v7"></path>
-            </svg>
-        </span>
         <span class="auth__brand-name meta"><?= e($profile['full_name']) ?></span>
     </div>
 
@@ -62,7 +54,6 @@
               // pantalla en un callejón sin salida si no hay JS. ?>
         <button class="cta cta--primary auth__submit" type="submit">
             Entrar
-            <span class="cta__icon" aria-hidden="true">→</span>
         </button>
     </form>
 
@@ -70,6 +61,6 @@
         No hay registro público: las cuentas se dan de alta desde el propio panel.
     </p>
 
-    <a class="auth__back" href="<?= url('/') ?>">← Volver al sitio</a>
+    <a class="auth__back" href="<?= url('/') ?>">Volver al sitio</a>
 
 </div>

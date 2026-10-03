@@ -1,0 +1,132 @@
+// ============================================================
+//  _steps.scss — secuencias numeradas (Cómo trabajo, flujo de proyecto)
+//
+//  Única numeración del sitio: sólo aparece donde el orden es real. El
+//  punto verde junto al último número es el único acento: el resultado.
+// ============================================================
+
+@use '../tokens' as *;
+
+.steps {
+  position: relative;
+  display: grid;
+  counter-reset: none;
+}
+
+.steps__item {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+}
+
+.steps__num {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  justify-self: start;
+  background: var(--color-paper);
+  line-height: 1.5rem;
+}
+
+// El punto del último paso.
+.steps__item:last-child .steps__num::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-signal);
+}
+
+.steps__label {
+  font-weight: var(--weight-semibold);
+}
+
+.steps__desc {
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+}
+
+// ------------------------------------------------------------
+//  Variante de sección: cinco columnas con una línea que une los
+//  números por arriba. Cada número "corta" la línea con el papel.
+//  Por debajo de escritorio ancho pasa a vertical.
+// ------------------------------------------------------------
+.steps--section {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: var(--space-5);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-rule);
+  }
+
+  .steps__num {
+    padding-right: var(--space-3);
+  }
+}
+
+// ------------------------------------------------------------
+//  Vertical: la variante compacta siempre, y la de sección por
+//  debajo de escritorio ancho. El número va a la izquierda y una línea
+//  vertical une los pasos.
+// ------------------------------------------------------------
+@mixin steps-vertical {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--space-5);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    right: auto;
+    width: 1px;
+    height: auto;
+    background: var(--color-rule);
+  }
+
+  .steps__item {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    column-gap: var(--space-4);
+    row-gap: var(--space-1);
+  }
+
+  .steps__num {
+    grid-row: 1 / 3;
+    justify-content: center;
+    justify-self: center;
+    align-self: start;
+    min-width: 1.5rem;
+    padding: 0;
+  }
+
+  // En vertical el punto final va debajo del número, para no ensanchar la columna.
+  .steps__item:last-child .steps__num {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .steps__label,
+  .steps__desc {
+    grid-column: 2;
+  }
+}
+
+.steps--compact {
+  @include steps-vertical;
+}
+
+// Cinco columnas sólo caben con holgura en escritorio ancho.
+@include below($bp-desktop) {
+  .steps--section {
+    @include steps-vertical;
+  }
+}

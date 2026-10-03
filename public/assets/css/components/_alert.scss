@@ -3,12 +3,8 @@
 //
 //  Una sola pieza para todo lo que el backend contesta: guardado, borrado,
 //  error o aviso. Vive en `partials/alert.php` y se ve igual en la landing
-//  y en el panel.
-//
-//  Reutiliza el lenguaje del modal de proyecto —velo oscuro, superficie
-//  elevada, `modal-in`— porque es la misma idea: algo que se pone delante
-//  de la página. Lo único propio es el disco del ícono, que es quien dice
-//  de un vistazo si salió bien o mal.
+//  y en el panel. Es una capa sobre la página: hoja, regla y sombra de
+//  overlay; el único color es el del tipo, en el icono y la barra.
 // ============================================================
 
 @use '../tokens' as *;
@@ -26,21 +22,16 @@
   margin: 0;
   padding: var(--space-5);
   border: none;
-  // El diálogo es su propio velo: al cerrarse se lleva el fondo con él, sin
-  // depender de JavaScript para retirar una capa aparte.
-  background: rgba(10, 14, 21, 0.78);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  color: var(--color-text);
-  animation: backdrop-in var(--duration-base) var(--ease-out) both;
+  // El diálogo es su propio velo: al cerrarse se lleva el fondo con él.
+  background: var(--backdrop);
+  color: var(--color-ink);
+  animation: alert-fade-in var(--duration-base) var(--ease-out) both;
   overscroll-behavior: contain;
 
   &:not([open]) {
     display: none;
   }
 
-  // Con `showModal()` el velo ya lo pinta el propio diálogo: el del navegador
-  // sobraría y oscurecería el doble.
   &::backdrop {
     background: transparent;
   }
@@ -50,56 +41,40 @@
   position: relative;
   width: min(26rem, 100%);
   padding: var(--space-6);
-  background: var(--color-surface);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-modal);
+  background: var(--color-sheet);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-overlay);
   overflow: hidden;
   text-align: center;
-  animation: modal-in var(--duration-slow) var(--ease-out) both;
 }
 
-// El disco del ícono es el único color de la alerta: el resto es el gris de
-// siempre, para que el tono no compita con el texto.
 .alert__icon {
   display: grid;
   place-items: center;
-  width: 3.5rem;
-  height: 3.5rem;
   margin: 0 auto var(--space-4);
-  background: var(--alert-tone-dim);
-  border: 2px solid var(--alert-tone);
-  border-radius: 50%;
   color: var(--alert-tone);
-  animation: alert-pop var(--duration-slow) var(--ease-spring) both;
 }
 
 .alert__title {
   margin: 0 0 var(--space-2);
   font-size: var(--text-md);
-  font-weight: 600;
-  line-height: var(--leading-snug);
 }
 
 .alert__text {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-  line-height: var(--leading-body);
+  margin: 0 auto;
+  color: var(--color-ink-soft);
 }
 
 .alert__actions {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  // Cuando la alerta pregunta son dos botones, y sin este hueco se tocan: la
-  // misma separación que en la pantalla de confirmación del panel.
-  gap: var(--space-4);
+  gap: var(--space-3);
   margin-top: var(--space-5);
 }
 
-// Barra de tiempo: sólo la ponen las alertas que se cierran solas, y la
-// pinta `alerts.js` — sin JavaScript no hay cuenta atrás que anunciar.
+// Barra de autocierre: la pinta `alerts.js`.
 .alert__timer {
   position: absolute;
   right: 0;
@@ -111,37 +86,25 @@
   animation: alert-timer var(--alert-timer, 4200ms) linear both;
 }
 
-// Salida: la misma inversa del modal, nunca un corte seco.
 .alert.is-closing {
-  animation: backdrop-out var(--duration-base) var(--ease-out) both;
+  animation: alert-fade-out var(--duration-base) var(--ease-out) both;
+}
 
-  .alert__panel {
-    animation: modal-out var(--duration-base) var(--ease-out) both;
-  }
+@keyframes alert-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes alert-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes alert-timer {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
 }
 
 // ------------------------------------------------------------
 //  Tonos
 // ------------------------------------------------------------
-.alert--success {
-  --alert-tone: var(--color-success);
-  --alert-tone-dim: rgba(79, 209, 160, 0.12);
-}
-
-.alert--error {
-  --alert-tone: var(--color-alert);
-  --alert-tone-dim: var(--color-alert-dim);
-}
-
-.alert--warning {
-  --alert-tone: var(--color-accent);
-  --alert-tone-dim: var(--color-accent-dim);
-}
-
-.alert--info {
-  --alert-tone: var(--color-structural);
-  --alert-tone-dim: var(--color-structural-dim);
-}
+.alert--success { --alert-tone: var(--color-signal); }
+.alert--error   { --alert-tone: var(--color-danger); }
+.alert--warning { --alert-tone: var(--color-warning); }
+.alert--info    { --alert-tone: var(--color-ink-soft); }
 
 @include below($bp-mobile) {
   .alert {
@@ -153,20 +116,7 @@
   }
 }
 
-// Sin movimiento: aparece y desaparece, y la cuenta atrás deja de correr a
-// la vista (el cierre automático sigue, pero sin barra que se mueva).
 @include reduced-motion {
-  .alert,
-  .alert.is-closing {
-    animation: reveal-fade var(--duration-base) linear both;
-  }
-
-  .alert__panel,
-  .alert.is-closing .alert__panel,
-  .alert__icon {
-    animation: reveal-fade var(--duration-base) linear both;
-  }
-
   .alert__timer {
     display: none;
   }

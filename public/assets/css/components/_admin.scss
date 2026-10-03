@@ -3,7 +3,7 @@
 //
 //  El panel es una herramienta, no una página del sitio: barra lateral
 //  fija, una pantalla por sección y tablas densas. Sigue siendo el mismo
-//  sistema visual (superficie bento, ámbar para lo que importa), pero con
+//  sistema visual (papel, tinta y la señal verde para lo que importa), con
 //  la densidad al alza — aquí se viene a leer datos, no a ser seducido.
 //
 //  Sin JS: la lateral se convierte en una tira de pestañas en pantallas
@@ -37,7 +37,7 @@
 //  Barra lateral
 // ------------------------------------------------------------
 .admin__sidebar {
-  @include bento-surface;
+  @include panel-surface;
 
   position: sticky;
   top: var(--space-5);
@@ -58,15 +58,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  color: var(--color-text);
+  color: var(--color-ink);
 
   &:hover {
-    color: var(--color-text);
+    color: var(--color-ink);
   }
 
   &:hover .admin__mark {
-    border-color: var(--border-accent);
-    color: var(--color-accent);
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink);
   }
 }
 
@@ -77,10 +77,10 @@
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
-  background: var(--color-bg);
-  color: var(--color-structural);
+  background: var(--color-paper);
+  color: var(--color-ink-soft);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
@@ -94,15 +94,14 @@
 }
 
 .admin__brand-name {
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
   font-weight: 600;
 }
 
 .admin__brand-role {
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
 }
 
 // ------------------------------------------------------------
@@ -140,10 +139,9 @@
 
 .admin__nav-label {
   margin: 0 0 var(--space-2);
-  color: var(--color-text-faint);
-  font-size: var(--text-3xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
 
   // Los rótulos de grupo sólo tienen sentido cuando la lateral es columna.
   @include below($bp-tablet) {
@@ -157,8 +155,8 @@
   gap: var(--space-3);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
   white-space: nowrap;
   transition:
     background-color var(--duration-fast) var(--ease-out),
@@ -167,29 +165,29 @@
 
   &:hover {
     transform: translateX(2px);
-    background: var(--color-surface-alt);
-    color: var(--color-text);
+    background: var(--color-sheet-hover);
+    color: var(--color-ink);
   }
 
-  // La pantalla en la que estás: fondo estructural y el icono en ámbar.
+  // La pantalla en la que estás: fondo de fila y el icono en verde señal.
   &.is-active {
-    background: var(--color-structural-dim);
-    color: var(--color-text);
+    background: var(--color-sheet-hover);
+    color: var(--color-ink);
     font-weight: 600;
   }
 
   &.is-active .admin__link-icon {
-    color: var(--color-accent);
+    color: var(--color-signal);
   }
 
   &:hover .admin__link-icon {
-    color: var(--color-structural);
+    color: var(--color-ink-soft);
   }
 }
 
 .admin__link-icon {
   flex: 0 0 auto;
-  color: var(--color-text-faint);
+  color: var(--color-ink-faint);
   transition: color var(--duration-fast) var(--ease-out);
 }
 
@@ -201,7 +199,7 @@
   flex-direction: column;
   gap: var(--space-3);
   padding-top: var(--space-5);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--color-rule);
 
   // En estrecho la lateral ya ocupa alto de sobra: el pie se pone en fila
   // para no empujar la tabla fuera de la primera pantalla.
@@ -217,35 +215,35 @@
 .admin__who {
   display: flex;
   flex-direction: column;
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
 }
 
 .admin__who-since {
-  color: var(--color-text-faint);
+  color: var(--color-ink-faint);
 }
 
 .admin__out {
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
 }
 
 .admin__logout {
   width: 100%;
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--color-rule);
   border-radius: var(--radius-md);
   background: none;
-  color: var(--color-text-muted);
-  font-family: var(--font-body);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-soft);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out);
 
   &:hover {
-    border-color: var(--border-accent);
-    color: var(--color-accent);
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink);
   }
 
   @include below($bp-tablet) {
@@ -279,8 +277,8 @@
 .admin-head__lead {
   margin-top: var(--space-2);
   max-width: 62ch;
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
 }
 
 .admin-head__text {
@@ -295,14 +293,14 @@
 }
 
 .admin-head__meta {
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
 }
 
 .admin-note {
   max-width: 70ch;
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   line-height: var(--leading-snug);
 }
 
@@ -312,18 +310,18 @@
 .admin-stats {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-  gap: var(--bento-gap);
+  gap: var(--space-3);
 }
 
 .admin-stat {
-  @include bento-surface;
+  @include panel-surface;
 
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   height: 100%;
   padding: var(--space-5);
-  color: var(--color-text);
+  color: var(--color-ink);
   transition:
     transform var(--duration-fast) var(--ease-out),
     background-color var(--duration-fast) var(--ease-out),
@@ -331,35 +329,34 @@
 
   // Elevación con movimiento, nunca sólo sombra.
   &:hover {
-    transform: translateY(-4px);
-    border-color: var(--border-accent);
-    background: var(--color-surface-alt);
-    color: var(--color-text);
+    border-color: var(--color-rule-strong);
+    background: var(--color-sheet-hover);
+    color: var(--color-ink);
   }
 }
 
 .admin-stat__label {
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-soft);
+  font-size: var(--text-xs);
 }
 
 .admin-stat__value {
-  color: var(--color-accent);
-  font-family: var(--font-display);
+  color: var(--color-signal);
+  font-family: var(--font-sans);
   font-size: var(--text-xl);
   line-height: 1;
 }
 
 .admin-stat__detail {
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
 }
 
 // ------------------------------------------------------------
 //  Bloque con título propio (una tabla dentro de una celda)
 // ------------------------------------------------------------
 .admin-panel {
-  @include bento-surface;
+  @include panel-surface;
 
   display: flex;
   flex-direction: column;
@@ -383,7 +380,7 @@
 //  Tablas
 // ------------------------------------------------------------
 .admin-table__wrap {
-  @include bento-surface;
+  @include panel-surface;
 
   // El ancho que sobra se desliza aquí dentro: el body nunca hace scroll
   // horizontal, por muchas columnas que tenga la tabla.
@@ -401,7 +398,7 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--text-2xs);
+  font-size: var(--text-xs);
 
   th,
   td {
@@ -411,18 +408,17 @@
   }
 
   thead th {
-    border-bottom: 1px solid var(--border-strong);
-    color: var(--color-text-dim);
-    font-family: var(--font-body);
-    font-size: var(--text-3xs);
+    border-bottom: 1px solid var(--color-rule-strong);
+    color: var(--color-ink-faint);
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     font-weight: 500;
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
+    font-weight: var(--weight-medium);
     white-space: nowrap;
   }
 
   tbody tr {
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--color-rule);
     transition: background-color var(--duration-fast) var(--ease-out);
 
     &:last-child {
@@ -430,30 +426,30 @@
     }
 
     &:hover {
-      background: var(--color-surface-alt);
+      background: var(--color-sheet-hover);
     }
   }
 
   td strong {
-    color: var(--color-text);
+    color: var(--color-ink);
     font-weight: 600;
   }
 
   // Lo despublicado se ve, pero apagado: sigue estando ahí.
   .is-hidden-row td,
   .is-hidden-row td strong {
-    color: var(--color-text-faint);
+    color: var(--color-ink-faint);
   }
 
-  // Sin leer: una marca ámbar en el canto, no un fondo que grite.
+  // Sin leer: una marca verde en el canto, no un fondo que grite.
   .is-unread-row td:first-child {
-    box-shadow: inset 2px 0 0 var(--color-accent);
+    box-shadow: inset 2px 0 0 var(--color-signal);
   }
 
   // Campo/valor (perfil): la clave manda a la izquierda.
   &--pairs th[scope='row'] {
     width: 12rem;
-    color: var(--color-text-dim);
+    color: var(--color-ink-faint);
     font-weight: 500;
   }
 }
@@ -461,20 +457,20 @@
 .admin-table__sub {
   display: block;
   margin-top: 2px;
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
 }
 
 a.admin-table__sub {
-  color: var(--color-text-dim);
+  color: var(--color-ink-faint);
 
   &:hover {
-    color: var(--color-accent);
+    color: var(--color-ink);
   }
 }
 
 .admin-table__none {
-  color: var(--color-text-faint);
+  color: var(--color-ink-faint);
 }
 
 .admin-table__narrow {
@@ -487,7 +483,7 @@ a.admin-table__sub {
 }
 
 .admin-table__p {
-  color: var(--color-text-muted);
+  color: var(--color-ink-soft);
 
   & + & {
     margin-top: var(--space-2);
@@ -502,10 +498,10 @@ a.admin-table__sub {
 
 .admin-empty {
   padding: var(--space-7) var(--space-5);
-  border: 1px dashed var(--border-strong);
+  border: 1px dashed var(--color-rule-strong);
   border-radius: var(--radius-lg);
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   text-align: center;
 }
 
@@ -513,40 +509,39 @@ a.admin-table__sub {
 //  Píldoras de estado
 //
 //  Nunca sólo color: el texto dice lo mismo que el tono, que es lo que
-//  lee quien no distingue el ámbar del azul.
+//  lee quien no distingue el verde del rojo.
 // ------------------------------------------------------------
 .pill {
   display: inline-block;
   padding: var(--space-1) var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  font-size: var(--text-3xs);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
   white-space: nowrap;
 
   &--on {
-    border-color: rgba(79, 209, 160, 0.32);
-    background: rgba(79, 209, 160, 0.12);
+    border-color: var(--color-signal);
+    background: var(--color-signal-soft);
     color: var(--color-success);
   }
 
   &--off {
-    border-color: rgba(255, 107, 91, 0.3);
-    background: var(--color-alert-dim);
-    color: var(--color-alert);
+    border-color: var(--color-danger);
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
   }
 
-  // "Destacado": ámbar sólido, igual que la etiqueta de la landing.
+  // "Destacado": tinta sólida, la única etiqueta rellena.
   &--accent {
-    border-color: var(--color-accent);
-    background: var(--color-accent);
-    color: var(--color-bg);
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-paper);
   }
 
   // La ausencia de bandera no merece resaltarse.
   &--mute {
-    color: var(--color-text-faint);
+    color: var(--color-ink-faint);
   }
 }
 
@@ -563,7 +558,7 @@ a.admin-table__sub {
 }
 
 .admin-form__group {
-  @include bento-surface;
+  @include panel-surface;
 
   margin: 0;
   padding: var(--space-5);
@@ -572,16 +567,16 @@ a.admin-table__sub {
 .admin-form__legend {
   padding: 0 var(--space-2);
   margin-left: calc(var(--space-2) * -1);
-  color: var(--color-text);
-  font-family: var(--font-display);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   font-size: var(--text-md);
 }
 
 .admin-form__note {
   max-width: 70ch;
   margin-top: var(--space-2);
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   line-height: var(--leading-snug);
 }
 
@@ -616,11 +611,11 @@ a.admin-table__sub {
   align-items: center;
   gap: var(--space-2);
   margin-left: auto;
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
 
   &:hover {
-    color: var(--color-alert);
+    color: var(--color-danger);
   }
 }
 
@@ -638,13 +633,13 @@ a.admin-table__sub {
   flex: 0 0 auto;
   width: 1.15rem;
   height: 1.15rem;
-  accent-color: var(--color-accent);
+  accent-color: var(--color-signal);
   cursor: pointer;
 }
 
 .admin-check__label {
-  color: var(--color-text);
-  font-size: var(--text-2xs);
+  color: var(--color-ink);
+  font-size: var(--text-xs);
 }
 
 .form__row--check {
@@ -661,20 +656,20 @@ a.admin-table__sub {
 //  navegador al lado del botón, así que no hace falta pintarlo.
 .admin-file__input {
   padding: var(--space-2) var(--space-3);
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   line-height: 1.6;
   cursor: pointer;
 
   &::file-selector-button {
     margin-right: var(--space-3);
     padding: var(--space-2) var(--space-4);
-    background: var(--color-surface);
-    border: 1px solid var(--border-strong);
+    background: var(--color-sheet);
+    border: 1px solid var(--color-rule-strong);
     border-radius: var(--radius-sm);
-    color: var(--color-text);
-    font-family: var(--font-body);
-    font-size: var(--text-2xs);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
     cursor: pointer;
     transition:
       border-color var(--duration-fast) var(--ease-out),
@@ -683,8 +678,8 @@ a.admin-table__sub {
 
   &:hover::file-selector-button,
   &:focus::file-selector-button {
-    border-color: var(--border-accent);
-    color: var(--color-accent);
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink);
   }
 }
 
@@ -694,8 +689,8 @@ a.admin-table__sub {
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  background: var(--color-surface-sunk);
-  border: 1px solid var(--border-subtle);
+  background: var(--color-field);
+  border: 1px solid var(--color-rule);
   border-radius: var(--radius-sm);
 }
 
@@ -709,8 +704,8 @@ a.admin-table__sub {
   &--doc {
     display: grid;
     place-items: center;
-    background: var(--color-surface);
-    color: var(--color-text-dim);
+    background: var(--color-sheet);
+    color: var(--color-ink-faint);
   }
 }
 
@@ -722,14 +717,14 @@ a.admin-table__sub {
 }
 
 .admin-file__name {
-  color: var(--color-text);
-  font-size: var(--text-2xs);
+  color: var(--color-ink);
+  font-size: var(--text-xs);
   // El nombre lo pone el servidor y lleva sufijo: si no cabe, se parte.
   overflow-wrap: anywhere;
 }
 
 .admin-file__open {
-  font-size: var(--text-3xs);
+  font-size: var(--text-xs);
 }
 
 .admin-file__remove {
@@ -753,10 +748,9 @@ a.admin-table__sub {
 }
 
 .admin-picker__label {
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
 }
 
 // ------------------------------------------------------------
@@ -795,10 +789,9 @@ a.admin-table__sub {
 }
 
 .admin-rows__head {
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
 
   // En una columna, los rótulos dejan de corresponder con nada.
   @include below($bp-mobile) {
@@ -825,10 +818,10 @@ a.admin-table__sub {
   width: 2rem;
   height: 2rem;
   padding: 0;
-  background: var(--color-surface-sunk);
-  border: 1px solid var(--border-subtle);
+  background: var(--color-field);
+  border: 1px solid var(--color-rule);
   border-radius: var(--radius-sm);
-  color: var(--color-text-dim);
+  color: var(--color-ink-faint);
   cursor: pointer;
   transition:
     border-color var(--duration-fast) var(--ease-out),
@@ -836,21 +829,21 @@ a.admin-table__sub {
     color var(--duration-fast) var(--ease-out);
 
   &:hover {
-    background: var(--color-surface);
-    border-color: var(--border-strong);
-    color: var(--color-text);
+    background: var(--color-sheet);
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink);
   }
 
   &--edit:hover {
-    border-color: var(--border-accent);
-    color: var(--color-structural);
+    border-color: var(--color-rule-strong);
+    color: var(--color-ink-soft);
   }
 
   // Borrar se enciende en rojo sólo al apuntarlo: en reposo pesa lo mismo que
   // las demás, para que no atraiga el dedo.
   &--delete:hover {
-    border-color: rgba(255, 107, 91, 0.4);
-    color: var(--color-alert);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
   }
 }
 
@@ -858,7 +851,7 @@ a.admin-table__sub {
 //  Confirmación de borrado
 // ------------------------------------------------------------
 .admin-confirm {
-  @include bento-surface;
+  @include panel-surface;
 
   display: flex;
   flex-direction: column;
@@ -866,7 +859,7 @@ a.admin-table__sub {
   max-width: 46rem;
   padding: var(--space-6);
   // Borde de aviso: esta pantalla no se parece a ninguna otra del panel.
-  border-color: rgba(255, 107, 91, 0.3);
+  border-color: var(--color-danger);
 }
 
 .admin-confirm__detail {
@@ -880,7 +873,7 @@ a.admin-table__sub {
   flex-wrap: wrap;
   gap: var(--space-4);
   padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--color-rule);
 
   &:last-child {
     border-bottom: none;
@@ -889,14 +882,14 @@ a.admin-table__sub {
 
 .admin-confirm__key {
   flex: 0 0 9rem;
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
 }
 
 .admin-confirm__val {
   margin: 0;
-  color: var(--color-text);
-  font-size: var(--text-2xs);
+  color: var(--color-ink);
+  font-size: var(--text-xs);
 }
 
 .admin-confirm__actions {
@@ -907,8 +900,8 @@ a.admin-table__sub {
 }
 
 .admin-confirm__hint {
-  color: var(--color-text-dim);
-  font-size: var(--text-3xs);
+  color: var(--color-ink-faint);
+  font-size: var(--text-xs);
   line-height: var(--leading-snug);
 }
 
@@ -916,7 +909,7 @@ a.admin-table__sub {
 //  Mensaje completo
 // ------------------------------------------------------------
 .admin-message {
-  @include bento-surface;
+  @include panel-surface;
 
   display: flex;
   flex-direction: column;
@@ -930,11 +923,11 @@ a.admin-table__sub {
   flex-direction: column;
   margin: 0;
   padding-bottom: var(--space-4);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--color-rule);
 }
 
 .admin-message__body {
-  font-size: var(--text-xs);
+  font-size: var(--text-sm);
 }
 
 .admin-message__actions {
@@ -943,7 +936,7 @@ a.admin-table__sub {
   align-items: center;
   gap: var(--space-4);
   padding-top: var(--space-5);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--color-rule);
 }
 
 @include reduced-motion {

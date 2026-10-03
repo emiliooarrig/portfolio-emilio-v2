@@ -77,7 +77,8 @@ CREATE TABLE `technologies` (
   `id`          SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`        VARCHAR(60)  NOT NULL,
   `slug`        VARCHAR(60)  NOT NULL,
-  `category`    ENUM('lenguaje','base_datos','orquestacion','cloud','bi','herramienta') NOT NULL DEFAULT 'herramienta',
+  -- El orden del ENUM es el orden en que se ven las categorías en "Sobre mí".
+  `category`    ENUM('datos','sistemas','redes','seguridad','cloud','lenguaje','herramienta') NOT NULL DEFAULT 'herramienta',
   `is_featured` TINYINT(1)   NOT NULL DEFAULT 0,  -- reservado: hoy el stack se muestra completo por categoría
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_tech_slug` (`slug`),
@@ -92,7 +93,7 @@ CREATE TABLE `projects` (
   `slug`           VARCHAR(120) NOT NULL,
   `title`          VARCHAR(160) NOT NULL,
   `subtitle`       VARCHAR(200) NULL,
-  `summary`        VARCHAR(400) NOT NULL,          -- texto de la tarjeta bento
+  `summary`        VARCHAR(400) NOT NULL,          -- descripción al compartir el enlace
   `context`        TEXT         NULL,              -- detalle: contexto / problema
   `solution`       TEXT         NULL,              -- detalle: qué construí
   `outcome`        TEXT         NULL,              -- detalle: resultado
@@ -101,7 +102,6 @@ CREATE TABLE `projects` (
   `cover_image`    VARCHAR(255) NULL,
   `repo_url`       VARCHAR(255) NULL,
   `demo_url`       VARCHAR(255) NULL,
-  `bento_size`     ENUM('sm','md','lg','xl') NOT NULL DEFAULT 'md', -- peso en el grid
   `is_featured`    TINYINT(1)   NOT NULL DEFAULT 0,
   `is_published`   TINYINT(1)   NOT NULL DEFAULT 1,
   `has_pipeline`   TINYINT(1)   NOT NULL DEFAULT 0, -- muestra el riel de flujo en el detalle
@@ -238,7 +238,7 @@ CREATE TABLE `experience_highlights` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------
---  home_metrics — celdas pequeñas del bento de Inicio
+--  home_metrics — sin uso en la landing actual; se conserva
 -- ------------------------------------------------------------
 CREATE TABLE `home_metrics` (
   `id`         SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,

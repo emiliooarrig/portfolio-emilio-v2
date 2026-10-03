@@ -1,246 +1,68 @@
 // ============================================================
-//  _timeline.scss — experiencia laboral
-//  Única sección con marcadores numerados: es una secuencia real.
+//  _timeline.scss — Experiencia
+//  Una fila de dos columnas por puesto: fechas a la izquierda, el puesto
+//  a la derecha. Las filas se separan por espacio, sin líneas.
 // ============================================================
 
 @use '../tokens' as *;
 
-.bento--experience {
-  .bento-cell--exp-intro { @include bento-place(1, 5); }
-  .bento-cell--exp-list  { @include bento-place(5, 13); }
-
-  @include below($bp-tablet) {
-    .bento-cell--exp-intro,
-    .bento-cell--exp-list { grid-column: 1 / 5; }
-  }
-}
-
-.bento-cell--exp-intro {
-  gap: var(--space-4);
-  align-self: start;
-  position: sticky;
-  top: calc(var(--nav-height) + var(--space-4));
-
-  @include below($bp-tablet) {
-    position: static;
-  }
-}
-
-.exp-intro__range {
-  color: var(--color-accent);
-  font-size: var(--text-lg);
-  line-height: 1;
-}
-
-.exp-intro__text {
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-  line-height: var(--leading-body);
-}
-
-.bento-cell--exp-list {
-  padding: 0;
-  background: none;
-  border: none;
-  box-shadow: none;
-}
-
-// ------------------------------------------------------------
-//  Timeline
-// ------------------------------------------------------------
 .timeline {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--bento-gap);
+  display: grid;
+  gap: var(--space-7);
 }
 
 .timeline__item {
-  position: relative;
   display: grid;
-  grid-template-columns: 3.5rem minmax(0, 1fr);
-  gap: var(--space-5);
+  grid-template-columns: 9rem minmax(0, 1fr);
+  column-gap: var(--space-6);
 
-  // Línea vertical que conecta la secuencia.
-  &::before {
-    content: '';
-    position: absolute;
-    top: 3.5rem;
-    bottom: calc(var(--bento-gap) * -1);
-    left: 1.75rem;
-    width: 1px;
-    background: var(--border-subtle);
-  }
-
-  &:last-child::before {
-    display: none;
+  @include below($bp-mobile) {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-3);
   }
 }
 
-.timeline__marker {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  transition:
-    border-color var(--duration-base) var(--ease-out),
-    transform var(--duration-base) var(--ease-spring);
+.timeline__when {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
 }
 
-.timeline__index {
-  color: var(--color-text-dim);
-  font-size: var(--text-2xs);
-  transition: color var(--duration-base) var(--ease-out);
-}
-
-.timeline__item:hover {
-  .timeline__marker {
-    border-color: var(--border-structural);
-    transform: scale(1.06);
-  }
-
-  .timeline__index {
-    color: var(--color-structural);
-  }
-}
-
-.timeline__item--current {
-  .timeline__marker {
-    border-color: var(--border-accent);
-    background: var(--color-accent-dim);
-  }
-
-  .timeline__index {
-    color: var(--color-accent);
-  }
-}
-
-// El hover (elevación + luz progresiva) llega con .bento-card--hoverable.
-.timeline__content {
-  @include bento-surface;
-
-  padding: var(--cell-padding);
-}
-
-.timeline__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-4);
+.timeline__when .status {
+  margin-bottom: var(--space-1);
 }
 
 .timeline__role {
   font-size: var(--text-md);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 
 .timeline__company {
   margin-top: var(--space-1);
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-}
-
-.timeline__location {
-  color: var(--color-text-dim);
-}
-
-.timeline__dates {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--space-1);
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-}
-
-.timeline__duration {
-  color: var(--color-text-faint);
+  color: var(--color-ink-soft);
 }
 
 .timeline__type {
-  margin-top: var(--space-3);
-  color: var(--color-structural);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  margin-top: var(--space-1);
 }
 
 .timeline__summary {
-  margin-top: var(--space-3);
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
+  margin-top: var(--space-4);
 }
 
 .timeline__highlights {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--space-2);
   margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-subtle);
+  padding-left: 1.25em;
+  list-style: disc;
+
+  li::marker {
+    color: var(--color-ink-faint);
+  }
 
   li {
-    position: relative;
-    padding-left: var(--space-5);
-    color: var(--color-text-muted);
-    font-size: var(--text-2xs);
-    line-height: var(--leading-snug);
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0.5rem;
-      left: 0;
-      width: 10px;
-      height: 1px;
-      background: var(--color-accent);
-      opacity: 0.75;
-      transition: width var(--duration-base) var(--ease-out);
-    }
-  }
-
-  li:hover::before {
-    width: 16px;
-  }
-}
-
-@include below($bp-mobile) {
-  .timeline__item {
-    grid-template-columns: 2.5rem minmax(0, 1fr);
-    gap: var(--space-3);
-
-    &::before {
-      top: 2.5rem;
-      left: 1.25rem;
-    }
-  }
-
-  .timeline__marker {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-
-  .timeline__head {
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .timeline__dates {
-    align-items: flex-start;
-  }
-
-  .timeline__content {
-    padding: var(--space-4);
-  }
-}
-
-@include reduced-motion {
-  .timeline__item:hover .timeline__marker {
-    transform: none;
+    max-inline-size: var(--measure);
+    padding-left: var(--space-1);
   }
 }

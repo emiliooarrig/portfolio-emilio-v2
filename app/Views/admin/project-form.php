@@ -38,14 +38,14 @@ foreach ($technologies as $technology) {
 ?>
 <?= partial('admin-head', [
     'title' => $isNew ? 'Nuevo proyecto' : 'Editar proyecto',
-    'lead'  => 'La tarjeta del grid y el modal de detalle salen de aquí.',
+    'lead'  => 'La fila del índice de proyectos y el modal de detalle salen de aquí.',
 ]) ?>
 
 <form class="admin-form" method="post" action="<?= url($action) ?>" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="_token" value="<?= e($token) ?>">
 
     <fieldset class="admin-form__group">
-        <legend class="admin-form__legend">La tarjeta</legend>
+        <legend class="admin-form__legend">La fila</legend>
         <p class="admin-form__note">Esto es lo que se ve sin abrir nada. Va en lenguaje de cliente: el resultado antes que el método.</p>
 
         <div class="admin-form__grid">
@@ -67,19 +67,12 @@ foreach ($technologies as $technology) {
                 'value' => $values['subtitle'], 'error' => $errors['subtitle'] ?? '',
             ]) ?>
 
-            <?= partial('admin-field', [
-                'name' => 'bento_size', 'label' => 'Tamaño en el grid', 'type' => 'select',
-                'value' => $values['bento_size'], 'error' => $errors['bento_size'] ?? '',
-                'options' => Project::SIZES,
-                'hint'    => 'Cuánto peso tiene en el bento. No todos pueden ser grandes.',
-            ]) ?>
-
             <div class="admin-form__wide">
                 <?= partial('admin-field', [
                     'name' => 'summary', 'label' => 'Resumen', 'type' => 'textarea', 'required' => true,
                     'value' => $values['summary'], 'error' => $errors['summary'] ?? '',
                     'rows'  => 3,
-                    'hint'  => 'Máximo 400 caracteres: es el texto de la tarjeta, no el del detalle.',
+                    'hint'  => 'Máximo 400 caracteres: es la descripción que se ve al compartir el enlace del proyecto.',
                 ]) ?>
             </div>
         </div>
@@ -87,7 +80,7 @@ foreach ($technologies as $technology) {
 
     <fieldset class="admin-form__group">
         <legend class="admin-form__legend">El detalle</legend>
-        <p class="admin-form__note">Lo que se lee dentro del modal. «Contexto» y «Resultado» van en lenguaje llano; «Qué construí» es donde sí toca el lenguaje técnico.</p>
+        <p class="admin-form__note">Lo que se lee dentro del modal. «Contexto» y «Resultado» van en lenguaje llano; «Qué hice» es donde sí toca el lenguaje técnico.</p>
 
         <div class="admin-form__grid">
             <div class="admin-form__wide">
@@ -100,7 +93,7 @@ foreach ($technologies as $technology) {
 
             <div class="admin-form__wide">
                 <?= partial('admin-field', [
-                    'name' => 'solution', 'label' => 'Qué construí', 'type' => 'textarea',
+                    'name' => 'solution', 'label' => 'Qué hice', 'type' => 'textarea',
                     'value' => $values['solution'], 'error' => $errors['solution'] ?? '',
                 ]) ?>
             </div>
@@ -156,7 +149,7 @@ foreach ($technologies as $technology) {
 
     <fieldset class="admin-form__group">
         <legend class="admin-form__legend">Stack</legend>
-        <p class="admin-form__note">Los tags de la tarjeta y del detalle. Si falta alguna, se da de alta en <a href="<?= url('/admin/tecnologias') ?>">Stack</a>.</p>
+        <p class="admin-form__note">Las tecnologías de la fila y del detalle. Si falta alguna, se da de alta en <a href="<?= url('/admin/tecnologias') ?>">Stack</a>.</p>
 
         <?php if ($technologies === []): ?>
             <p class="admin-empty">No hay tecnologías dadas de alta todavía.</p>
@@ -219,7 +212,7 @@ foreach ($technologies as $technology) {
 
     <fieldset class="admin-form__group">
         <legend class="admin-form__legend">Flujo de datos</legend>
-        <p class="admin-form__note">El riel del detalle, de dato crudo a dato refinado. Sólo se dibuja si marcas «Mostrar el flujo» más abajo.</p>
+        <p class="admin-form__note">Los pasos de «Cómo funciona» dentro del detalle. Sólo se muestran si marcas «Mostrar el flujo» más abajo.</p>
 
         <?php if (isset($errors['pipeline'])): ?>
             <p class="form__error" role="alert"><?= e($errors['pipeline']) ?></p>
@@ -271,13 +264,13 @@ foreach ($technologies as $technology) {
                 <?= partial('admin-field', [
                     'name' => 'is_featured', 'label' => 'Destacado', 'type' => 'checkbox',
                     'value' => $values['is_featured'],
-                    'hint'  => 'Sale primero y con etiqueta ámbar.',
+                    'hint'  => 'Sale primero, ampliado y con su primera métrica en grande.',
                 ]) ?>
 
                 <?= partial('admin-field', [
                     'name' => 'has_pipeline', 'label' => 'Mostrar el flujo', 'type' => 'checkbox',
                     'value' => $values['has_pipeline'],
-                    'hint'  => 'Dibuja el riel de pasos dentro del modal.',
+                    'hint'  => 'Muestra los pasos numerados dentro del modal.',
                 ]) ?>
             </div>
         </div>

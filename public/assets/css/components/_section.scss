@@ -1,0 +1,70 @@
+// ============================================================
+//  _section.scss — patrón riel + contenido
+//
+//  Toda sección salvo el hero: el título vive a la izquierda (sticky en
+//  escritorio) y el contenido en una columna ancha a la derecha. Las
+//  secciones se separan sólo por espacio: sin líneas ni cambios de fondo.
+// ============================================================
+
+@use '../tokens' as *;
+
+.section {
+  padding-block: var(--section-gap);
+  // Refuerza el frenado del ancla en navegadores que ignoran scroll-padding.
+  scroll-margin-top: var(--nav-height);
+}
+
+.section__grid {
+  @include section-grid;
+}
+
+.section__head {
+  grid-column: 1 / 5;
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-6));
+  align-self: start;
+
+  @include below($bp-tablet) {
+    grid-column: 1 / -1;
+    position: static;
+  }
+}
+
+.section__title {
+  font-size: var(--text-xl);
+}
+
+.section__lead {
+  margin-top: var(--space-3);
+  color: var(--color-ink-soft);
+  font-size: var(--text-base);
+}
+
+.section__body {
+  grid-column: 5 / 13;
+  min-width: 0;
+
+  @include below($bp-tablet) {
+    grid-column: 1 / -1;
+  }
+}
+
+// ------------------------------------------------------------
+//  Lista de filas: una línea de 1px separa cada fila, y la última
+//  también cierra por abajo. La comparten proyectos y certificaciones.
+// ------------------------------------------------------------
+.row-list > * {
+  border-top: 1px solid var(--color-rule);
+
+  &:last-child {
+    border-bottom: 1px solid var(--color-rule);
+  }
+}
+
+// Tecnologías en texto plano, separadas sólo por espacio.
+.tech-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+}

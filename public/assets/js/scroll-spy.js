@@ -63,7 +63,7 @@ export function initScrollSpy() {
 
     const navHeight = parseFloat(
         getComputedStyle(document.documentElement).getPropertyValue('--nav-height')
-    ) || 4.5;
+    ) || 4;
 
     const topOffset = Math.round(navHeight * 16) + 8;
 

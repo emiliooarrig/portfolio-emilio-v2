@@ -21,10 +21,10 @@ $title = $pageTitle !== '' ? $pageTitle . ' — ' . $profile['full_name'] : (str
     <title><?= e($title) ?></title>
     <?php // El panel no se indexa ni se comparte: no es parte del sitio público. ?>
     <meta name="robots" content="noindex, nofollow">
-    <meta name="theme-color" content="#0A0E15">
+    <meta name="theme-color" content="#F7F8F9" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
 
-    <link rel="preload" href="<?= url('/assets/fonts/stack-sans-headline.woff2') ?>" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="<?= url('/assets/fonts/sekuya.woff2') ?>" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="<?= url('/assets/fonts/mona-sans.woff2') ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
 </head>
 <body class="page page--auth">

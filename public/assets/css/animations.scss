@@ -1,181 +1,20 @@
 // ============================================================
-//  animations.scss — keyframes y clases de animación reutilizables
-//  Regla: sólo `transform` y `opacity` (nunca top/left/width).
-//  Toda animación de aquí tiene versión reducida al final del archivo.
+//  animations.scss — regla global de movimiento reducido
+//
+//  La línea modern minimal tiene un solo momento de movimiento (el nombre
+//  del hero, en components/_hero.scss); todo lo demás sólo responde a
+//  acciones del usuario. Bajo `prefers-reduced-motion` cualquier transición
+//  o animación que quede se vuelve instantánea.
 // ============================================================
 
 @use 'tokens' as *;
 
-// ------------------------------------------------------------
-//  Keyframes
-// ------------------------------------------------------------
-@keyframes reveal-up {
-  from { opacity: 0; transform: translate3d(0, 16px, 0); }
-  to   { opacity: 1; transform: none; }
-}
-
-@keyframes reveal-fade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-// Entrada del hero: un poco más de recorrido, es el primer golpe de vista.
-@keyframes hero-in {
-  from { opacity: 0; transform: translate3d(0, 28px, 0); }
-  to   { opacity: 1; transform: none; }
-}
-
-// Respiración de los halos del fondo del hero: lentísima, casi imperceptible.
-@keyframes aurora-drift {
-  0%   { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
-  50%  { transform: translate3d(3%, -4%, 0) scale(1.12); opacity: 0.85; }
-  100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.55; }
-}
-
-// Modal de proyecto: scale-fade. El backdrop va por separado.
-@keyframes modal-in {
-  from { opacity: 0; transform: scale(0.96) translate3d(0, 12px, 0); }
-  to   { opacity: 1; transform: none; }
-}
-
-@keyframes modal-out {
-  from { opacity: 1; transform: none; }
-  to   { opacity: 0; transform: scale(0.96) translate3d(0, 12px, 0); }
-}
-
-@keyframes backdrop-in  { from { opacity: 0; } to { opacity: 1; } }
-@keyframes backdrop-out { from { opacity: 1; } to { opacity: 0; } }
-
-// Disco del ícono de las alertas: entra un paso después del panel, con el
-// rebote corto de --ease-spring. Es lo primero que se mira.
-@keyframes alert-pop {
-  from { opacity: 0; transform: scale(0.4); }
-  to   { opacity: 1; transform: none; }
-}
-
-// Cuenta atrás de las alertas que se cierran solas.
-@keyframes alert-timer {
-  from { transform: scaleX(1); }
-  to   { transform: scaleX(0); }
-}
-
-// Paquetes de datos recorriendo el riel del pipeline.
-@keyframes packet-flow {
-  0% {
-    transform: translateX(0) scale(0.85);
-    background-color: var(--color-structural);
-    opacity: 0;
-  }
-  8%   { opacity: 1; }
-  48%  { background-color: var(--color-structural); }
-  62%  { background-color: var(--color-accent); }
-  92%  { opacity: 1; }
-  100% {
-    transform: translateX(calc(100cqw - 10px)) scale(1);
-    background-color: var(--color-accent);
-    opacity: 0;
-  }
-}
-
-// Chips del stack entrando en cascada.
-@keyframes chip-in {
-  from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.96); }
-  to   { opacity: 1; transform: none; }
-}
-
-// ------------------------------------------------------------
-//  .reveal — scroll-reveal por celda (lo dispara IntersectionObserver)
-//  El estado oculto sólo se aplica si JS está vivo (html.js), así
-//  ninguna falla del observer puede dejar contenido invisible.
-//
-//  La entrada va por `animation`, no por `transition`: casi toda celda es
-//  además .bento-card--hoverable y necesita su `transition` libre para el
-//  hover. Con fill `backwards` la animación manda durante el retardo y la
-//  entrada, y suelta el control en cuanto termina — el hover no hereda ni
-//  el escalonado ni las propiedades del reveal.
-// ------------------------------------------------------------
-.js .reveal {
-  opacity: 0;
-  will-change: opacity, transform;
-}
-
-.js .reveal.is-revealed {
-  opacity: 1;
-  animation: reveal-up var(--duration-slow) var(--ease-out) var(--reveal-delay, 0ms) backwards;
-  will-change: auto;
-}
-
-// Variante sin desplazamiento, para bloques grandes o texto largo.
-.js .reveal--fade.is-revealed {
-  animation-name: reveal-fade;
-}
-
-// ------------------------------------------------------------
-//  .reveal--stagger — el contenedor reparte el retardo a sus hijos
-//  El índice lo escribe el JS (--reveal-index) al observar la sección.
-// ------------------------------------------------------------
-.js .reveal--stagger > * {
-  --reveal-delay: calc(var(--reveal-index, 0) * var(--stagger-step));
-}
-
-// ------------------------------------------------------------
-//  .count-up — métricas que cuentan de 0 al valor real
-// ------------------------------------------------------------
-.count-up {
-  display: inline-block;
-  font-variant-numeric: tabular-nums;
-}
-
-// ------------------------------------------------------------
-//  .bento-card--hoverable — comportamiento de hover de toda celda
-//  del sitio: elevación con movimiento (nunca sólo sombra) más la
-//  iluminación progresiva que nace donde entró el puntero.
-//
-//  Es la única definición del efecto: cualquier contenedor que lo
-//  quiera añade esta clase, no vuelve a declarar hover por su cuenta.
-// ------------------------------------------------------------
-.bento-card--hoverable {
-  @include glow-hover;
-
-  box-shadow: var(--shadow-rest);
-
-  &:hover,
-  &:focus-within {
-    transform: translateY(-4px);
-    background-color: var(--color-surface-alt);
-  }
-}
-
-// ------------------------------------------------------------
-//  prefers-reduced-motion: sólo fade, sin desplazamiento ni bucles
-// ------------------------------------------------------------
 @include reduced-motion {
-  .js .reveal.is-revealed {
-    animation: reveal-fade var(--duration-base) linear backwards;
-  }
-
-  .js .reveal--stagger > * {
-    --reveal-delay: 0ms;
-  }
-
-  // La entrada del hero se queda en un fade simple, sin cascada ni barrido.
-  .hero__word,
-  .hero__role,
-  .hero__actions {
-    animation: reveal-fade var(--duration-base) linear both;
-  }
-
-  // Se va el desplazamiento; la luz y el borde se quedan, que no son
-  // movimiento: sólo cambian de color.
-  .bento-card--hoverable:hover,
-  .bento-card--hoverable:focus-within {
-    transform: none;
-  }
-
-  // Todo lo que sea bucle decorativo se apaga.
-  .hero__aurora,
-  .pipeline__packet,
-  .cursor__ring {
-    animation: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

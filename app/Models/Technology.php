@@ -5,12 +5,13 @@ namespace App\Models;
 use App\Core\Model;
 
 /**
- * Stack tecnológico: chips de "Sobre mí" y tags de proyecto.
+ * Stack tecnológico: el stack de "Sobre mí" y las tecnologías de cada proyecto.
  */
 class Technology extends Model
 {
     /**
-     * Todo el stack agrupado por categoría (para Sobre mí).
+     * Todo el stack agrupado por categoría (para Sobre mí). `category` es un
+     * ENUM: ordenar por él sigue el orden en que se declararon sus valores.
      *
      * @return array<string, array<int, array<string, mixed>>>
      */
@@ -57,14 +58,19 @@ class Technology extends Model
     //  Panel: escritura
     // --------------------------------------------------------
 
-    /** Categorías del esquema, con la etiqueta que ve el visitante. */
+    /**
+     * Categorías del esquema, con la etiqueta que ve el visitante. Van en el
+     * mismo orden que el ENUM de `technologies.category`, que es el orden en
+     * que MySQL las ordena y por tanto el que se ve en "Sobre mí".
+     */
     public const CATEGORIES = [
-        'lenguaje'     => 'Lenguajes',
-        'base_datos'   => 'Bases de datos',
-        'orquestacion' => 'Orquestación y procesamiento',
-        'cloud'        => 'Nube',
-        'bi'           => 'Visualización',
-        'herramienta'  => 'Herramientas',
+        'datos'       => 'Datos',
+        'sistemas'    => 'Sistemas y servidores',
+        'redes'       => 'Redes',
+        'seguridad'   => 'Seguridad',
+        'cloud'       => 'Nube',
+        'lenguaje'    => 'Lenguajes',
+        'herramienta' => 'Herramientas',
     ];
 
     /**

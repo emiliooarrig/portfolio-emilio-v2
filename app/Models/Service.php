@@ -76,7 +76,7 @@ class Service extends Model
     //  Panel: escritura
     // --------------------------------------------------------
 
-    /** Claves de icono que la tarjeta sabe dibujar (`section-servicios.php`). */
+    /** Claves de icono que la tarjeta de servicio sabía dibujar (la sección salió de la landing). */
     public const ICONS = [
         'spark'   => 'Chispa',
         'browser' => 'Navegador',

@@ -15,7 +15,7 @@ use App\Models\Technology;
 ?>
 <?= partial('admin-head', [
     'title' => $isNew ? 'Nueva tecnología' : 'Editar tecnología',
-    'lead'  => 'Un chip de «Sobre mí» y un tag disponible para los proyectos.',
+    'lead'  => 'Una línea del stack de «Sobre mí» y una tecnología disponible para los proyectos.',
 ]) ?>
 
 <form class="admin-form" method="post" action="<?= url($action) ?>" novalidate>
@@ -41,7 +41,7 @@ use App\Models\Technology;
                 'name' => 'category', 'label' => 'Categoría', 'type' => 'select',
                 'value' => $values['category'], 'error' => $errors['category'] ?? '',
                 'options' => Technology::CATEGORIES,
-                'hint'    => 'Agrupa los chips en «Sobre mí».',
+                'hint'    => 'Agrupa el stack en «Sobre mí»: Datos y Sistemas van primero.',
             ]) ?>
         </div>
     </fieldset>

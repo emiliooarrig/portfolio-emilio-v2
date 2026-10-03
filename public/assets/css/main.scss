@@ -10,18 +10,18 @@
 @use 'layout';
 @use 'animations';
 
+@use 'components/section';
 @use 'components/nav';
 @use 'components/cta';
 @use 'components/hero';
-@use 'components/bento';
-@use 'components/carousel';
-@use 'components/about';
-@use 'components/pipeline';
+@use 'components/projects';
+@use 'components/steps';
 @use 'components/timeline';
-@use 'components/cert-card';
+@use 'components/about';
+@use 'components/certs';
 @use 'components/form';
-@use 'components/auth';
-@use 'components/admin';
+@use 'components/footer';
 @use 'components/modal';
 @use 'components/alert';
-@use 'components/cursor';
+@use 'components/auth';
+@use 'components/admin';
