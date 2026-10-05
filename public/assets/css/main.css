@@ -2348,6 +2348,17 @@ html:not(.js) .project-row:hover .project-row__metric-value {
   transform: scale(0.85);
 }
 
+.cursor__dot {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cursor-fill);
+  transition: transform var(--duration-base) var(--ease-out), background-color var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out);
+}
+
 .cursor__shape {
   position: absolute;
   top: -46px;
@@ -2356,10 +2367,10 @@ html:not(.js) .project-row:hover .project-row__metric-value {
   place-items: center;
   width: 92px;
   height: 92px;
-  border: 0 solid var(--cursor-fill);
+  border: 2.875px solid var(--cursor-fill);
   border-radius: 50%;
-  background: var(--cursor-fill);
-  transform: scale(0.1304);
+  background: transparent;
+  transform: scale(0.3478);
   transition: transform 320ms var(--ease-reveal), background-color var(--duration-base) var(--ease-out), border-width var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out);
 }
 
@@ -2375,12 +2386,12 @@ html:not(.js) .project-row:hover .project-row__metric-value {
 }
 
 .cursor[data-state=link] .cursor__shape {
-  border-width: 3.14px;
-  background: transparent;
+  border-width: 2.09px;
   transform: scale(0.4783);
 }
 
 .cursor[data-state=label] .cursor__shape {
+  border-width: 0;
   background: var(--cursor-label-bg);
   transform: scale(1);
 }
@@ -2389,54 +2400,23 @@ html:not(.js) .project-row:hover .project-row__metric-value {
   opacity: 1;
 }
 
+.cursor[data-state=label] .cursor__dot,
+.cursor[data-state=hidden] .cursor__dot {
+  opacity: 0;
+  transform: scale(0);
+}
+
 .cursor[data-state=hidden] .cursor__shape {
   opacity: 0;
   transform: scale(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cursor__dot,
   .cursor__shape {
     transition-duration: 0.01ms;
   }
 }
-.project-preview {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 45;
-  display: none;
-  width: 320px;
-  height: 220px;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: var(--shadow-float);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-out);
-}
-.project-preview.is-visible {
-  opacity: 1;
-}
-
-.has-custom-cursor .project-preview {
-  display: block;
-}
-@media (max-width: 60rem) {
-  .has-custom-cursor .project-preview {
-    display: none;
-  }
-}
-
-.project-preview__item {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-out);
-}
-.project-preview__item.is-active {
-  opacity: 1;
-}
-
 .auth {
   display: grid;
   place-items: center;

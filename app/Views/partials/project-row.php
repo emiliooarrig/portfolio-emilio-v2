@@ -7,8 +7,7 @@
  * Con JS, `project-modal.js` intercepta el clic y abre el detalle encima.
  *
  * Hover (cursor.js): la fila se rellena de cobalto desde el borde por el que
- * entra el puntero, el título rueda (roll_text) y una vista previa generada
- * del proyecto sigue al cursor (`data-preview` = su slug).
+ * entra el puntero, el título rueda (roll_text) y el cursor dice "Ver".
  *
  * @var array<string, mixed> $project
  * @var bool                 $featured  fila ampliada, con métrica principal
@@ -21,7 +20,7 @@ $period   = date_range($project['started_on'] ?? null, $project['ended_on'] ?? n
 $metric   = $project['lead_metric'] ?? null;
 ?>
 <?php if ($featured): ?>
-    <article class="project-row project-row--featured" data-project-card data-reveal style="--i: <?= $index ?>" data-cursor="Ver" data-preview="<?= e($project['slug']) ?>">
+    <article class="project-row project-row--featured" data-project-card data-reveal style="--i: <?= $index ?>" data-cursor="Ver">
         <?php if ($period !== ''): ?>
             <p class="project-row__period meta"><?= e($period) ?></p>
         <?php endif; ?>
@@ -50,7 +49,7 @@ $metric   = $project['lead_metric'] ?? null;
         <?php endif; ?>
     </article>
 <?php else: ?>
-    <article class="project-row" data-project-card data-reveal style="--i: <?= $index ?>" data-cursor="Ver" data-preview="<?= e($project['slug']) ?>">
+    <article class="project-row" data-project-card data-reveal style="--i: <?= $index ?>" data-cursor="Ver">
         <h3 class="project-row__title">
             <a class="project-row__link" href="<?= url('/proyectos/' . $project['slug']) ?>" data-project-link><?= roll_text((string) $project['title']) ?></a>
         </h3>

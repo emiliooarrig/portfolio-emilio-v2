@@ -33,16 +33,6 @@ $others   = array_filter($projects, static fn (array $p): bool => empty($p['is_f
                         <?= partial('project-row', ['project' => $project, 'featured' => false, 'index' => $index++]) ?>
                     <?php endforeach; ?>
                 </div>
-
-                <?php // Una sola capa fija para la vista previa flotante (cursor.js): los
-                      // patrones se pintan aquí ocultos y sólo se alternan. Decorativa. ?>
-                <div class="project-preview" aria-hidden="true" data-project-preview>
-                    <?php foreach ($projects as $project): ?>
-                        <div class="project-preview__item" data-preview-item="<?= e($project['slug']) ?>">
-                            <?= partial('pattern', ['seed' => (string) $project['slug'], 'variant' => 'preview']) ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
             <?php endif; ?>
         </div>
     </div>

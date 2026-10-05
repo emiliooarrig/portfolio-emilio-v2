@@ -1,10 +1,11 @@
 // ============================================================
-//  _cursor.scss — cursor contextual y vista previa flotante
+//  _cursor.scss — cursor contextual
 //
 //  Sólo existe con puntero fino y JS (`cursor.js` añade
-//  html.has-custom-cursor y construye el elemento). Los tamaños se animan
-//  con `transform: scale()`: la forma mide 92px y se escala a 12px
-//  (reposo), 44px (aro sobre enlaces) o 92px (con texto).
+//  html.has-custom-cursor y construye el elemento). Un punto de 6px
+//  inscrito en un aro de 1px. Los tamaños del aro se animan con
+//  `transform: scale()`: la forma mide 92px y se escala a 32px (reposo),
+//  44px (sobre enlaces) o 92px (relleno, con texto).
 // ============================================================
 
 @use '../tokens' as *;
@@ -61,6 +62,23 @@
   }
 }
 
+// El punto marca la posición exacta; desaparece cuando el aro se rellena.
+.cursor__dot {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cursor-fill);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out);
+}
+
+// El borde se compensa con la escala para quedar en 1px:
+// 2.875px × 0.3478 ≈ 1px.
 .cursor__shape {
   position: absolute;
   top: -46px;
@@ -69,10 +87,10 @@
   place-items: center;
   width: 92px;
   height: 92px;
-  border: 0 solid var(--cursor-fill);
+  border: 2.875px solid var(--cursor-fill);
   border-radius: 50%;
-  background: var(--cursor-fill);
-  transform: scale(0.1304); // 12px
+  background: transparent;
+  transform: scale(0.3478); // 32px
   transition:
     transform 320ms var(--ease-reveal),
     background-color var(--duration-base) var(--ease-out),
@@ -91,21 +109,27 @@
   transition: opacity var(--duration-fast) var(--ease-out);
 }
 
-// Sobre enlaces y botones: aro de 1.5px a 44px (el borde se compensa con
-// la escala: 3.14px × 0.478 ≈ 1.5px).
+// Sobre enlaces y botones: el aro se abre a 44px, todavía de 1px
+// (2.09px × 0.478 ≈ 1px), con el punto en el centro.
 .cursor[data-state='link'] .cursor__shape {
-  border-width: 3.14px;
-  background: transparent;
+  border-width: 2.09px;
   transform: scale(0.4783);
 }
 
 .cursor[data-state='label'] .cursor__shape {
+  border-width: 0;
   background: var(--cursor-label-bg);
   transform: scale(1);
 }
 
 .cursor[data-state='label'] .cursor__label {
   opacity: 1;
+}
+
+.cursor[data-state='label'] .cursor__dot,
+.cursor[data-state='hidden'] .cursor__dot {
+  opacity: 0;
+  transform: scale(0);
 }
 
 .cursor[data-state='hidden'] .cursor__shape {
@@ -115,50 +139,8 @@
 
 // Sin lerp ni transiciones largas de tamaño.
 @include reduced-motion {
+  .cursor__dot,
   .cursor__shape {
     transition-duration: 0.01ms;
-  }
-}
-
-// ------------------------------------------------------------
-//  Vista previa flotante de proyectos: una sola capa fija que sigue al
-//  cursor; los patrones están pintados dentro y sólo se alternan.
-// ------------------------------------------------------------
-.project-preview {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 45;
-  display: none;
-  width: 320px;
-  height: 220px;
-  overflow: hidden;
-  border-radius: 12px;
-  box-shadow: var(--shadow-float);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-out);
-
-  &.is-visible {
-    opacity: 1;
-  }
-}
-
-.has-custom-cursor .project-preview {
-  display: block;
-
-  @include below($bp-tablet) {
-    display: none;
-  }
-}
-
-.project-preview__item {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity var(--duration-base) var(--ease-out);
-
-  &.is-active {
-    opacity: 1;
   }
 }

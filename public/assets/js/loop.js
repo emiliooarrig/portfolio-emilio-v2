@@ -1,9 +1,9 @@
 /**
  * loop.js — el único bucle requestAnimationFrame de la landing.
  *
- * Lo comparten el cursor, la vista previa de proyectos y la velocidad de
- * la cinta. Cada tarea devuelve `true` mientras le quede algo que mover;
- * cuando ninguna lo necesita, el bucle se detiene. Con la pestaña oculta
+ * Lo comparten el cursor y la velocidad de la cinta. Cada tarea devuelve
+ * `true` mientras le quede algo que mover; cuando ninguna lo necesita, el
+ * bucle se detiene. Con la pestaña oculta
  * también se detiene, y se reanuda al volver si hay tareas.
  */
 
